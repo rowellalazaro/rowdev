@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .profile-form-box {
+        width: 100%;
+        max-width: 500px;
+        margin: 40px auto;
+        background: rgb(87, 163, 193);
+        padding: 40px;
+        border-radius: 12px;
+        box-sizing: border-box;
+    }
+
+    .profile-form-box h1 {
+        color: #003082;
+        font-size: 26px;
+        margin-bottom: 20px;
+        margin-top: 0;
+    }
+
+    .profile-form-box label {
+        display: block;
+        color: #003082;
+        font-weight: bold;
+        margin-bottom: 6px;
+        margin-top: 12px;
+    }
+
+    .profile-form-box input[type="text"],
+    .profile-form-box input[type="email"],
+    .profile-form-box input[type="date"],
+    .profile-form-box textarea {
+        width: 100% !important;
+        padding: 10px !important;
+        border: none !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+        font-size: 15px !important;
+        background: white !important;
+        color: #003082 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 13px;
+        background-color: #003082;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .btn-save:hover {
+        background-color: #001f52;
+    }
+
+    .profile-pic-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #003082;
+        margin-bottom: 10px;
+        display: block;
+    }
+</style>
+
+<div class="profile-form-box">
+    <h1>Edit Profile</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Profile pic preview -->
+        {% if request.user.profile.profile_pic %}
+            <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
+        {% else %}
+            <div style="
+                width: 80px; height: 80px; border-radius: 50%;
+                background: #003082; display: flex; align-items: center;
+                justify-content: center; font-size: 30px; color: white;
+                margin-bottom: 10px;
+            " id="pic-placeholder">{{ request.user.username|first|upper }}</div>
+        {% endif %}
+
+        <label>Profile Picture</label>
+        <label for="id_profile_pic" style="
+            display: inline-block;
+            background: #b4cbff;
+            color: #003082;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 15px;
+        ">Change Photo</label>
+        <input type="file" name="profile_pic" id="id_profile_pic" accept="image/*" style="display: none;"
+               onchange="previewPic(this)">
+
+        <label>Username</label>
+        {{ user_form.username }}
+
+        <label>Email</label>
+        {{ user_form.email }}
+
+        <label>Bio</label>
+        {{ profile_form.bio }}
+
+        <label>Location</label>
+        {{ profile_form.location }}
+
+        <label>Birthday</label>
+        {{ profile_form.birthday }}
+
+        <button type="submit" class="btn-save">Save Changes</button>
+
+        <a href="{% url 'profile' request.user.username %}" style="
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+            color: #003082;
+            font-weight: bold;
+            text-decoration: underline;
+        ">Cancel</a>
+    </form>
+</div>
+
+<script>
+    function previewPic(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let preview = document.getElementById('pic-preview');
+                let placeholder = document.getElementById('pic-placeholder');
+                if (preview) {
+                    preview.src = e.target.result;
+                } else if (placeholder) {
+                    placeholder.innerHTML = `<img src="${e.target.result}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">`;
+                }
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+{% endblock %}

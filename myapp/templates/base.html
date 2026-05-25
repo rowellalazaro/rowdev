@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RowDev</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #fefefe;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgb(87, 163, 193);
+            border-bottom: 1px solid #003082;
+        }
+
+        .logo {
+            font-family: sans-serif;
+            font-size: 22px;
+            font-weight: bold;
+            color: #003082;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a, .nav-links button {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #003082;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: Arial;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: #b4cbff !important;
+            color: #003082 !important;
+            padding: 8px 14px;
+            border-radius: 20px;
+        }
+
+        .logout-btn {
+            background: #b4cbff !important;
+            color: #003082 !important;
+            padding: 8px 14px;
+            border-radius: 20px;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 10px;
+            margin: 10px 0;
+            background: #fff;
+            border-radius: 5px;
+            color: #003082;
+            border-left: 5px solid #003082;
+        }
+
+        .container {
+            width: 70%;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgb(176, 210, 225);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .login-box {
+            width: 400px;
+            margin: auto;
+            margin-top: 80px;
+            background: rgb(87, 163, 193);
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], textarea {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .user-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            min-width: 170px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .user-menu a, .user-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            color: #003082;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-family: Arial;
+            font-size: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .user-menu a:hover, .user-menu button:hover {
+            background: #f0f4ff;
+        }
+
+        .user-menu .logout-item {
+            color: #820000;
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="{% url 'home' %}" class="logo">RowDev</a>
+
+    <div>
+        <form action="{% url 'post-list' %}" method="get">
+            <input type="text" name="q" placeholder="Search articles..." style="margin-bottom: 0; width: 250px; color:#003082">
+        </form>
+    </div>
+
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+
+            <div class="user-dropdown">
+                <button onclick="toggleMenu()" class="logout-btn" style="cursor: pointer;">
+                    {{ user.username }} ▾
+                </button>
+                <div class="user-menu" id="user-menu">
+                    <a href="{% url 'profile' user.username %}">My Profile</a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}">Admin</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post" style="margin: 0; padding: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-item">Logout</button>
+                    </form>
+                </div>
+            </div>
+
+        {% else %}
+            <a href="{% url 'account_login' %}">Login</a>
+            <a class="btn" href="{% url 'register' %}">Join Now</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages" style="border: 5px solid #ffffff; background: rgb(198, 226, 238); padding: 10px; margin-bottom: 20px; border-radius: 5px; color: #003082;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById('user-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            document.getElementById('user-menu').style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>

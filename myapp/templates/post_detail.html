@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card" style="position: relative;">
+
+    <!-- Edit / Delete buttons top right -->
+    {% if request.user == object.author or request.user.is_staff %}
+    <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 10px;">
+        <a href="{% url 'post-edit' object.pk %}" style="
+            background: #003082;
+            color:#b4cbff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        ">Edit</a>
+
+        <a href="{% url 'post-delete' object.pk %}" style="
+            background: #003082;
+            color:#b4cbff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        "> Delete</a>
+    </div>
+    {% endif %}
+
+    <h1 style="color: #003082; margin-top: 0;">{{ object.title }}</h1>
+
+    <p style="font-size: 14px; color: #00225c;">
+        By <strong>{{ object.author }}</strong>
+    </p>
+
+    <p style="font-size: 18px; color: #003082; white-space: pre-line;">
+        {{ object.content }}
+    </p>
+
+    {% if object.image %}
+        <img src="{{ object.image.url }}" alt="Post image" style="
+            max-width: 50%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 12px;
+            display: block;
+        ">
+    {% endif %}
+
+    <br>
+    <a href="{% url 'post-list' %}" class="btn" style="
+        display: inline-block;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: bold;
+        padding: 8px 18px;
+        margin-top: 10px;
+    "> Back to Posts</a>
+
+</div>
+
+{% endblock %}

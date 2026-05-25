@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    width: 100%;
+    max-width: 420px;
+    margin: 60px auto;
+    background:#003082;
+    padding: 40px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    text-align: center;
+">
+    <h1 style="color: white; font-size: 24px; margin-bottom: 10px;">Sign In Via Google</h1>
+    <p style="color: white; margin-bottom: 20px;">You are about to sign in using your Google account.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% if form %}{{ form.as_p }}{% endif %}
+        <button type="submit" style="
+            width: 100%;
+            padding: 13px;
+            background-color: white;
+            color: #003082;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        ">Continue with Google</button>
+    </form>
+
+    <a href="{% url 'account_login' %}" style="
+        display: block;
+        margin-top: 15px;
+        color: white;
+        font-weight: bold;
+        text-decoration: underline;
+    ">Back to Sign In</a>
+</div>
+
+{% endblock %}

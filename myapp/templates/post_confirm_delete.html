@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="login-box" style="text-align: center;">
+    <h2 style="color: #003082;">Delete Post</h2>
+    <p style="color: #003082;">Are you sure you want to delete <strong>"{{ object.title }}"</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button type="submit" style="
+                background: #ffb4b4;
+                color: #820000;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 20px;
+                font-weight: bold;
+                font-size: 15px;
+                cursor: pointer;
+            ">Yes, Delete</button>
+
+            <a href="{% url 'home' %}" style="
+                background: #b4cbff;
+                color: #003082;
+                padding: 10px 20px;
+                border-radius: 20px;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 15px;
+            ">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

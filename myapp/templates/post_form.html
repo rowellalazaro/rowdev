@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="login-box" style="width: 500px; margin-top: 40px;">
+    <h1 style="color: #003082; margin-top: 0;">{{ page_title }}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label style="color: #003082; font-weight: bold;">Caption</label>
+        <input type="text" name="title" value="{{ form.title.value|default:'' }}" placeholder="Write a caption...">
+
+        <label style="color: #003082; font-weight: bold;">Content</label>
+        <textarea name="content" placeholder="What's on your mind?" style="height: 150px;">{{ form.content.value|default:'' }}</textarea>
+
+        <label style="color: #003082; font-weight: bold; display: block; margin-bottom: 8px;">Image</label>
+        <label for="id_image" style="
+            display: inline-block;
+            background: #b4cbff;
+            color: #003082;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        ">Upload Image</label>
+        <input type="file" name="image" id="id_image" accept="image/*" style="display: none;"
+               onchange="document.getElementById('file-name').textContent = this.files[0]?.name || 'No file chosen'">
+        <span id="file-name" style="color: #003082; font-size: 14px; margin-left: 8px;">No file chosen</span>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button type="submit" class="btn" style="
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: bold;
+                font-family: Arial;
+                width: 100%;
+                padding: 10px;
+            ">{{ page_title }}</button>
+
+            <a href="{% url 'home' %}" class="btn" style="
+                text-align: center;
+                font-size: 16px;
+                font-weight: bold;
+                width: 100%;
+                padding: 10px;
+                background: #003082 !important;
+                color: #b4cbff !important;
+            ">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
