@@ -20,7 +20,7 @@ SECRET_KEY = 'django-insecure-la^d71$g%m&38v&ewoy5ai@)&mj2s@xxo7k_8z=!al$zvn+wdl
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['rowdev-production-283a.up.railway.app', 'rowdev-production.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
