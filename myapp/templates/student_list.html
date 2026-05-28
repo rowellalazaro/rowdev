@@ -1,0 +1,22 @@
+<h2>Student CRUD System</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<h3>Students</h3>
+
+{% for s in students %}
+    <p>
+        {{ s.name }} | {{ s.email }} | {{ s.age }}
+
+        <a href="{% url 'update_student' s.id %}">Edit</a>
+        <a href="{% url 'delete_student' s.id %}">Delete</a>
+    </p>
+{% empty %}
+    <p>No students yet</p>
+{% endfor %}

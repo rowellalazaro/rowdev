@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'home' %}" class="btn" style="
+        display: inline-block;
+        font-size: 15px;
+        font-weight: bold;
+        padding: 8px 18px;
+        text-decoration: none;
+    "> Back to Dashboard</a>
+</div>
+
+<h2 style="color: #003082;">Latest Posts</h2>
+
+{% for post in posts %}
+    <div class="card">
+        <h2 style="color: #003082; margin-top: 0;">{{ post.title|default:"Status Update" }}</h2>
+        <p style="color: #00225c; font-size: 14px;">
+            By <strong>{% if post.author %}{{ post.author.username }}{% else %}Anonymous{% endif %}</strong>
+            on {{ post.created_at|date:"M d, Y H:i" }}
+        </p>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post Image" style="
+                max-width: 100%;
+                border-radius: 10px;
+                margin: 10px 0;
+                display: block;
+            ">
+        {% endif %}
+
+        <p style="white-space: pre-line; color: #003082;">{{ post.content|truncatewords:20 }}</p>
+
+        <a href="{% url 'post-detail' post.pk %}" style="
+            color: #003082;
+            font-weight: bold;
+            text-decoration: none;
+        ">Read More →</a>
+    </div>
+{% empty %}
+    <p style="color: #003082;">No posts available.</p>
+{% endfor %}
+
+{% endblock %}
