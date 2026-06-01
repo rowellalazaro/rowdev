@@ -201,7 +201,6 @@
     }
 </style>
         
-    </style>
 </head>
 
 <body>
@@ -267,6 +266,19 @@
             document.getElementById('user-menu').style.display = 'none';
         }
     });
+
+    // Apply dark mode
+    const theme = "{{ request.session.theme }}";
+    if (theme === 'dark') {
+        document.body.style.background = '#1a1a2e';
+        document.body.style.color = '#ffffff';
+        document.querySelector('.navbar').style.background = '#16213e';
+        document.querySelector('.navbar').style.borderBottom = '1px solid #0f3460';
+        document.querySelectorAll('.card').forEach(el => el.style.background = '#16213e');
+        document.querySelectorAll('.user-menu a, .user-menu button').forEach(el => {
+            el.style.color = '#ffffff';
+        });
+    }
 </script>
 
 </body>
