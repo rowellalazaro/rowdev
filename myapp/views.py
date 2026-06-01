@@ -149,13 +149,14 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
-    
-from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def settings_view(request):
     if request.method == 'POST':
         request.session['language'] = request.POST.get('language', 'en')
         request.session['theme'] = request.POST.get('theme', 'light')
+        request.session.modified = True
         messages.success(request, 'Settings saved!')
+        return redirect('home')
     return render(request, 'settings.html')
