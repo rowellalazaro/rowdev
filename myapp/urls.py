@@ -12,4 +12,5 @@ urlpatterns = [
     path('admin-page/', views.admin_page, name='admin_page'),
     path('profile/edit/', views.edit_profile, name='edit-profile'), 
     path('profile/<str:username>/', views.profile_view, name='profile'),  
-]
+    path('settings/', views.settings_view, name='settings'),
+] 

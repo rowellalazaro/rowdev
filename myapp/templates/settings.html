@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="settings-box">
+    <h2>Settings</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="settings-section">
+            <h4>🌐 Language</h4>
+            <select name="language">
+                <option value="en" {% if request.session.language == 'en' %}selected{% endif %}>English</option>
+                <option value="tl" {% if request.session.language == 'tl' %}selected{% endif %}>Tagalog</option>
+                <option value="ko" {% if request.session.language == 'ko' %}selected{% endif %}>Korean</option>
+            </select>
+        </div>
+
+        <div class="settings-section">
+            <h4>Theme</h4>
+            <div class="toggle-switch">
+                <label>
+                    <input type="radio" name="theme" value="light" {% if request.session.theme != 'dark' %}checked{% endif %}> Light Mode
+                </label>
+                <label>
+                    <input type="radio" name="theme" value="dark" {% if request.session.theme == 'dark' %}checked{% endif %}> Dark Mode
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h4>Change Password</h4>
+            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
+        </div>
+
+        <button type="submit" class="save-btn">Save Settings</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -147,9 +147,60 @@
         }
 
         .user-menu .logout-item {
-            color: #820000;
-            border-bottom: none;
-        }
+        color: #820000;
+        border-bottom: none;
+    }
+
+    .settings-box {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 500px;
+        margin: 40px auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .settings-box h2 {
+        color: #003082;
+        margin-bottom: 20px;
+    }
+
+    .settings-section {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 15px;
+    }
+
+    .settings-section h4 {
+        color: #003082;
+        margin-bottom: 10px;
+    }
+
+    .settings-section select, .settings-section input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .toggle-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .save-btn {
+        background: #b4cbff;
+        color: #003082;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 15px;
+    }
+</style>
+        
     </style>
 </head>
 
@@ -173,9 +224,10 @@
                 </button>
                 <div class="user-menu" id="user-menu">
                     <a href="{% url 'profile' user.username %}">My Profile</a>
-                    {% if user.is_staff %}
-                        <a href="{% url 'admin:index' %}">Admin</a>
-                    {% endif %}
+                        {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}">Admin</a>
+                         {% endif %}
+                    <a href="{% url 'settings' %}">Settings</a>
                     <form action="{% url 'logout' %}" method="post" style="margin: 0; padding: 0;">
                         {% csrf_token %}
                         <button type="submit" class="logout-item">Logout</button>
