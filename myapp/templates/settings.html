@@ -4,37 +4,58 @@
 <div class="settings-box">
     <h2>Settings</h2>
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="settings-section">
+        <h4>🌐 Language</h4>
+        <select name="language" id="language-select">
+            <option value="en">English</option>
+            <option value="tl">Tagalog</option>
+            <option value="ko">Korean</option>
+        </select>
+    </div>
 
-        <div class="settings-section">
-            <h4>🌐 Language</h4>
-            <select name="language">
-                <option value="en" {% if request.session.language == 'en' %}selected{% endif %}>English</option>
-                <option value="tl" {% if request.session.language == 'tl' %}selected{% endif %}>Tagalog</option>
-                <option value="ko" {% if request.session.language == 'ko' %}selected{% endif %}>Korean</option>
-            </select>
+    <div class="settings-section">
+        <h4>Theme</h4>
+        <div class="toggle-switch">
+            <label>
+                <input type="radio" name="theme" value="light" id="light-mode"> Light Mode
+            </label>
+            <label>
+                <input type="radio" name="theme" value="dark" id="dark-mode"> Dark Mode
+            </label>
         </div>
+    </div>
 
-        <div class="settings-section">
-            <h4>Theme</h4>
-            <div class="toggle-switch">
-                <label>
-                    <input type="radio" name="theme" value="light" {% if request.session.theme != 'dark' %}checked{% endif %}> Light Mode
-                </label>
-                <label>
-                    <input type="radio" name="theme" value="dark" {% if request.session.theme == 'dark' %}checked{% endif %}> Dark Mode
-                </label>
-            </div>
-        </div>
+    <div class="settings-section">
+        <h4>Change Password</h4>
+        <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
+    </div>
 
-        <div class="settings-section">
-            <h4>Change Password</h4>
-            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
-        </div>
-
-        <button type="submit" class="save-btn">Save Settings</button>
-    </form>
+    <button onclick="saveSettings()" class="save-btn">Save Settings</button>
 </div>
+
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Set current theme on load
+    const currentTheme = getCookie('theme') || 'light';
+    document.getElementById(currentTheme + '-mode').checked = true;
+
+    // Live preview when switching
+    document.querySelectorAll('input[name="theme"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            applyTheme(this.value);
+        });
+    });
+
+    function saveSettings() {
+        const theme = document.querySelector('input[name="theme"]:checked').value;
+        document.cookie = `theme=${theme}; path=/; max-age=31536000`;
+        window.location.href = '/';
+    }
+</script>
 
 {% endblock %}
