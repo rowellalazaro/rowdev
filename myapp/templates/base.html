@@ -257,11 +257,6 @@
 <div class="navbar">
     <a href="{% url 'home' %}" class="logo">RowDev</a>
 
-    <div>
-        <form action="{% url 'post-list' %}" method="get">
-            <input type="text" name="q" placeholder="Search articles..." style="margin-bottom: 0; width: 250px; color:#003082">
-        </form>
-    </div>
 
     <div class="nav-links">
         {% if user.is_authenticated %}
