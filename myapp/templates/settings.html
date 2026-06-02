@@ -17,8 +17,10 @@
     </div>
 
     <div class="settings-section">
-        <h4>🔒 Change Password</h4>
-        <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
+        <h4>👤 Account</h4>
+        <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block; margin-bottom:10px;">Change Password</a>
+        <br><br>
+        <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Email</a>
     </div>
 
     <button onclick="saveSettings()" class="save-btn">Save Settings</button>
@@ -32,11 +34,9 @@
         return null;
     }
 
-    // Set current theme on radio buttons
     const currentTheme = getCookie('theme') || 'light';
     document.getElementById(currentTheme + '-mode').checked = true;
 
-    // Live preview
     document.querySelectorAll('input[name="theme"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
             if (this.value === 'dark') {
