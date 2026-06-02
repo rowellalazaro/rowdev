@@ -56,6 +56,7 @@
     toggle.checked = currentTheme === 'dark';
     updateToggleStyle(currentTheme === 'dark');
 
+    // Auto save when toggled
     toggle.addEventListener('change', function() {
         const isDark = this.checked;
         updateToggleStyle(isDark);
@@ -64,13 +65,10 @@
         } else {
             document.body.classList.remove('dark');
         }
-    });
-
-    function saveSettings() {
-        const theme = toggle.checked ? 'dark' : 'light';
+        // Auto save cookie
+        const theme = isDark ? 'dark' : 'light';
         document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
-        window.location.href = '/';
-    }
+    });
 
     function toggleAccount() {
         const options = document.getElementById('account-options');
