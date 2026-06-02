@@ -6,13 +6,15 @@
 
     <div class="settings-section">
         <h4>Theme</h4>
-        <div class="toggle-switch">
-            <label>
-                <input type="radio" name="theme" value="light" id="light-mode"> Light Mode
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span>Light</span>
+            <label style="position:relative; display:inline-block; width:52px; height:28px;">
+                <input type="checkbox" id="theme-toggle" style="opacity:0; width:0; height:0;">
+                <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#b4cbff; border-radius:28px; transition:0.3s;">
+                    <span id="toggle-knob" style="position:absolute; height:22px; width:22px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s;"></span>
+                </span>
             </label>
-            <label>
-                <input type="radio" name="theme" value="dark" id="dark-mode"> Dark Mode
-            </label>
+            <span>Dark</span>
         </div>
     </div>
 
@@ -27,7 +29,7 @@
 
     <button onclick="saveSettings()" class="save-btn">Save Settings</button>
     <br><br>
-    <a href="{% url 'home' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Back to Dashboard</a>
+    <a href="{% url 'home' %}" class="save-btn" style="text-decoration:none; display:inline-block;">← Back to Dashboard</a>
 </div>
 
 <script>
@@ -39,20 +41,34 @@
     }
 
     const currentTheme = getCookie('theme') || 'light';
-    document.getElementById(currentTheme + '-mode').checked = true;
+    const toggle = document.getElementById('theme-toggle');
+    const knob = document.getElementById('toggle-knob');
 
-    document.querySelectorAll('input[name="theme"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            if (this.value === 'dark') {
-                document.body.classList.add('dark');
-            } else {
-                document.body.classList.remove('dark');
-            }
-        });
+    function updateToggleStyle(isDark) {
+        if (isDark) {
+            knob.style.transform = 'translateX(24px)';
+            toggle.parentElement.querySelector('span').style.background = '#003082';
+        } else {
+            knob.style.transform = 'translateX(0)';
+            toggle.parentElement.querySelector('span').style.background = '#b4cbff';
+        }
+    }
+
+    toggle.checked = currentTheme === 'dark';
+    updateToggleStyle(currentTheme === 'dark');
+
+    toggle.addEventListener('change', function() {
+        const isDark = this.checked;
+        updateToggleStyle(isDark);
+        if (isDark) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
     });
 
     function saveSettings() {
-        const theme = document.querySelector('input[name="theme"]:checked').value;
+        const theme = toggle.checked ? 'dark' : 'light';
         document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
         window.location.href = '/';
     }
