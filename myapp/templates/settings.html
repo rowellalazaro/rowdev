@@ -19,17 +19,16 @@
     </div>
 
     <div class="settings-section">
-        <h4 onclick="toggleAccount()" style="cursor:pointer;">👤 Account ▾</h4>
+        <h4 onclick="toggleAccount()" style="cursor:pointer;">Account ▾</h4>
         <div id="account-options" style="display:none;">
-            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:block; margin-bottom:10px; text-align:center;">🔒 Change Password</a>
+            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:block; margin-bottom:10px; text-align:center;">Change Password</a>
             <br>
-            <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:block; text-align:center;">✉️ Change Email</a>
+            <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:block; text-align:center;">Change Email</a>
         </div>
     </div>
 
-    <button onclick="saveSettings()" class="save-btn">Save Settings</button>
     <br><br>
-    <a href="{% url 'home' %}" class="save-btn" style="text-decoration:none; display:inline-block;">← Back to Dashboard</a>
+    <a href="{% url 'home' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Back to Dashboard</a>
 </div>
 
 <script>
