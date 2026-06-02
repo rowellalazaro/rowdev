@@ -2,6 +2,10 @@
 {% block content %}
 
 <div class="settings-box">
+    <div style="margin-bottom:15px;">
+        <a href="{% url 'home' %}" style="text-decoration:none; color:#003082; font-weight:bold; font-size:15px;">← Back to Dashboard</a>
+    </div>
+
     <h2>Settings</h2>
 
     <div class="settings-section">
@@ -19,16 +23,17 @@
     </div>
 
     <div class="settings-section">
-        <h4 onclick="toggleSection('account-options', this)" 
+        <h4 onclick="toggleSection('account-options', this)"
             style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
             onmouseover="this.style.background='#e8f0ff';"
             onmouseout="this.style.background='';">
-            👤 Account
+             Account
         </h4>
         <div id="account-options" style="display:none; padding:10px 0;">
-            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:block; margin-bottom:10px; text-align:center;">Change Password</a>
-            <br>
-            <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:block; text-align:center;">Change Email</a>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
+                <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Email</a>
+            </div>
         </div>
     </div>
 
@@ -41,14 +46,10 @@
         </h4>
         <div id="about-options" style="display:none; padding:10px 0;">
             <p style="margin:5px 0;"><strong>Site:</strong> RowDev</p>
-            <p style="margin:5px 0;"><strong>Developer:</strong> Rowella Lazaro</p>
+            <p style="margin:5px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
             <p style="margin:5px 0;"><strong>Description:</strong> A personal blog and social platform for sharing posts and ideas.</p>
             <p style="margin:5px 0;"><strong>Version:</strong> 1.0.0</p>
         </div>
-    </div>
-
-    <div style="margin-top:20px; text-align:left;">
-        <a href="{% url 'home' %}" style="text-decoration:none; color:#003082; font-weight:bold; font-size:15px;">Back to Dashboard</a>
     </div>
 
 </div>
