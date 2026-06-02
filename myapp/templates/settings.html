@@ -5,7 +5,7 @@
     <h2>Settings</h2>
 
     <div class="settings-section">
-        <h4>🌙 Theme</h4>
+        <h4>Theme</h4>
         <div style="display:flex; align-items:center; gap:10px;">
             <span>Light</span>
             <label style="position:relative; display:inline-block; width:52px; height:28px;">
@@ -19,35 +19,24 @@
     </div>
 
     <div class="settings-section">
-        <h4 onclick="toggleAccount()" 
-            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
-            onmouseover="this.style.background='#e8f0ff'; this.style.color='#003082';"
-            onmouseout="this.style.background=''; this.style.color='';">
-            👤 Account ▾
-        </h4>
-        <div id="account-options" style="display:none;">
-            <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:block; margin-bottom:10px; text-align:center;">🔒 Change Password</a>
-            <br>
-            <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:block; text-align:center;">✉️ Change Email</a>
-        </div>
+        <h4>👤 Account</h4>
+        <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:block; margin-bottom:10px; text-align:center;">Change Password</a>
+        <br>
+        <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:block; text-align:center;">Change Email</a>
     </div>
 
     <div class="settings-section">
-        <h4 onclick="toggleAbout()" 
-            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
-            onmouseover="this.style.background='#e8f0ff'; this.style.color='#003082';"
-            onmouseout="this.style.background=''; this.style.color='';">
-            ℹ️ About ▾
-        </h4>
-        <div id="about-options" style="display:none; margin-top:10px;">
-            <p style="margin:5px 0;"><strong>Site:</strong> RowDev</p>
-            <p style="margin:5px 0;"><strong>Developer:</strong> Rowella Lazaro</p>
-            <p style="margin:5px 0;"><strong>Description:</strong> A personal blog and social platform for sharing posts and ideas.</p>
-            <p style="margin:5px 0;"><strong>Version:</strong> 1.0.0</p>
-        </div>
+        <h4>ℹ️ About</h4>
+        <p style="margin:5px 0;"><strong>Site:</strong> RowDev</p>
+        <p style="margin:5px 0;"><strong>Developer:</strong> Rowella Lazaro</p>
+        <p style="margin:5px 0;"><strong>Description:</strong> A personal blog and social platform for sharing posts and ideas.</p>
+        <p style="margin:5px 0;"><strong>Version:</strong> 1.0.0</p>
     </div>
 
-    <a href="{% url 'home' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Back</a>
+    <div style="margin-top:20px; text-align:left;">
+        <a href="{% url 'home' %}" style="text-decoration:none; color:#003082; font-weight:bold; font-size:15px;">← Back to Dashboard</a>
+    </div>
+
 </div>
 
 <script>
@@ -86,16 +75,6 @@
         const theme = isDark ? 'dark' : 'light';
         document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
     });
-
-    function toggleAccount() {
-        const options = document.getElementById('account-options');
-        options.style.display = options.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function toggleAbout() {
-        const options = document.getElementById('about-options');
-        options.style.display = options.style.display === 'none' ? 'block' : 'none';
-    }
 </script>
 
 {% endblock %}
