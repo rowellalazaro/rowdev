@@ -9,12 +9,15 @@ urlpatterns = [
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
     path('post/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post-edit'),
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
-    path('admin-page/', views.admin_page, name='admin_page'),
-    path('profile/edit/', views.edit_profile, name='edit-profile'), 
-    path('profile/<str:username>/', views.profile_view, name='profile'),  
+    path('profile/edit/', views.edit_profile, name='edit-profile'),
+    path('profile/<str:username>/', views.profile_view, name='profile'),
     path('settings/', views.settings_view, name='settings'),
+
+    # Admin URLs
     path('rowdev-admin/', views.admin_login, name='admin_login'),
+    path('rowdev-admin/dashboard/', views.admin_page, name='admin_page'),
+    path('rowdev-admin/user/<int:user_id>/', views.admin_user_detail, name='admin_user_detail'),
     path('rowdev-admin/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
     path('rowdev-admin/toggle/<int:user_id>/', views.admin_toggle_user, name='admin_toggle_user'),
-    path('rowdev-admin/user/<int:user_id>/', views.admin_user_detail, name='admin_user_detail'),
-] 
+    path('rowdev-admin/post/delete/<int:post_id>/', views.admin_delete_post, name='admin_delete_post'),
+]

@@ -45,7 +45,7 @@ def home(request):
             messages.success(request, "Posted successfully!")
         return redirect('home')
 
-    posts = Post.objects.all().order_by('-created_at')
+    posts = Post.objects.filter(author__is_active=True).order_by('-created_at')
     return render(request, 'home.html', {'posts': posts})
 
 
@@ -98,12 +98,22 @@ def admin_toggle_user(request, user_id):
     return redirect('admin_page')
 
 
+def admin_delete_post(request, post_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    post = get_object_or_404(Post, id=post_id)
+    post.delete()
+    messages.success(request, 'Post deleted successfully!')
+    return redirect(request.META.get('HTTP_REFERER', 'admin_page'))
+
+
 def admin_user_detail(request, user_id):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
     u = get_object_or_404(User, id=user_id)
     profile, created = Profile.objects.get_or_create(user=u)
-    return render(request, 'admin_user_detail.html', {'u': u, 'profile': profile})
+    posts = Post.objects.filter(author=u).order_by('-created_at')
+    return render(request, 'admin_user_detail.html', {'u': u, 'profile': profile, 'posts': posts})
 
 
 @login_required
