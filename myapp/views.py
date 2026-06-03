@@ -211,6 +211,25 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
 
+@login_required
+def user_request(request):
+    from .models import UserRequest
+    if request.method == 'POST':
+        request_type = request.POST.get('request_type')
+        current_value = request.POST.get('current_value')
+        requested_value = request.POST.get('requested_value')
+        message = request.POST.get('message')
+        UserRequest.objects.create(
+            user=request.user,
+            request_type=request_type,
+            current_value=current_value,
+            requested_value=requested_value,
+            message=message
+        )
+        messages.success(request, 'Request sent to admin successfully!')
+        return redirect('user_request')
+    my_requests = UserRequest.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'user_request.html', {'my_requests': my_requests})
 
 @login_required
 def settings_view(request):

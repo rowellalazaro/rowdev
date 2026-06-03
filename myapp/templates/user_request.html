@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="login-box" style="max-width:500px; margin:40px auto;">
+    <h2 style="color:#003082; text-align:center; margin-bottom:20px;">📩 Request to Admin</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background:#d4edda; color:#155724; padding:10px; border-radius:8px; margin-bottom:15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label style="color:#003082; font-weight:bold; display:block; margin-bottom:5px;">Request Type</label>
+        <select name="request_type" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; color:#003082;">
+            <option value="username">Change Username</option>
+            <option value="bio">Update Bio</option>
+            <option value="location">Update Location</option>
+            <option value="birthday">Update Birthday</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label style="color:#003082; font-weight:bold; display:block; margin-bottom:5px;">Current Value</label>
+        <input type="text" name="current_value" placeholder="What is your current value?" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; box-sizing:border-box; color:#003082;">
+
+        <label style="color:#003082; font-weight:bold; display:block; margin-bottom:5px;">Requested Value</label>
+        <input type="text" name="requested_value" placeholder="What do you want to change it to?" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; box-sizing:border-box; color:#003082;">
+
+        <label style="color:#003082; font-weight:bold; display:block; margin-bottom:5px;">Additional Message (optional)</label>
+        <textarea name="message" placeholder="Any additional info..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; box-sizing:border-box; color:#003082; height:100px;"></textarea>
+
+        <button type="submit" style="width:100%; padding:12px; background:#003082; color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;">Send Request</button>
+    </form>
+
+    <div style="text-align:center; margin-top:15px;">
+        <a href="{% url 'settings' %}" style="color:#003082; font-weight:bold;">← Back to Settings</a>
+    </div>
+
+    {% if my_requests %}
+    <div style="margin-top:30px;">
+        <h3 style="color:#003082;">My Previous Requests</h3>
+        {% for req in my_requests %}
+        <div style="background:#f0f4ff; padding:15px; border-radius:10px; margin-bottom:10px; border-left:4px solid rgb(87,163,193);">
+            <p style="margin:0; color:#003082;"><strong>{{ req.get_request_type_display }}</strong> → {{ req.requested_value }}</p>
+            <p style="margin:5px 0; font-size:13px; color:#666;">{{ req.created_at|date:"M d, Y" }}</p>
+            <p style="margin:0;">
+                {% if req.status == 'pending' %}
+                    <span style="background:#fff3cd; color:#856404; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold;">⏳ Pending</span>
+                {% elif req.status == 'approved' %}
+                    <span style="background:#d4edda; color:#155724; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold;">✅ Approved</span>
+                {% elif req.status == 'rejected' %}
+                    <span style="background:#f8d7da; color:#721c24; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold;">❌ Rejected</span>
+                {% endif %}
+                {% if req.admin_note %}
+                    <span style="font-size:13px; color:#666;"> — {{ req.admin_note }}</span>
+                {% endif %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
