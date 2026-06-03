@@ -78,6 +78,34 @@ def admin_page(request):
     return render(request, 'admin.html', {'users': users})
 
 
+def admin_delete_user(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    user = get_object_or_404(User, id=user_id)
+    if user != request.user:
+        user.delete()
+        messages.success(request, 'User deleted successfully!')
+    return redirect('admin_page')
+
+
+def admin_toggle_user(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    user = get_object_or_404(User, id=user_id)
+    if user != request.user:
+        user.is_active = not user.is_active
+        user.save()
+    return redirect('admin_page')
+
+
+def admin_user_detail(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    u = get_object_or_404(User, id=user_id)
+    profile, created = Profile.objects.get_or_create(user=u)
+    return render(request, 'admin_user_detail.html', {'u': u, 'profile': profile})
+
+
 @login_required
 def profile_view(request, username):
     user_obj = get_object_or_404(User, username=username)

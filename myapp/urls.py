@@ -14,4 +14,7 @@ urlpatterns = [
     path('profile/<str:username>/', views.profile_view, name='profile'),  
     path('settings/', views.settings_view, name='settings'),
     path('rowdev-admin/', views.admin_login, name='admin_login'),
+    path('rowdev-admin/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
+    path('rowdev-admin/toggle/<int:user_id>/', views.admin_toggle_user, name='admin_toggle_user'),
+    path('rowdev-admin/user/<int:user_id>/', views.admin_user_detail, name='admin_user_detail'),
 ] 

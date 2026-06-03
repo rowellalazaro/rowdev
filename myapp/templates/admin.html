@@ -35,7 +35,7 @@
         }
 
         .container {
-            width: 80%;
+            width: 90%;
             margin: 30px auto;
         }
 
@@ -49,12 +49,33 @@
 
         .admin-box h2 {
             color: #003082;
-            margin-bottom:5px;
+            margin-bottom: 5px;
         }
 
-        .admin-box p {
-            color: #003082;
+        .controls {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls input {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid #b4cbff;
+            font-size: 14px;
+            width: 250px;
+            color: #003082;
+        }
+
+        .controls select {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid #b4cbff;
+            font-size: 14px;
+            color: #003082;
+            cursor: pointer;
         }
 
         .user-table {
@@ -87,31 +108,33 @@
             font-weight: bold;
         }
 
-        .badge-staff {
-            background: #003082;
-            color: white;
+        .badge-staff { background: #003082; color: white; }
+        .badge-user { background: #b4cbff; color: #003082; }
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-inactive { background: #f8d7da; color: #721c24; }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 5px;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .badge-user {
-            background: #b4cbff;
-            color: #003082;
-        }
-
-        .badge-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
+        .btn-view { background: #b4cbff; color: #003082; }
+        .btn-disable { background: #fff3cd; color: #856404; }
+        .btn-enable { background: #d4edda; color: #155724; }
+        .btn-delete { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
 {% if not user.is_staff %}
-    <p>You are not authorized to view this page.</p>
+    <p>You are not authorized.</p>
 {% else %}
 
 <div class="admin-navbar">
@@ -125,26 +148,40 @@
 <div class="container">
     <div class="admin-box">
         <h2>👥 User Management</h2>
-        <p>Total users: <strong>{{ users.count }}</strong></p>
+        <p style="color:#003082;">Total users: <strong>{{ users.count }}</strong></p>
 
-        <table class="user-table">
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Search by username or email..." onkeyup="searchUsers()">
+            <select id="sortSelect" onchange="sortUsers()">
+                <option value="default">Sort by: Default</option>
+                <option value="name-asc">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+                <option value="date-asc">Date Joined (Oldest)</option>
+                <option value="date-desc">Date Joined (Newest)</option>
+            </select>
+        </div>
+
+        <table class="user-table" id="userTable">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Date Joined</th>
+                    <th>Last Login</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="userTableBody">
                 {% for u in users %}
-                <tr>
+                <tr data-name="{{ u.username }}" data-date="{{ u.date_joined|date:'Y-m-d' }}">
                     <td>{{ forloop.counter }}</td>
-                    <td>@{{ u.username }}</td>
+                    <td><strong>@{{ u.username }}</strong></td>
                     <td>{{ u.email }}</td>
                     <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td>{% if u.last_login %}{{ u.last_login|date:"M d, Y" }}{% else %}Never{% endif %}</td>
                     <td>
                         {% if u.is_staff %}
                             <span class="badge badge-staff">Admin</span>
@@ -159,12 +196,56 @@
                             <span class="badge badge-inactive">Inactive</span>
                         {% endif %}
                     </td>
+                    <td>
+                        <a href="{% url 'admin_user_detail' u.id %}" class="action-btn btn-view">View</a>
+                        {% if u != request.user %}
+                            <form action="{% url 'admin_toggle_user' u.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                {% if u.is_active %}
+                                    <button type="submit" class="action-btn btn-disable">Disable</button>
+                                {% else %}
+                                    <button type="submit" class="action-btn btn-enable" Enable</button>
+                                {% endif %}
+                            </form>
+                            <form action="{% url 'admin_delete_user' u.id %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete @{{ u.username }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn btn-delete">🗑 Delete</button>
+                            </form>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    function searchUsers() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#userTableBody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+
+    function sortUsers() {
+        const select = document.getElementById('sortSelect').value;
+        const tbody = document.getElementById('userTableBody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+            if (select === 'name-asc') return a.dataset.name.localeCompare(b.dataset.name);
+            if (select === 'name-desc') return b.dataset.name.localeCompare(a.dataset.name);
+            if (select === 'date-asc') return new Date(a.dataset.date) - new Date(b.dataset.date);
+            if (select === 'date-desc') return new Date(b.dataset.date) - new Date(a.dataset.date);
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+</script>
 
 {% endif %}
 
