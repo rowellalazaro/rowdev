@@ -29,6 +29,9 @@ def register(request):
 
 @login_required
 def home(request):
+    if request.user.is_staff:
+        return redirect('admin_page')
+
     if request.method == 'POST':
         content = request.POST.get('content')
         image = request.FILES.get('image')
