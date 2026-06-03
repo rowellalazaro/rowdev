@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -50,10 +50,27 @@ def admin_check(user):
     return user.groups.filter(name='Admins').exists()
 
 
-@login_required
+def admin_login(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admin_page')
+
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user and user.is_staff:
+            auth_login(request, user)
+            return redirect('admin_page')
+        else:
+            error = 'Invalid credentials or not an admin!'
+
+    return render(request, 'admin_login.html', {'error': error})
+
+
 def admin_page(request):
-    if not request.user.is_staff:
-        return redirect('home')
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
     users = User.objects.all().order_by('-date_joined')
     return render(request, 'admin.html', {'users': users})
 
