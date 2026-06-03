@@ -336,9 +336,6 @@
                 </button>
                 <div class="user-menu" id="user-menu">
                     <a href="{% url 'profile' user.username %}">My Profile</a>
-                    {% if user.is_staff %}
-                        <a href="{% url 'admin:index' %}">Admin</a>
-                    {% endif %}
                     <a href="{% url 'settings' %}">Settings</a>
                     <form action="{% url 'logout' %}" method="post" style="margin: 0; padding: 0;">
                         {% csrf_token %}

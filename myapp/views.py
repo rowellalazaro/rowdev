@@ -50,9 +50,12 @@ def admin_check(user):
     return user.groups.filter(name='Admins').exists()
 
 
-@user_passes_test(admin_check)
+@login_required
 def admin_page(request):
-    return render(request, 'admin.html')
+    if not request.user.is_staff:
+        return redirect('home')
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, 'admin.html', {'users': users})
 
 
 @login_required
