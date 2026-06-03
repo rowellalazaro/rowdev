@@ -134,3 +134,9 @@ EMAIL_HOST_PASSWORD = 'wxlf xdyn fkdl kphl'
 DEFAULT_FROM_EMAIL = 'roxlibao@gmail.com'
 
 CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.dev', 'https://*.ngrok.io']
+
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_ADAPTER = 'myapp.adapters.NoSignInMessageAdapter'
