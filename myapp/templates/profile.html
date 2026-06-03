@@ -97,6 +97,8 @@
         {% endif %}
 
         <div class="profile-info">
+            <div class="profile-username">@{{ profile_user.username }}</div>
+            {% if profile_user.email %}
                 <div class="profile-detail">{{ profile_user.email }}</div>
             {% endif %}
             {% if profile.location %}
