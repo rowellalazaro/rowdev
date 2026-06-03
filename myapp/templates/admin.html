@@ -32,6 +32,8 @@
             border-radius: 20px;
             font-weight: bold;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .container {
@@ -139,10 +141,7 @@
 
 <div class="admin-navbar">
     <h1>🛡️ RowDev Admin Dashboard</h1>
-    <form action="{% url 'logout' %}" method="post" style="margin:0;">
-        {% csrf_token %}
-        <button type="submit" class="logout-btn">Logout</button>
-    </form>
+    <a href="{% url 'admin_logout' %}" class="logout-btn">Logout</a>
 </div>
 
 <div class="container">
@@ -151,9 +150,11 @@
         <p style="color:#003082;">Total users: <strong>{{ users.count }}</strong></p>
 
         <div class="controls">
-            <input type="text" id="searchInput" placeholder="Search by username or email..." onkeyup="searchUsers()">
+            <input type="text" id="searchInput" placeholder="🔍 Search by username or email..." onkeyup="searchUsers()">
             <select id="sortSelect" onchange="sortUsers()">
                 <option value="default">Sort by: Default</option>
+                <option value="name-asc">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
                 <option value="date-asc">Date Joined (Oldest)</option>
                 <option value="date-desc">Date Joined (Newest)</option>
             </select>
@@ -195,14 +196,14 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'admin_user_detail' u.id %}" class="action-btn btn-view">View</a>
+                        <a href="{% url 'admin_user_detail' u.id %}" class="action-btn btn-view">👁 View</a>
                         {% if u != request.user %}
                             <form action="{% url 'admin_toggle_user' u.id %}" method="post" style="display:inline;">
                                 {% csrf_token %}
                                 {% if u.is_active %}
-                                    <button type="submit" class="action-btn btn-disable">Disable</button>
+                                    <button type="submit" class="action-btn btn-disable">🚫 Disable</button>
                                 {% else %}
-                                    <button type="submit" class="action-btn btn-enable" Enable</button>
+                                    <button type="submit" class="action-btn btn-enable">✅ Enable</button>
                                 {% endif %}
                             </form>
                             <form action="{% url 'admin_delete_user' u.id %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete @{{ u.username }}?')">

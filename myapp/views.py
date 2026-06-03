@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
 from .models import Post, Profile
-
+from django.contrib.auth import logout as auth_logout
 
 def register(request):
     if request.method == "POST":
@@ -221,3 +221,8 @@ def settings_view(request):
         messages.success(request, 'Settings saved!')
         return redirect('home')
     return render(request, 'settings.html')
+
+
+def admin_logout(request):
+    auth_logout(request)
+    return redirect('admin_login')
