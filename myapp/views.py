@@ -74,8 +74,10 @@ def admin_login(request):
 def admin_page(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
+    from .models import UserRequest
     users = User.objects.all().order_by('-date_joined')
-    return render(request, 'admin.html', {'users': users})
+    requests_list = UserRequest.objects.all().order_by('-created_at')
+    return render(request, 'admin.html', {'users': users, 'requests_list': requests_list})
 
 
 def admin_delete_user(request, user_id):
@@ -245,3 +247,40 @@ def settings_view(request):
 def admin_logout(request):
     auth_logout(request)
     return redirect('admin_login')
+
+def admin_handle_request(request, request_id):
+    from .models import UserRequest
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    req = get_object_or_404(UserRequest, id=request_id)
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        admin_note = request.POST.get('admin_note', '')
+        if action == 'approve':
+            req.status = 'approved'
+            req.admin_note = admin_note
+            req.save()
+            # Apply the change
+            u = req.user
+            if req.request_type == 'username':
+                u.username = req.requested_value
+                u.save()
+            elif req.request_type == 'bio':
+                profile, _ = Profile.objects.get_or_create(user=u)
+                profile.bio = req.requested_value
+                profile.save()
+            elif req.request_type == 'location':
+                profile, _ = Profile.objects.get_or_create(user=u)
+                profile.location = req.requested_value
+                profile.save()
+            elif req.request_type == 'birthday':
+                profile, _ = Profile.objects.get_or_create(user=u)
+                profile.birthday = req.requested_value
+                profile.save()
+            messages.success(request, 'Request approved and applied!')
+        elif action == 'reject':
+            req.status = 'rejected'
+            req.admin_note = admin_note
+            req.save()
+            messages.success(request, 'Request rejected!')
+    return redirect('admin_page')

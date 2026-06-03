@@ -222,6 +222,65 @@
     </div>
 </div>
 
+<div class="admin-box" style="margin-top:20px;">
+        <h2>User Requests</h2>
+        <p style="color:#003082;">Total pending: <strong>{{ requests_list|length }}</strong></p>
+
+        {% if requests_list %}
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Request Type</th>
+                    <th>Current Value</th>
+                    <th>Requested Value</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>@{{ req.user.username }}</strong></td>
+                    <td>{{ req.get_request_type_display }}</td>
+                    <td>{{ req.current_value|default:"-" }}</td>
+                    <td>{{ req.requested_value }}</td>
+                    <td>{{ req.message|default:"-" }}</td>
+                    <td>{{ req.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if req.status == 'pending' %}
+                            <span class="badge" style="background:#fff3cd; color:#856404;">⏳ Pending</span>
+                        {% elif req.status == 'approved' %}
+                            <span class="badge" style="background:#d4edda; color:#155724;">✅ Approved</span>
+                        {% elif req.status == 'rejected' %}
+                            <span class="badge" style="background:#f8d7da; color:#721c24;">❌ Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if req.status == 'pending' %}
+                        <form action="{% url 'admin_handle_request' req.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="text" name="admin_note" placeholder="Note (optional)" style="padding:4px 8px; border-radius:8px; border:1px solid #ccc; width:120px; font-size:12px;">
+                            <button type="submit" name="action" value="approve" class="action-btn btn-enable" style="margin-top:5px;">✅ Approve</button>
+                            <button type="submit" name="action" value="reject" class="action-btn btn-delete" style="margin-top:5px;">❌ Reject</button>
+                        </form>
+                        {% else %}
+                            <span style="font-size:12px; color:#888;">{{ req.admin_note|default:"" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p style="color:#888;">No requests yet.</p>
+        {% endif %}
+    </div>
+
 <script>
     function searchUsers() {
         const input = document.getElementById('searchInput').value.toLowerCase();

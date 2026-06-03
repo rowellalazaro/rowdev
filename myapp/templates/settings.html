@@ -9,7 +9,7 @@
     <h2>Settings</h2>
 
     <div class="settings-section">
-        <h4>🌙 Theme</h4>
+        <h4>Theme</h4>
         <div style="display:flex; align-items:center; gap:10px;">
             <span>Light</span>
             <label style="position:relative; display:inline-block; width:52px; height:28px;">
@@ -31,10 +31,22 @@
         </h4>
         <div id="account-options" style="display:none; padding:10px 0;">
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">🔒 Change Password</a>
-                <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:inline-block;">✉️ Change Email</a>
-                <a href="{% url 'user_request' %}" class="save-btn" style="text-decoration:none; display:inline-block;">📩 Request to Admin</a>
+                <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Password</a>
+                <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Change Email</a>
             </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h4 onclick="toggleSection('request-options', this)"
+            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
+            onmouseover="this.style.background='#e8f0ff';"
+            onmouseout="this.style.background='';">
+            Request to Admin
+        </h4>
+        <div id="request-options" style="display:none; padding:10px 0;">
+            <p style="color:#666; font-size:14px; margin-bottom:10px;">Need to change your username or update info? Send a request to admin.</p>
+            <a href="{% url 'user_request' %}" class="save-btn" style="text-decoration:none; display:inline-block;">Send Request</a>
         </div>
     </div>
 

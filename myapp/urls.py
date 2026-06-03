@@ -22,4 +22,5 @@ urlpatterns = [
     path('rowdev-admin/post/delete/<int:post_id>/', views.admin_delete_post, name='admin_delete_post'),
     path('rowdev-admin/logout/', views.admin_logout, name='admin_logout'),
     path('settings/request/', views.user_request, name='user_request'),
+    path('rowdev-admin/request/<int:request_id>/', views.admin_handle_request, name='admin_handle_request'),
 ]
