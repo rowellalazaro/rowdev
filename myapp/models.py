@@ -35,3 +35,31 @@ def create_profile(sender, instance, created, **kwargs):
 def save_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+class UserRequest(models.Model):
+    REQUEST_TYPES = [
+        ('username', 'Change Username'),
+        ('bio', 'Update Bio'),
+        ('location', 'Update Location'),
+        ('birthday', 'Update Birthday'),
+        ('other', 'Other'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    request_type = models.CharField(max_length=20, choices=REQUEST_TYPES)
+    current_value = models.CharField(max_length=200, blank=True, null=True)
+    requested_value = models.CharField(max_length=200)
+    message = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    admin_note = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.request_type} - {self.status}"
