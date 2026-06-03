@@ -132,3 +132,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'roxlibao@gmail.com'
 EMAIL_HOST_PASSWORD = 'wxlf xdyn fkdl kphl'
 DEFAULT_FROM_EMAIL = 'roxlibao@gmail.com'
+
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.dev', 'https://*.ngrok.io']
