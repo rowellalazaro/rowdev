@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html id="html-root">
 <head>
@@ -125,7 +126,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 10px 30px;
             background: rgb(87, 163, 193);
             border-bottom: 1px solid #003082;
         }
@@ -136,6 +137,8 @@
             font-weight: bold;
             color: #003082;
             text-decoration: none;
+            display: flex;
+            align-items: center;
         }
 
         .nav-links {
@@ -263,12 +266,12 @@
         }
 
         .settings-box {
-            background: #f0f4ff(255, 255, 255);;
+            background: white;
             border-radius: 10px;
             padding: 30px;
             max-width: 500px;
             margin: 40px auto;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.656);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .settings-box h2 {
@@ -300,11 +303,19 @@
             gap: 10px;
         }
 
-    
+        .save-btn {
+            background: #b4cbff;
+            color: #003082;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
     </style>
 
     <script>
-    
         (function() {
             function getCookie(name) {
                 const value = '; ' + document.cookie;
@@ -324,10 +335,11 @@
 
 <body>
 
-<div class="navbar">
-    <a href="{% url 'home' %}" class="logo">RowDev</a>
-
-
+<a href="{% url 'home' %}" class="logo" style="display:flex; align-items:center; gap:10px;">
+        <img src="{% static 'images/ean (1).jpg' %}" alt="RowDev" style="height:45px; width:auto;">
+        <span>RowDev</span>
+    </a>
+    
     <div class="nav-links">
         {% if user.is_authenticated %}
             <div class="user-dropdown">
