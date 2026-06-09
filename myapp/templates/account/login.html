@@ -1,255 +1,256 @@
-{% extends "base.html" %}
 {% load socialaccount %}
 {% load static %}
+<!DOCTYPE html>
+<html id="html-root">
+<head>
+    <title>RowDev - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-{% block content %}
-
-<style>
-    .bubble-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    .bubble {
-        position: absolute;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(73, 203, 255, 0.879));
-        border: 1.5px solid rgba(255, 255, 255, 0.6);
-        box-shadow: inset 0 0 10px rgba(255,255,255,0.5), 0 0 8px rgba(73, 203, 255, 0.879);
-        animation: floatEverywhere linear infinite;
-    }
-
-    @keyframes floatEverywhere {
-        0% {
-            transform: translate(0, 0) scale(0.6);
-            opacity: 0;
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8f4fa;
+            height: 100vh;
+            overflow: hidden;
         }
-        10% {
-            opacity: 0.75;
+
+        .bubble-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
         }
-        90% {
-            opacity: 0.75;
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(73, 203, 255, 0.879));
+            border: 1.5px solid rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.5), 0 0 8px rgba(73, 203, 255, 0.879);
+            animation: floatEverywhere linear infinite;
         }
-        100% {
-            transform: translate(var(--drift-x, 40px), var(--drift-y, -100px)) scale(1.2);
-            opacity: 0;
+
+        @keyframes floatEverywhere {
+            0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+            10% { opacity: 0.75; }
+            90% { opacity: 0.75; }
+            100% { transform: translate(var(--drift-x, 40px), var(--drift-y, -100px)) scale(1.2); opacity: 0; }
         }
-    }
 
-    .login-container {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 420px;
-        margin: 60px auto;
-        background: rgb(87, 163, 193);
-        padding: 40px;
-        border-radius: 12px;
-        box-sizing: border-box;
-    }
+        .login-wrapper {
+            position: fixed;
+            top: 0; right: 0;
+            width: 50%;
+            height: 100vh;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
 
-    .login-logo {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: rgb(87, 163, 193);
+            padding: 40px;
+            border-radius: 12px;
+            margin: 20px;
+        }
 
-    .login-logo img {
-        height: 80px;
-        width: auto;
-    }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    .login-logo h2 {
-        color: #003082;
-        margin: 5px 0;
-        font-size: 24px;
-    }
+        .login-logo img {
+            height: 80px;
+            width: auto;
+        }
 
-    .login-logo p {
-        color: #003082;
-        margin: 0;
-        font-size: 14px;
-    }
+        .login-logo h2 {
+            color: #003082;
+            margin: 5px 0;
+            font-size: 24px;
+        }
 
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
+        .login-logo p {
+            color: #003082;
+            margin: 0;
+            font-size: 14px;
+        }
 
-    .form-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: bold;
-        color: #003082;
-        font-size: 15px;
-    }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
 
-    .login-container input[type="text"],
-    .login-container input[type="password"],
-    .login-container input[type="email"] {
-        width: 100% !important;
-        padding: 12px !important;
-        margin-bottom: 0 !important;
-        border: none !important;
-        border-radius: 8px !important;
-        box-sizing: border-box !important;
-        font-size: 15px !important;
-        background: white !important;
-        color: #003082 !important;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #003082;
+            font-size: 15px;
+        }
 
-    .btn-login {
-        width: 100%;
-        padding: 13px;
-        background-color: #003082;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        margin-top: 10px;
-    }
+        .login-container input[type="text"],
+        .login-container input[type="password"],
+        .login-container input[type="email"] {
+            width: 100% !important;
+            padding: 12px !important;
+            margin-bottom: 0 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
+            font-size: 15px !important;
+            background: white !important;
+            color: #003082 !important;
+        }
 
-    .btn-login:hover {
-        background-color: #001f52;
-    }
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background-color: #003082;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
 
-    .btn-google {
-        width: 100%;
-        padding: 12px;
-        background-color: white;
-        color: #003082;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 12px;
-        text-decoration: none;
-        transition: background 0.3s ease;
-        box-sizing: border-box;
-        cursor: pointer;
-    }
+        .btn-login:hover { background-color: #001f52; }
 
-    .btn-google:hover {
-        background-color: #e8f0fe;
-    }
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            color: #003082;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
 
-    .divider {
-        text-align: center;
-        margin: 16px 0;
-        color: #003082;
-        font-weight: bold;
-    }
+        .btn-google:hover { background-color: #e8f0fe; }
 
-    .login-footer {
-        text-align: center;
-        margin-top: 20px;
-        color: #003082;
-        font-size: 14px;
-        font-weight: bold;
-    }
+        .divider {
+            text-align: center;
+            margin: 16px 0;
+            color: #003082;
+            font-weight: bold;
+        }
 
-    .login-footer a {
-        color: #003082;
-        text-decoration: underline;
-    }
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #003082;
+            font-size: 14px;
+            font-weight: bold;
+        }
 
-    .error-text {
-        color: #b91c1c;
-        font-size: 0.85rem;
-        margin-top: 5px;
-        list-style: none;
-        padding: 0;
-    }
-</style>
+        .login-footer a {
+            color: #003082;
+            text-decoration: underline;
+        }
 
+        .error-text {
+            color: #b91c1c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
 
 <div class="bubble-bg" id="bubble-bg"></div>
 
-<div class="login-container">
+<div class="login-wrapper">
+    <div class="login-container">
 
-    <div class="login-logo">
-        <img src="{% static 'images/logo.jpg' %}" alt="RowDev">
-        <h2>RowDev</h2>
-        <p>Sign in to continue</p>
-    </div>
+        <div class="login-logo">
+            <img src="{% static 'images/logo.jpg' %}" alt="RowDev">
+            <h2>RowDev</h2>
+            <p>Sign in to continue</p>
+        </div>
 
-    <form method="post" action="{% url 'account_login' %}">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <ul class="error-text">
-                        {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        {% endfor %}
-        <button type="submit" class="btn-login">Sign In</button>
-    </form>
+        <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="error-text">
+                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn-login">Sign In</button>
+        </form>
 
-    <div class="divider">— or —</div>
+        <div class="divider">— or —</div>
 
-    <a href="{% provider_login_url 'google' %}" class="btn-google">
-        <svg width="20" height="20" viewBox="0 0 48 48">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            <path fill="none" d="M0 0h48v48H0z"/>
-        </svg>
-        Sign in with Google
-    </a>
+        <a href="{% provider_login_url 'google' %}" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                <path fill="none" d="M0 0h48v48H0z"/>
+            </svg>
+            Sign in with Google
+        </a>
 
-    <div class="login-footer">
-        <a href="{% url 'password_reset' %}">Forgot Password?</a>
-    </div>
-    <div class="login-footer">
-        Don't have an account? <a href="{% url 'register' %}">Join Now</a>
+        <div class="login-footer">
+            <a href="{% url 'password_reset' %}">Forgot Password?</a>
+        </div>
+        <div class="login-footer">
+            Don't have an account? <a href="{% url 'register' %}">Join Now</a>
+        </div>
+
     </div>
 </div>
 
 <script>
     const bg = document.getElementById('bubble-bg');
-    const count = 35; 
-
+    const count = 35;
     for (let i = 0; i < count; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
-
         const size = Math.random() * 90 + 60;
         const left = Math.random() * 100;
         const top = Math.random() * 100;
-        const duration = Math.random() * 6 + 6; 
+        const duration = Math.random() * 6 + 6;
         const delay = Math.random() * -duration;
-
-        const driftX = (Math.random() * 160 - 80) + 'px'; 
+        const driftX = (Math.random() * 160 - 80) + 'px';
         const driftY = (Math.random() * 160 - 80) + 'px';
-
         bubble.style.width = size + 'px';
         bubble.style.height = size + 'px';
         bubble.style.left = left + 'vw';
         bubble.style.top = top + 'vh';
         bubble.style.animationDuration = duration + 's';
         bubble.style.animationDelay = delay + 's';
-        
         bubble.style.setProperty('--drift-x', driftX);
         bubble.style.setProperty('--drift-y', driftY);
-
         bg.appendChild(bubble);
     }
 </script>
 
-{% endblock %}
+</body>
+</html>

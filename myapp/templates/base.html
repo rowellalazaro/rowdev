@@ -364,14 +364,6 @@
 </div>
 
 <div class="container">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="messages" style="border: 5px solid #ffffff; background: rgb(198, 226, 238); padding: 10px; margin-bottom: 20px; border-radius: 5px; color: #003082;">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
     {% block content %}
     {% endblock %}
 </div>
