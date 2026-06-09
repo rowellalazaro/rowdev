@@ -218,16 +218,16 @@
 
 <script>
     const bg = document.getElementById('bubble-bg');
-    const count = 18;
+    const count = 60;
 
     for (let i = 0; i < count; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
 
-        const size = Math.random() * 60 + 20; // 20px to 80px
-        const left = Math.random() * 100;     // 0% to 100%
-        const duration = Math.random() * 10 + 8; // 8s to 18s
-        const delay = Math.random() * 10;     // 0s to 10s
+        const size = Math.random() * 50 + 10;     // 10px to 60px
+        const left = Math.random() * 100;          // 0% to 100%
+        const duration = Math.random() * 4 + 3;   // 3s to 7s (fast)
+        const delay = Math.random() * 8;           // spread out start times
 
         bubble.style.width = size + 'px';
         bubble.style.height = size + 'px';
