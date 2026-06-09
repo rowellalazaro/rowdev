@@ -12,17 +12,19 @@
             height: 100vh;
             overflow: hidden;
             display: flex;
+            background: #e8f4fa;
         }
 
         /* ── LEFT SLIDESHOW ── */
         .slideshow-panel {
             position: fixed;
-            top: 0; left: 0;
-            width: 50%;
-            height: 100vh;
+            top: 20px; left: 20px;
+            width: calc(50% - 30px);
+            height: calc(100vh - 40px);
             z-index: 1;
             overflow: hidden;
             background: #000;
+            border-radius: 16px;
         }
 
         .slide {
@@ -62,7 +64,7 @@
 
         .slide-dots {
             position: absolute;
-            bottom: 20px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
