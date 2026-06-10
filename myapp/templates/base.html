@@ -11,116 +11,28 @@
             color: #1e3a5f;
         }
 
-        body.dark {
-            background: #1a2a3a !important;
-            color: #d0e8f5 !important;
+        body.dark { background: #1a2a3a !important; color: #d0e8f5 !important; }
+        body.dark .navbar { background: #0f1f2e !important; border-bottom: 1px solid #0a1520 !important; }
+        body.dark .logo { color: #7ec8e3 !important; }
+        body.dark .card { background: #1e3448 !important; color: #ffffff !important; border: 1px solid #0f1f2e !important; }
+        body.dark .card p, body.dark .card span, body.dark .card a,
+        body.dark .card h1, body.dark .card h2, body.dark .card h3,
+        body.dark .card h4, body.dark .card h5, body.dark .card small { color: #ffffff !important; }
+        body.dark .side-menu { background: #0f1f2e !important; box-shadow: 4px 0 20px rgba(0,0,0,0.5) !important; }
+        body.dark .side-menu a, body.dark .side-menu button { color: #d0e8f5 !important; border-bottom: 1px solid #1a2a3a !important; }
+        body.dark .side-menu a:hover, body.dark .side-menu button:hover { background: #1e3448 !important; }
+        body.dark .side-menu .logout-item { color: #ff6b6b !important; }
+        body.dark .settings-box { background: #1e3448 !important; color: #d0e8f5 !important; }
+        body.dark .settings-box h2 { color: #7ec8e3 !important; }
+        body.dark .settings-section h4 { color: #7ec8e3 !important; }
+        body.dark .settings-section { border-bottom: 1px solid #0f1f2e !important; }
+        body.dark .save-btn { background: #1e3a52 !important; color: #7ec8e3 !important; }
+        body.dark input[type="text"], body.dark input[type="password"],
+        body.dark input[type="email"], body.dark textarea {
+            background: #1a2a3a !important; color: #d0e8f5 !important; border: 1px solid #0f1f2e !important;
         }
-
-        body.dark .navbar {
-            background: #0f1f2e !important;
-            border-bottom: 1px solid #0a1520 !important;
-        }
-
-        body.dark .logo {
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .nav-links a, body.dark .nav-links button {
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .logout-btn {
-            background: #1e3a52 !important;
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .card {
-            background: #1e3448 !important;
-            color: #ffffff !important;
-            border: 1px solid #0f1f2e !important;
-        }
-
-        body.dark .card p,
-        body.dark .card span,
-        body.dark .card a,
-        body.dark .card h1,
-        body.dark .card h2,
-        body.dark .card h3,
-        body.dark .card h4,
-        body.dark .card h5,
-        body.dark .card small {
-            color: #ffffff !important;
-        }
-
-        body.dark .user-menu {
-            background: #0f1f2e !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
-        }
-
-        body.dark .user-menu a, body.dark .user-menu button {
-            color: #d0e8f5 !important;
-            border-bottom: 1px solid #1a2a3a !important;
-        }
-
-        body.dark .user-menu a:hover, body.dark .user-menu button:hover {
-            background: #1e3448 !important;
-        }
-
-        body.dark .user-menu .logout-item {
-            color: #ff6b6b !important;
-        }
-
-        body.dark .settings-box {
-            background: #1e3448 !important;
-            color: #d0e8f5 !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-        }
-
-        body.dark .settings-box h2 {
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .settings-section h4 {
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .settings-section {
-            border-bottom: 1px solid #0f1f2e !important;
-        }
-
-        body.dark .save-btn {
-            background: #1e3a52 !important;
-            color: #7ec8e3 !important;
-        }
-
-        body.dark .messages {
-            background: #1e3448 !important;
-            color: #d0e8f5 !important;
-            border-left: 5px solid #7ec8e3 !important;
-        }
-
-        body.dark .login-box {
-            background: #1e3448 !important;
-            color: #d0e8f5 !important;
-        }
-
-        body.dark input[type="text"],
-        body.dark input[type="password"],
-        body.dark input[type="email"],
-        body.dark textarea {
-            background: #1a2a3a !important;
-            color: #d0e8f5 !important;
-            border: 1px solid #0f1f2e !important;
-        }
-
-        body.dark .container {
-            color: #d0e8f5 !important;
-        }
-
-        body.dark .btn {
-            background: #1e3a52 !important;
-            color: #7ec8e3 !important;
-        }
+        body.dark .container { color: #d0e8f5 !important; }
+        body.dark .overlay { display: block !important; }
 
         .navbar {
             display: flex;
@@ -129,6 +41,8 @@
             padding: 10px 30px;
             background: #003082;
             border-bottom: 1px solid #7ec8e3;
+            position: relative;
+            z-index: 100;
         }
 
         .logo {
@@ -139,47 +53,143 @@
             text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .nav-links {
+        /* ── HAMBURGER ── */
+        .hamburger {
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .hamburger:hover { background: rgba(255,255,255,0.15); }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        /* ── OVERLAY ── */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 200;
+        }
+
+        /* ── SIDE MENU ── */
+        .side-menu {
+            position: fixed;
+            top: 0; right: -320px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            z-index: 300;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .side-menu.open { right: 0; }
+
+        .side-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #003082;
+            color: white;
+        }
+
+        .side-menu-header .username {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .side-menu-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .side-menu-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #7ec8e3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #003082;
+            margin-bottom: 8px;
+        }
+
+        .side-menu-user-info {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
             align-items: center;
         }
 
-        .nav-links a, .nav-links button {
-            margin-left: 15px;
-            text-decoration: none;
-            color: #ffffff;
+        .side-menu-user-info .display-name {
+            font-size: 16px;
             font-weight: bold;
-            background: none;
+            color: #003082;
+        }
+
+        .side-menu a, .side-menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 20px;
+            color: #003082;
+            font-weight: bold;
+            text-decoration: none;
             border: none;
+            background: none;
+            text-align: left;
             cursor: pointer;
             font-family: Arial;
-            font-size: 16px;
+            font-size: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            box-sizing: border-box;
+            transition: background 0.2s;
         }
 
-        .btn {
-            background: #7ec8e3 !important;
-            color: #003082 !important;
-            padding: 8px 14px;
-            border-radius: 20px;
+        .side-menu a:hover, .side-menu-btn:hover { background: #f0f4ff; }
+
+        .side-menu .logout-item {
+            color: #820000;
+            border-bottom: none;
+            margin-top: auto;
         }
 
-        .logout-btn {
-            background: #003082 !important;
-            color: #ffffff !important;
-            padding: 8px 14px;
-            border-radius: 20px;
-        }
-
-        .messages {
-            list-style: none;
-            padding: 10px;
-            margin: 10px 0;
-            background: #fff;
-            border-radius: 5px;
-            color: #003082;
-            border-left: 5px solid #003082;
+        .side-menu .menu-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
         }
 
         .container {
@@ -202,15 +212,6 @@
             margin-top: 10px;
         }
 
-        .login-box {
-            width: 400px;
-            margin: auto;
-            margin-top: 80px;
-            background: rgb(87, 163, 193);
-            padding: 30px;
-            border-radius: 10px;
-        }
-
         input[type="text"], input[type="password"], input[type="email"], textarea {
             width: 95%;
             padding: 10px;
@@ -219,65 +220,15 @@
             border: 1px solid #ccc;
         }
 
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
-            margin-left: 15px;
-        }
-
-        .user-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 45px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            min-width: 170px;
-            z-index: 999;
-            overflow: hidden;
-        }
-
-        .user-menu a, .user-menu button {
-            display: block;
-            width: 100%;
-            padding: 12px 16px;
-            color: #003082;
-            font-weight: bold;
-            text-decoration: none;
-            border: none;
-            background: none;
-            text-align: left;
-            cursor: pointer;
-            font-family: Arial;
-            font-size: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            box-sizing: border-box;
-            margin: 0;
-        }
-
-        .user-menu a:hover, .user-menu button:hover {
-            background: #8aa9ffd7;
-        }
-
-        .user-menu .logout-item {
-            color: #820000;
-            border-bottom: none;
-        }
-
         .settings-box {
-            background: #e0e0e0(255, 255, 255, 0.438);
             border-radius: 10px;
             padding: 30px;
             max-width: 500px;
             margin: 40px auto;
-            box-shadow: 0 4px 15px #003082(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .settings-box h2 {
-            color: #003082;
-            margin-bottom: 20px;
-        }
+        .settings-box h2 { color: #003082; margin-bottom: 20px; }
 
         .settings-section {
             margin-bottom: 25px;
@@ -285,10 +236,7 @@
             padding-bottom: 15px;
         }
 
-        .settings-section h4 {
-            color: #003082;
-            margin-bottom: 10px;
-        }
+        .settings-section h4 { color: #003082; margin-bottom: 10px; }
 
         .settings-section select, .settings-section input {
             width: 100%;
@@ -297,11 +245,7 @@
             border: 1px solid #003082;
         }
 
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .toggle-switch { display: flex; align-items: center; gap: 10px; }
 
         .save-btn {
             background: #b4cbff;
@@ -312,6 +256,31 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 15px;
+        }
+
+        .btn {
+            background: #7ec8e3 !important;
+            color: #003082 !important;
+            padding: 8px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Auth links for non-logged in */
+        .auth-links a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .auth-links .btn {
+            background: #7ec8e3 !important;
+            color: #003082 !important;
+            padding: 8px 14px;
+            border-radius: 20px;
         }
     </style>
 
@@ -335,33 +304,57 @@
 
 <body>
 
+<div class="overlay" id="overlay" onclick="closeSideMenu()"></div>
+
 <div class="navbar">
-    <a href="{% url 'home' %}" class="logo" style="display:flex; align-items:center; gap:10px;">
+    <a href="{% url 'home' %}" class="logo">
         <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:45px; width:auto;">
         <span>Iramora</span>
     </a>
 
     <div class="nav-links">
         {% if user.is_authenticated %}
-            <div class="user-dropdown">
-                <button onclick="toggleMenu()" class="logout-btn" style="cursor: pointer;">
-                    {{ user.username }} ▾
-                </button>
-                <div class="user-menu" id="user-menu">
-                    <a href="{% url 'profile' user.username %}">My Profile</a>
-                    <a href="{% url 'settings' %}">Settings</a>
-                    <form action="{% url 'logout' %}" method="post" style="margin: 0; padding: 0;">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-item">Logout</button>
-                    </form>
-                </div>
+            <div class="hamburger" onclick="openSideMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         {% else %}
-            <a href="{% url 'account_login' %}">Login</a>
-            <a class="btn" href="{% url 'register' %}">Join Now</a>
+            <div class="auth-links">
+                <a href="{% url 'account_login' %}">Login</a>
+                <a class="btn" href="{% url 'register' %}">Join Now</a>
+            </div>
         {% endif %}
     </div>
 </div>
+
+{% if user.is_authenticated %}
+<div class="side-menu" id="side-menu">
+    <div style="background:#003082; padding:20px; display:flex; align-items:center; justify-content:space-between;">
+        <span style="color:white; font-size:18px; font-weight:bold;">Menu</span>
+        <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
+    </div>
+
+    <div class="side-menu-user-info">
+        <div class="side-menu-avatar">{{ user.username|first|upper }}</div>
+        <div class="display-name">{{ user.username }}</div>
+        <div style="font-size:13px; color:#666; margin-top:4px;">{{ user.email }}</div>
+    </div>
+
+    <a href="{% url 'profile' user.username %}">
+        <span class="menu-icon">👤</span> My Profile
+    </a>
+    <a href="{% url 'settings' %}">
+        <span class="menu-icon">⚙️</span> Settings
+    </a>
+    <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
+        {% csrf_token %}
+        <button type="submit" class="side-menu-btn logout-item">
+            <span class="menu-icon">🚪</span> Logout
+        </button>
+    </form>
+</div>
+{% endif %}
 
 <div class="container">
     {% block content %}
@@ -369,17 +362,17 @@
 </div>
 
 <script>
-    function toggleMenu() {
-        const menu = document.getElementById('user-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    function openSideMenu() {
+        document.getElementById('side-menu').classList.add('open');
+        document.getElementById('overlay').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 
-    document.addEventListener('click', function(e) {
-        const dropdown = document.querySelector('.user-dropdown');
-        if (dropdown && !dropdown.contains(e.target)) {
-            document.getElementById('user-menu').style.display = 'none';
-        }
-    });
+    function closeSideMenu() {
+        document.getElementById('side-menu').classList.remove('open');
+        document.getElementById('overlay').style.display = 'none';
+        document.body.style.overflow = '';
+    }
 </script>
 
 </body>

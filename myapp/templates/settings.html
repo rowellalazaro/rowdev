@@ -1,68 +1,281 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="settings-box">
-    <div style="margin-bottom:15px;">
-        <a href="{% url 'home' %}" style="text-decoration:none; color:#003082; font-weight:bold; font-size:15px;">Back to Dashboard</a>
-    </div>
+<style>
+    .settings-wrapper {
+        max-width: 540px;
+        margin: 40px auto;
+    }
 
-    <h2>Settings</h2>
+    .settings-back {
+        font-size: 14px;
+        color: #003082;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 20px;
+    }
 
-    <div class="settings-section">
-        <h4>Theme</h4>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <span>Light</span>
-            <label style="position:relative; display:inline-block; width:52px; height:28px;">
-                <input type="checkbox" id="theme-toggle" style="opacity:0; width:0; height:0;">
-                <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#b4cbff; border-radius:28px; transition:0.3s;">
-                    <span id="toggle-knob" style="position:absolute; height:22px; width:22px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s;"></span>
-                </span>
-            </label>
-            <span>Dark</span>
-        </div>
-    </div>
+    .settings-back:hover { text-decoration: underline; }
 
-    <div class="settings-section">
-        <h4 onclick="toggleSection('account-options', this)"
-            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
-            onmouseover="this.style.background='#e8f0ff';"
-            onmouseout="this.style.background='';">
-            👤 Account
-        </h4>
-        <div id="account-options" style="display:none; padding:10px 0;">
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <a href="{% url 'account_change_password' %}" class="save-btn" style="text-decoration:none; background:#b4cbff; padding: 10px; margin-bottom: 20px; border-radius: 5px; color:#003082; font-weight:bold; font-size:15px;">Change Password</a>
-                <a href="{% url 'account_email' %}" class="save-btn" style="text-decoration:none; background:#b4cbff; padding: 10px; margin-bottom: 20px; border-radius: 5px; color:#003082; font-weight:bold; font-size:15px;">Change Email</a>
+    .settings-title {
+        font-size: 26px;
+        font-weight: bold;
+        color: #003082;
+        margin-bottom: 25px;
+    }
+
+    .settings-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0,48,130,0.1);
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .settings-row:last-child { border-bottom: none; }
+    .settings-row:hover { background: #f5f8ff; }
+
+    .settings-row-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .settings-row-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #e8f0ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .settings-row-label {
+        font-size: 15px;
+        font-weight: bold;
+        color: #1a1a2e;
+    }
+
+    .settings-row-sub {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .settings-row-arrow { color: #aaa; font-size: 18px; }
+
+    .settings-expandable {
+        display: none;
+        padding: 0 20px 18px 68px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafbff;
+    }
+
+    .settings-expandable.open { display: block; }
+
+    .settings-expandable a, .settings-expandable-link {
+        display: inline-block;
+        background: #e8f0ff;
+        color: #003082;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        text-decoration: none;
+        margin: 6px 6px 0 0;
+        transition: background 0.2s;
+    }
+
+    .settings-expandable a:hover { background: #c8d8ff; }
+
+    .settings-expandable p {
+        font-size: 14px;
+        color: #555;
+        margin: 8px 0;
+    }
+
+    .settings-expandable strong { color: #003082; }
+
+    /* Theme toggle */
+    .theme-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+    }
+
+    .theme-toggle-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .toggle-track {
+        position: relative;
+        width: 52px;
+        height: 28px;
+        display: inline-block;
+    }
+
+    .toggle-track input {
+        opacity: 0; width: 0; height: 0;
+        position: absolute;
+        margin: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #b4cbff;
+        border-radius: 28px;
+        transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+        content: '';
+        position: absolute;
+        height: 22px; width: 22px;
+        left: 3px; bottom: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+
+    input:checked + .toggle-slider { background: #003082; }
+    input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+    .toggle-label { font-size: 14px; color: #888; }
+
+    /* About logo */
+    .about-logo-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .about-logo-row img {
+        height: 50px;
+        width: auto;
+        border-radius: 10px;
+    }
+
+    .about-logo-row .site-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #003082;
+    }
+
+    body.dark .settings-card { background: #1e3448 !important; box-shadow: 0 2px 12px rgba(0,0,0,0.3) !important; }
+    body.dark .settings-row:hover { background: #1a2f45 !important; }
+    body.dark .settings-row { border-bottom-color: #0f1f2e !important; }
+    body.dark .settings-row-label { color: #d0e8f5 !important; }
+    body.dark .settings-row-sub { color: #7ec8e3 !important; }
+    body.dark .settings-expandable { background: #162535 !important; border-bottom-color: #0f1f2e !important; }
+    body.dark .settings-expandable p { color: #d0e8f5 !important; }
+    body.dark .settings-expandable strong { color: #7ec8e3 !important; }
+    body.dark .settings-row-icon { background: #1a2f45 !important; }
+    body.dark .settings-back { color: #7ec8e3 !important; }
+    body.dark .settings-title { color: #7ec8e3 !important; }
+</style>
+
+<div class="settings-wrapper">
+    <a href="{% url 'home' %}" class="settings-back">Back to Dashboard</a>
+    <div class="settings-title">Settings</div>
+
+    <!-- THEME -->
+    <div class="settings-card">
+        <div class="theme-toggle-row">
+            <div class="theme-toggle-left">
+                <div class="settings-row-icon"></div>
+                <div>
+                    <div class="settings-row-label">Theme</div>
+                    <div class="settings-row-sub">Light / Dark mode</div>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="toggle-label">Light</span>
+                <label class="toggle-track">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Dark</span>
             </div>
         </div>
     </div>
 
-    <div class="settings-section">
-        <h4 onclick="toggleSection('request-options', this)"
-            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
-            onmouseover="this.style.background='#e8f0ff';"
-            onmouseout="this.style.background='';">
-            Request to Admin
-        </h4>
-        <div id="request-options" style="display:none; padding:10px 0;">
-            <p style="color:#666; font-size:14px; margin-bottom:10px;">Send a request to admin.</p>
-            <a href="{% url 'user_request' %}" class="save-btn" style="text-decoration:none; background:#b4cbff; padding: 10px; margin-bottom: 20px; border-radius: 5px; color:#003082; font-weight:bold; font-size:15px;">Send Request</a>
+    <!-- ACCOUNT -->
+    <div class="settings-card">
+        <div class="settings-row" onclick="toggleExpand('account-expand', this)">
+            <div class="settings-row-left">
+                <div class="settings-row-icon">👤</div>
+                <div>
+                    <div class="settings-row-label">Account</div>
+                    <div class="settings-row-sub">Password, email</div>
+                </div>
+            </div>
+            <span class="settings-row-arrow">›</span>
+        </div>
+        <div class="settings-expandable" id="account-expand">
+            <a href="{% url 'account_change_password' %}">Change Password</a>
+            <a href="{% url 'account_email' %}">Change Email</a>
         </div>
     </div>
 
-    <div class="settings-section">
-        <h4 onclick="toggleSection('about-options', this)"
-            style="cursor:pointer; padding:8px; border-radius:8px; transition:0.2s;"
-            onmouseover="this.style.background='#e8f0ff';"
-            onmouseout="this.style.background='';">
-            ℹ️ About
-        </h4>
-        <div id="about-options" style="display:none; padding:10px 0;">
-            <p style="margin:5px 0;"><strong>Site:</strong>Iramora</p>
-            <p style="margin:5px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
-            <p style="margin:5px 0;"><strong>Description:</strong> Iramora means a space for ideas, reflection, and expression shared through media and writing.
-It represents a digital environment where thoughts become stories, and stories connect people.</p>
-            <p style="margin:5px 0;"><strong>Version:</strong> 1.0.0</p>
+    <!-- HELP & ADMIN REQUEST -->
+    <div class="settings-card">
+        <div class="settings-row" onclick="toggleExpand('help-expand', this)">
+            <div class="settings-row-left">
+                <div class="settings-row-icon">🛠️</div>
+                <div>
+                    <div class="settings-row-label">Help Centre</div>
+                    <div class="settings-row-sub">Admin requests, support</div>
+                </div>
+            </div>
+            <span class="settings-row-arrow">›</span>
+        </div>
+        <div class="settings-expandable" id="help-expand">
+            <p>Need help or want to request a change?</p>
+            <a href="{% url 'user_request' %}">Request to Admin</a>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="settings-card">
+        <div class="settings-row" onclick="toggleExpand('about-expand', this)">
+            <div class="settings-row-left">
+                <div class="settings-row-icon">ℹ️</div>
+                <div>
+                    <div class="settings-row-label">About</div>
+                    <div class="settings-row-sub">App info and version</div>
+                </div>
+            </div>
+            <span class="settings-row-arrow">›</span>
+        </div>
+        <div class="settings-expandable" id="about-expand">
+            <div class="about-logo-row">
+                <img src="{% static 'images/logo.jpg' %}" alt="Iramora Logo">
+                <span class="site-name">Iramora</span>
+            </div>
+            <p><strong>Developer:</strong> Rowella L. Lazaro</p>
+            <p><strong>Description:</strong> Iramora means a space for ideas, reflection, and expression shared through media and writing. It represents a digital environment where thoughts become stories, and stories connect people.</p>
+            <p><strong>Version:</strong> 1.0.0</p>
         </div>
     </div>
 
@@ -78,42 +291,25 @@ It represents a digital environment where thoughts become stories, and stories c
 
     const currentTheme = getCookie('theme') || 'light';
     const toggle = document.getElementById('theme-toggle');
-    const knob = document.getElementById('toggle-knob');
-
-    function updateToggleStyle(isDark) {
-        if (isDark) {
-            knob.style.transform = 'translateX(24px)';
-            toggle.parentElement.querySelector('span').style.background = '#003082';
-        } else {
-            knob.style.transform = 'translateX(0)';
-            toggle.parentElement.querySelector('span').style.background = '#b4cbff';
-        }
-    }
-
     toggle.checked = currentTheme === 'dark';
-    updateToggleStyle(currentTheme === 'dark');
 
     toggle.addEventListener('change', function() {
         const isDark = this.checked;
-        updateToggleStyle(isDark);
         if (isDark) {
             document.body.classList.add('dark');
         } else {
             document.body.classList.remove('dark');
         }
-        const theme = isDark ? 'dark' : 'light';
-        document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
+        document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=31536000';
     });
 
-    function toggleSection(id, header) {
-        const options = document.getElementById(id);
-        if (options.style.display === 'none') {
-            options.style.display = 'block';
-            header.style.background = '#d0e4ff';
-        } else {
-            options.style.display = 'none';
-            header.style.background = '';
-        }
+    function toggleExpand(id, row) {
+        const panel = document.getElementById(id);
+        const arrow = row.querySelector('.settings-row-arrow');
+        const isOpen = panel.classList.contains('open');
+        panel.classList.toggle('open');
+        arrow.style.transform = isOpen ? '' : 'rotate(90deg)';
+        arrow.style.transition = '0.2s';
     }
 </script>
 
