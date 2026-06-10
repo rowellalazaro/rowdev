@@ -17,7 +17,7 @@
             overflow: hidden;
         }
 
-        /* ── BUBBLES ── */
+    
         .bubble-bg {
             position: fixed;
             top: 0; left: 0;
@@ -43,7 +43,6 @@
             100% { transform: translate(var(--drift-x, 40px), var(--drift-y, -100px)) scale(1.2); opacity: 0; }
         }
 
-        /* ── MAIN CARD ── */
         .card-wrapper {
             position: relative;
             z-index: 1;
@@ -68,20 +67,23 @@
         .slide {
             position: absolute;
             top: 0; left: 0;
-            width: 100%; height: 100%;
+            width: 100%; 
+            height: 100%;
             opacity: 0;
             transition: opacity 0.8s ease-in-out;
         }
 
         .slide.active { opacity: 1; }
 
-        .slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center center;
-            display: block;
-        }
+        
+    .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+}
+   
 
         .slide-dots {
             position: absolute;
