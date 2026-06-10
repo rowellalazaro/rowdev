@@ -84,23 +84,13 @@
 }
 
 
-.slide img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 110%; 
-    height: 100%;
-    object-fit: cover;
-}
-
-
 .slide.active img {
-    animation: swipeHorizontal 10s ease-in-out infinite alternate;
+    animation: diagonalDrift 9s ease-in-out infinite alternate;
 }
 
-@keyframes swipeHorizontal {
-    0%   { transform: translate(0, 0); }
-    100% { transform: translate(-9%, 0); } 
+@keyframes diagonalDrift {
+    0%   { transform: scale(1) translate(-1.5%, -1.5%); }
+    100% { transform: scale(1.1) translate(1.5%, 1.5%); }
 }
 
         .slide-dots {
