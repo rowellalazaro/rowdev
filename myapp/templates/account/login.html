@@ -74,24 +74,28 @@
             overflow: hidden;
         }
 
+        .slide.active { opacity: 1; }
 
-.slide {
-    position: relative;
-    overflow: hidden; 
-    width: 100%; 
-    height: 100vh; 
-    background: #ffffff; 
-}
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            animation: none;
+        }
 
+        .slide.active img {
+            animation: kenburns 8s ease-in-out infinite alternate;
+        }
 
-.slide.active img {
-    animation: diagonalDrift 9s ease-in-out infinite alternate;
-}
-
-@keyframes diagonalDrift {
-    0%   { transform: scale(1) translate(-1.5%, -1.5%); }
-    100% { transform: scale(1.1) translate(1.5%, 1.5%); }
-}
+        @keyframes kenburns {
+            0%   { transform: scale(1)    translate(0, 0); }
+            25%  { transform: scale(1.08) translate(-1%, -1%); }
+            50%  { transform: scale(1.05) translate(1%, 1%); }
+            75%  { transform: scale(1.1)  translate(-1.5%, 0.5%); }
+            100% { transform: scale(1.06) translate(0.5%, -1.5%); }
+        }
 
         .slide-dots {
             position: absolute;
