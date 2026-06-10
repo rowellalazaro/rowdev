@@ -13,36 +13,58 @@
 
         body.dark { background: #1a2a3a !important; color: #d0e8f5 !important; }
         body.dark .navbar { background: #0f1f2e !important; border-bottom: 1px solid #0a1520 !important; }
-        body.dark .logo { color: #7ec8e3 !important; }
         body.dark .card { background: #1e3448 !important; color: #ffffff !important; border: 1px solid #0f1f2e !important; }
         body.dark .card p, body.dark .card span, body.dark .card a,
         body.dark .card h1, body.dark .card h2, body.dark .card h3,
         body.dark .card h4, body.dark .card h5, body.dark .card small { color: #ffffff !important; }
-        body.dark .side-menu { background: #0f1f2e !important; box-shadow: 4px 0 20px rgba(0,0,0,0.5) !important; }
-        body.dark .side-menu a, body.dark .side-menu button { color: #d0e8f5 !important; border-bottom: 1px solid #1a2a3a !important; }
-        body.dark .side-menu a:hover, body.dark .side-menu button:hover { background: #1e3448 !important; }
+        body.dark .side-menu { background: #0f1f2e !important; }
+        body.dark .side-menu a, body.dark .side-menu-btn { color: #d0e8f5 !important; border-bottom-color: #1a2a3a !important; }
+        body.dark .side-menu a:hover, body.dark .side-menu-btn:hover { background: #1e3448 !important; }
         body.dark .side-menu .logout-item { color: #ff6b6b !important; }
+        body.dark .side-menu-user-info { border-bottom-color: #1a2a3a !important; }
+        body.dark .side-menu-user-info .display-name { color: #d0e8f5 !important; }
         body.dark .settings-box { background: #1e3448 !important; color: #d0e8f5 !important; }
         body.dark .settings-box h2 { color: #7ec8e3 !important; }
+        body.dark .settings-section { border-bottom-color: #0f1f2e !important; }
         body.dark .settings-section h4 { color: #7ec8e3 !important; }
-        body.dark .settings-section { border-bottom: 1px solid #0f1f2e !important; }
         body.dark .save-btn { background: #1e3a52 !important; color: #7ec8e3 !important; }
         body.dark input[type="text"], body.dark input[type="password"],
         body.dark input[type="email"], body.dark textarea {
             background: #1a2a3a !important; color: #d0e8f5 !important; border: 1px solid #0f1f2e !important;
         }
         body.dark .container { color: #d0e8f5 !important; }
-        body.dark .overlay { display: block !important; }
 
         .navbar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 30px;
+            padding: 10px 20px;
             background: #003082;
             border-bottom: 1px solid #7ec8e3;
             position: relative;
             z-index: 100;
+            gap: 15px;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .hamburger:hover { background: rgba(255,255,255,0.15); }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
         }
 
         .logo {
@@ -56,27 +78,26 @@
             gap: 10px;
         }
 
-        /* ── HAMBURGER ── */
-        .hamburger {
+        .nav-right {
+            margin-left: auto;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 5px;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
-            transition: background 0.2s;
+            align-items: center;
+            gap: 12px;
         }
 
-        .hamburger:hover { background: rgba(255,255,255,0.15); }
+        .auth-links a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 3px;
-            background: white;
-            border-radius: 3px;
-            transition: 0.3s;
+        .auth-links .btn {
+            background: #7ec8e3 !important;
+            color: #003082 !important;
+            padding: 8px 14px;
+            border-radius: 20px;
         }
 
         /* ── OVERLAY ── */
@@ -92,31 +113,31 @@
         /* ── SIDE MENU ── */
         .side-menu {
             position: fixed;
-            top: 0; right: -320px;
-            width: 280px;
+            top: 0; left: -300px;
+            width: 260px;
             height: 100%;
             background: white;
             z-index: 300;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-            transition: right 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
         }
 
-        .side-menu.open { right: 0; }
+        .side-menu.open { left: 0; }
 
         .side-menu-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
+            padding: 16px 20px;
             background: #003082;
-            color: white;
         }
 
-        .side-menu-header .username {
-            font-size: 18px;
+        .side-menu-header span {
+            color: white;
+            font-size: 17px;
             font-weight: bold;
         }
 
@@ -124,32 +145,29 @@
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             padding: 0;
             line-height: 1;
         }
 
+        .side-menu-user-info {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
         .side-menu-avatar {
-            width: 60px;
-            height: 60px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: #7ec8e3;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #003082;
-            margin-bottom: 8px;
-        }
-
-        .side-menu-user-info {
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin-bottom: 10px;
         }
 
         .side-menu-user-info .display-name {
@@ -158,12 +176,16 @@
             color: #003082;
         }
 
+        .side-menu-user-info .display-email {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+
         .side-menu a, .side-menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: block;
             width: 100%;
-            padding: 16px 20px;
+            padding: 15px 20px;
             color: #003082;
             font-weight: bold;
             text-decoration: none;
@@ -183,13 +205,6 @@
         .side-menu .logout-item {
             color: #820000;
             border-bottom: none;
-            margin-top: auto;
-        }
-
-        .side-menu .menu-icon {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
         }
 
         .container {
@@ -238,15 +253,6 @@
 
         .settings-section h4 { color: #003082; margin-bottom: 10px; }
 
-        .settings-section select, .settings-section input {
-            width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #003082;
-        }
-
-        .toggle-switch { display: flex; align-items: center; gap: 10px; }
-
         .save-btn {
             background: #b4cbff;
             color: #003082;
@@ -265,22 +271,6 @@
             border-radius: 20px;
             text-decoration: none;
             font-weight: bold;
-        }
-
-        /* Auth links for non-logged in */
-        .auth-links a {
-            margin-left: 15px;
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .auth-links .btn {
-            background: #7ec8e3 !important;
-            color: #003082 !important;
-            padding: 8px 14px;
-            border-radius: 20px;
         }
     </style>
 
@@ -307,51 +297,47 @@
 <div class="overlay" id="overlay" onclick="closeSideMenu()"></div>
 
 <div class="navbar">
+    {% if user.is_authenticated %}
+        <div class="hamburger" onclick="openSideMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    {% endif %}
+
     <a href="{% url 'home' %}" class="logo">
         <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:45px; width:auto;">
         <span>Iramora</span>
     </a>
 
-    <div class="nav-links">
-        {% if user.is_authenticated %}
-            <div class="hamburger" onclick="openSideMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        {% else %}
-            <div class="auth-links">
-                <a href="{% url 'account_login' %}">Login</a>
-                <a class="btn" href="{% url 'register' %}">Join Now</a>
-            </div>
-        {% endif %}
+    {% if not user.is_authenticated %}
+    <div class="nav-right">
+        <div class="auth-links">
+            <a href="{% url 'account_login' %}">Login</a>
+            <a class="btn" href="{% url 'register' %}">Join Now</a>
+        </div>
     </div>
+    {% endif %}
 </div>
 
 {% if user.is_authenticated %}
 <div class="side-menu" id="side-menu">
-    <div style="background:#003082; padding:20px; display:flex; align-items:center; justify-content:space-between;">
-        <span style="color:white; font-size:18px; font-weight:bold;">Menu</span>
+    <div class="side-menu-header">
+        <span>Menu</span>
         <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
     </div>
 
     <div class="side-menu-user-info">
         <div class="side-menu-avatar">{{ user.username|first|upper }}</div>
         <div class="display-name">{{ user.username }}</div>
-        <div style="font-size:13px; color:#666; margin-top:4px;">{{ user.email }}</div>
+        <div class="display-email">{{ user.email }}</div>
     </div>
 
-    <a href="{% url 'profile' user.username %}">
-        <span class="menu-icon">👤</span> My Profile
-    </a>
-    <a href="{% url 'settings' %}">
-        <span class="menu-icon">⚙️</span> Settings
-    </a>
+    <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
+    <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
     <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
         {% csrf_token %}
-        <button type="submit" class="side-menu-btn logout-item">
-            <span class="menu-icon">🚪</span> Logout
-        </button>
+        <button type="submit" class="side-menu-btn logout-item">Logout</button>
     </form>
 </div>
 {% endif %}
