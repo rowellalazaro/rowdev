@@ -38,12 +38,13 @@ def save_profile(sender, instance, **kwargs):
 
 class UserRequest(models.Model):
     REQUEST_TYPES = [
-        ('username', 'Change Username'),
-        ('bio', 'Update Bio'),
-        ('location', 'Update Location'),
-        ('birthday', 'Update Birthday'),
-        ('other', 'Other'),
-    ]
+    ('bug', 'Bug Report'),
+    ('error', 'Error / Something Not Working'),
+    ('suggestion', 'Suggestion / Feature Request'),
+    ('account', 'Account Concern'),
+    ('content', 'Content Concern'),
+    ('other', 'Other'),
+]
 
     STATUS_CHOICES = [
         ('pending', 'Pending'),
