@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.urls import reverse_lazy
 
@@ -12,6 +11,7 @@ from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
 from .models import Post, Profile
 from django.contrib.auth import logout as auth_logout
 
+
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -20,7 +20,6 @@ def register(request):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             group, created = Group.objects.get_or_create(name='Users')
             user.groups.add(group)
-            messages.success(request, "Account created successfully!")
             return redirect('home')
     else:
         form = RegisterForm()
@@ -42,7 +41,6 @@ def home(request):
                 author=request.user,
                 title='Status Update'
             )
-            messages.success(request, "Posted successfully!")
         return redirect('home')
 
     posts = Post.objects.filter(author__is_active=True).order_by('-created_at')
@@ -86,7 +84,6 @@ def admin_delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if user != request.user:
         user.delete()
-        messages.success(request, 'User deleted successfully!')
     return redirect('admin_page')
 
 
@@ -105,7 +102,6 @@ def admin_delete_post(request, post_id):
         return redirect('admin_login')
     post = get_object_or_404(Post, id=post_id)
     post.delete()
-    messages.success(request, 'Post deleted successfully!')
     return redirect(request.META.get('HTTP_REFERER', 'admin_page'))
 
 
@@ -141,7 +137,6 @@ def edit_profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, "Profile updated successfully!")
             return redirect('profile', username=request.user.username)
     else:
         user_form = UserUpdateForm(instance=request.user)
@@ -175,7 +170,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         if not form.cleaned_data.get('title'):
             form.instance.title = "Status Update"
-        messages.success(self.request, "Post created successfully!")
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -195,7 +189,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author or self.request.user.is_staff
 
     def form_valid(self, form):
-        messages.success(self.request, "Post updated successfully!")
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -213,30 +206,30 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
 
+
 @login_required
 def user_request(request):
     from .models import UserRequest
     if request.method == 'POST':
         request_type = request.POST.get('request_type')
-        current_value = request.POST.get('current_value')
-        requested_value = request.POST.get('requested_value')
         message = request.POST.get('message')
         UserRequest.objects.create(
             user=request.user,
             request_type=request_type,
-            current_value=current_value,
-            requested_value=requested_value,
+            current_value='',
+            requested_value='',
             message=message
         )
-        messages.success(request, 'Request sent to admin successfully!')
         return redirect('user_request')
     my_requests = UserRequest.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'user_request.html', {'my_requests': my_requests})
+
 
 @login_required
 def files_view(request):
     posts = Post.objects.filter(author=request.user, image__isnull=False).exclude(image='').order_by('-created_at')
     return render(request, 'files.html', {'posts': posts})
+
 
 @login_required
 def settings_view(request):
@@ -244,7 +237,6 @@ def settings_view(request):
         request.session['language'] = request.POST.get('language', 'en')
         request.session['theme'] = request.POST.get('theme', 'light')
         request.session.modified = True
-        messages.success(request, 'Settings saved!')
         return redirect('home')
     return render(request, 'settings.html')
 
@@ -252,6 +244,7 @@ def settings_view(request):
 def admin_logout(request):
     auth_logout(request)
     return redirect('admin_login')
+
 
 def admin_handle_request(request, request_id):
     from .models import UserRequest
@@ -265,7 +258,6 @@ def admin_handle_request(request, request_id):
             req.status = 'approved'
             req.admin_note = admin_note
             req.save()
-            # Apply the change
             u = req.user
             if req.request_type == 'username':
                 u.username = req.requested_value
@@ -282,10 +274,8 @@ def admin_handle_request(request, request_id):
                 profile, _ = Profile.objects.get_or_create(user=u)
                 profile.birthday = req.requested_value
                 profile.save()
-            messages.success(request, 'Request approved and applied!')
         elif action == 'reject':
             req.status = 'rejected'
             req.admin_note = admin_note
             req.save()
-            messages.success(request, 'Request rejected!')
     return redirect('admin_page')
