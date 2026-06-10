@@ -71,7 +71,6 @@
             width: 100%; height: 100%;
             opacity: 0;
             transition: opacity 0.8s ease-in-out;
-            overflow: hidden;
         }
 
         .slide.active { opacity: 1; }
@@ -79,8 +78,8 @@
         .slide img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            object-position: center;
+            object-fit: cover;
+            object-position: center center;
             display: block;
         }
 
@@ -181,9 +180,7 @@
         .divider::before { left: 0; }
         .divider::after { right: 0; }
 
-        .form-group {
-            margin-bottom: 0;
-        }
+        .form-group { margin-bottom: 0; }
 
         .fields-box {
             border: 1.5px solid #ddd;
@@ -213,9 +210,7 @@
             outline: none !important;
         }
 
-        .fields-box input::placeholder {
-            color: #aaa;
-        }
+        .fields-box input::placeholder { color: #aaa; }
 
         .btn-login {
             padding: 13px 35px;
