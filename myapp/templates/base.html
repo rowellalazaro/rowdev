@@ -334,6 +334,7 @@
     </div>
 
     <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
+    <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
     <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
     <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
         {% csrf_token %}

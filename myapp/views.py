@@ -234,6 +234,11 @@ def user_request(request):
     return render(request, 'user_request.html', {'my_requests': my_requests})
 
 @login_required
+def files_view(request):
+    posts = Post.objects.filter(author=request.user, image__isnull=False).exclude(image='').order_by('-created_at')
+    return render(request, 'files.html', {'posts': posts})
+
+@login_required
 def settings_view(request):
     if request.method == 'POST':
         request.session['language'] = request.POST.get('language', 'en')

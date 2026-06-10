@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .files-wrapper {
+        max-width: 900px;
+        margin: 30px auto;
+    }
+
+    .files-back {
+        font-size: 14px;
+        color: #003082;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 20px;
+    }
+
+    .files-back:hover { text-decoration: underline; }
+
+    .files-title {
+        font-size: 26px;
+        font-weight: bold;
+        color: #003082;
+        margin-bottom: 8px;
+    }
+
+    .files-subtitle {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    .date-group {
+        margin-bottom: 30px;
+    }
+
+    .date-label {
+        font-size: 13px;
+        font-weight: bold;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+    }
+
+    .photo-item {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        background: #e0e8f0;
+        cursor: pointer;
+    }
+
+    .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .photo-item:hover img { transform: scale(1.05); }
+
+    .photo-item .photo-overlay {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.5));
+        padding: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .photo-item:hover .photo-overlay { opacity: 1; }
+
+    .photo-overlay span {
+        color: white;
+        font-size: 11px;
+    }
+
+    .no-files {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+        background: #f5f8ff;
+        border-radius: 14px;
+    }
+
+    .no-files .no-files-icon { font-size: 48px; margin-bottom: 12px; }
+    .no-files p { font-size: 15px; }
+
+    /* Lightbox */
+    .lightbox {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+        max-width: 90%;
+        max-height: 90vh;
+        border-radius: 10px;
+        object-fit: contain;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 20px; right: 25px;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    body.dark .date-label { color: #7ec8e3 !important; border-bottom-color: #1a2a3a !important; }
+    body.dark .files-title { color: #7ec8e3 !important; }
+    body.dark .files-back { color: #7ec8e3 !important; }
+    body.dark .files-subtitle { color: #aaa !important; }
+    body.dark .no-files { background: #1e3448 !important; color: #aaa !important; }
+    body.dark .photo-item { background: #1a2a3a !important; }
+</style>
+
+<div class="files-wrapper">
+    <a href="{% url 'home' %}" class="files-back">← Back to Dashboard</a>
+    <div class="files-title">My Files</div>
+    <div class="files-subtitle">Your uploaded photos organized by date</div>
+
+    {% if posts %}
+        {% regroup posts by created_at|date:"F Y" as posts_by_month %}
+        {% for month in posts_by_month %}
+            <div class="date-group">
+                <div class="date-label">{{ month.grouper }}</div>
+                <div class="photo-grid">
+                    {% for post in month.list %}
+                        <div class="photo-item" onclick="openLightbox('{{ post.image.url }}')">
+                            <img src="{{ post.image.url }}" alt="Photo">
+                            <div class="photo-overlay">
+                                <span>{{ post.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-files">
+            <div class="no-files-icon">🖼️</div>
+            <p>No uploaded photos yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+    <img id="lightbox-img" src="" alt="Preview">
+</div>
+
+<script>
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+</script>
+
+{% endblock %}
