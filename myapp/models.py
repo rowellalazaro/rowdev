@@ -55,7 +55,7 @@ class UserRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     request_type = models.CharField(max_length=20, choices=REQUEST_TYPES)
     current_value = models.CharField(max_length=200, blank=True, null=True)
-    requested_value = models.CharField(max_length=200)
+    requested_value = models.CharField(max_length=200, blank=True, null=True)
     message = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     admin_note = models.TextField(blank=True, null=True)
