@@ -17,7 +17,6 @@
             overflow: hidden;
         }
 
-        /* ── BUBBLES ── */
         .bubble-bg {
             position: fixed;
             top: 0; left: 0;
@@ -43,7 +42,6 @@
             100% { transform: translate(var(--drift-x, 40px), var(--drift-y, -100px)) scale(1.2); opacity: 0; }
         }
 
-        /* ── MAIN CARD ── */
         .card-wrapper {
             position: relative;
             z-index: 1;
@@ -81,6 +79,11 @@
             object-fit: cover;
             object-position: center center;
             display: block;
+        }
+
+        .slide:first-child img {
+            object-fit: contain;
+            background: #0d2137;
         }
 
         .slide-dots {
@@ -149,19 +152,29 @@
             margin-bottom: 20px;
         }
 
-        .fields-box .form-group {
+        .fields-box .form-row {
             border-bottom: 1.5px solid #ddd;
         }
 
-        .fields-box .form-group:last-child {
+        .fields-box .form-row:last-child {
             border-bottom: none;
+        }
+
+        .fields-box label {
+            display: block;
+            padding: 10px 16px 0 16px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .fields-box input[type="text"],
         .fields-box input[type="password"],
         .fields-box input[type="email"] {
             width: 100% !important;
-            padding: 13px 16px !important;
+            padding: 6px 16px 12px 16px !important;
             border: none !important;
             border-radius: 0 !important;
             font-size: 14px !important;
@@ -169,8 +182,6 @@
             background: white !important;
             outline: none !important;
         }
-
-        .fields-box input::placeholder { color: #aaa; }
 
         .btn-register {
             padding: 13px 35px;
@@ -229,7 +240,7 @@
         .error-text {
             color: #b91c1c;
             font-size: 0.8rem;
-            padding: 4px 16px;
+            padding: 4px 16px 8px 16px;
             list-style: none;
             background: #fff0f0;
         }
@@ -268,11 +279,12 @@
 
         <div class="register-title">Create Account</div>
 
-        <form method="post">
+        <form method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
             <div class="fields-box">
                 {% for field in form %}
-                    <div class="form-group">
+                    <div class="form-row">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
                         {% if field.errors %}
                             <ul class="error-text">
@@ -295,7 +307,7 @@
                 <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                 <path fill="none" d="M0 0h48v48H0z"/>
             </svg>
-            Sign in with Google
+            Sign up with Google
         </a>
 
     </div>
