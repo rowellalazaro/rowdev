@@ -85,13 +85,14 @@
             animation: none;
         }
 
-       .slide.active img {
-    animation: diagonalDrift 9s ease-in-out infinite alternate;
+.slide.active img {
+    animation: gentlePan 10s ease-in-out infinite alternate;
 }
 
-@keyframes diagonalDrift {
-    0%   { transform: scale(1) translate(-1.5%, -1.5%); }
-    100% { transform: scale(1.1) translate(1.5%, 1.5%); }
+@keyframes gentlePan {
+    0%   { transform: scale(1.05) translate(-2%, 0); }
+    50%  { transform: scale(1.08) translate(0, 1%); }
+    100% { transform: scale(1.05) translate(2%, 0); }
 }
 
         .slide-dots {
