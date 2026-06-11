@@ -6,26 +6,28 @@
     .profile-form-box {
         width: 100%;
         max-width: 500px;
-        margin: 40px auto;
-        background: rgb(87, 163, 193);
-        padding: 40px;
-        border-radius: 12px;
+        margin: 30px auto;
+        background: #ffffff;
+        border: 2px solid #001f52;
+        padding: 25px;
+        border-radius: 10px;
         box-sizing: border-box;
     }
 
     .profile-form-box h1 {
-        color: #003082;
-        font-size: 26px;
-        margin-bottom: 20px;
+        color: #001f52;
+        font-size: 22px;
+        margin-bottom: 15px;
         margin-top: 0;
     }
 
     .profile-form-box label {
         display: block;
-        color: #003082;
+        color: #001f52;
         font-weight: bold;
-        margin-bottom: 6px;
-        margin-top: 12px;
+        font-size: 14px;
+        margin-bottom: 4px;
+        margin-top: 10px;
     }
 
     .profile-form-box input[type="text"],
@@ -33,40 +35,41 @@
     .profile-form-box input[type="date"],
     .profile-form-box textarea {
         width: 100% !important;
-        padding: 10px !important;
-        border: none !important;
-        border-radius: 8px !important;
+        padding: 8px 10px !important;
+        border: 1px solid #001f52 !important;
+        border-radius: 6px !important;
         box-sizing: border-box !important;
-        font-size: 15px !important;
-        background: white !important;
-        color: #003082 !important;
+        font-size: 14px !important;
+        background: #ffffff !important;
+        color: #001f52 !important;
         margin-bottom: 0 !important;
     }
 
     .btn-save {
         width: 100%;
-        padding: 13px;
-        background-color: #003082;
+        padding: 10px;
+        background-color: #001f52;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
+        border-radius: 6px;
+        font-size: 14px;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 20px;
+        margin-top: 15px;
+        transition: background 0.2s;
     }
 
     .btn-save:hover {
-        background-color: #001f52;
+        background-color: #003082;
     }
 
     .profile-pic-preview {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #003082;
-        margin-bottom: 10px;
+        border: 2px solid #001f52;
+        margin-bottom: 8px;
         display: block;
     }
 </style>
@@ -77,29 +80,29 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- Profile pic preview -->
         {% if request.user.profile.profile_pic %}
             <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
         {% else %}
             <div style="
-                width: 80px; height: 80px; border-radius: 50%;
-                background: #003082; display: flex; align-items: center;
-                justify-content: center; font-size: 30px; color: white;
-                margin-bottom: 10px;
+                width: 70px; height: 70px; border-radius: 50%;
+                background: #001f52; display: flex; align-items: center;
+                justify-content: center; font-size: 26px; color: white;
+                margin-bottom: 8px; border: 2px solid #001f52;
             " id="pic-placeholder">{{ request.user.username|first|upper }}</div>
         {% endif %}
 
         <label>Profile Picture</label>
         <label for="id_profile_pic" style="
             display: inline-block;
-            background: #b4cbff;
+            background: #99afc4;
             color: #003082;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 15px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            margin-top: 4px;
         ">Change Photo</label>
         <input type="file" name="profile_pic" id="id_profile_pic" accept="image/*" style="display: none;"
                onchange="previewPic(this)">
@@ -119,7 +122,8 @@
             display: block;
             text-align: center;
             margin-top: 12px;
-            color: #003082;
+            color: #001f52;
+            font-size: 13px;
             font-weight: bold;
             text-decoration: underline;
         ">Cancel</a>
@@ -136,7 +140,8 @@
                 if (preview) {
                     preview.src = e.target.result;
                 } else if (placeholder) {
-                    placeholder.innerHTML = `<img src="${e.target.result}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">`;
+                    placeholder.innerHTML = `<img src="${e.target.result}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;">`;
+                    placeholder.style.border = "2px solid #001f52";
                 }
             }
             reader.readAsDataURL(input.files[0]);
