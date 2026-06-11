@@ -3,62 +3,63 @@
 
 {% block content %}
 
-
 <style>
     .status-box {
-        background: #001f52; /* Darker blue background */
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
+        background: #ffffff;
+        border: 2px solid #001f52;
+        padding: 12px 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        max-width: 600px;
     }
 
     .status-title {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
-        color: #ffffff; /* White text */
-        margin-bottom: 15px;
+        color: #001f52;
+        margin-bottom: 8px;
     }
 
     .status-textarea {
-        width: 97%;
-        height: 120px;
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(255, 255, 255, 0.1); /* Subtle white tint overlay */
-        color: #ffffff; /* White text while typing */
+        width: 100%;
+        box-sizing: border-box;
+        height: 70px;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #001f52;
+        background: #ffffff;
+        color: #001f52;
         resize: none;
-        font-size: 16px;
-        margin-top: 10px;
+        font-size: 14px;
+        margin-top: 5px;
     }
 
-    /* Styles the placeholder text to be light white/gray */
     .status-textarea::placeholder {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(0, 31, 82, 0.5);
     }
 
     .post-btn {
-        margin-top: 15px;
-        background: #003082;
+        margin-top: 10px;
+        background: #001f52;
         color: white;
         border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 14px;
         transition: background 0.2s;
     }
 
     .post-btn:hover {
-        background: #0044b5;
+        background: #003082;
     }
 
     .feed-heading {
-        font-size: 28px;
+        font-size: 24px;
         font-weight: bold;
         color: #001f52;
-        margin-top: 40px;
-        margin-bottom: 20px;
+        margin-top: 30px;
+        margin-bottom: 15px;
     }
 
     .no-posts {
@@ -72,11 +73,11 @@
 
     #image-preview {
         display: none;
-        max-width: 50%;
-        max-height: 200px;
+        max-width: 40%;
+        max-height: 150px;
         object-fit: cover;
-        border-radius: 10px;
-        margin-top: 10px;
+        border-radius: 8px;
+        margin-top: 8px;
     }
 </style>
 
@@ -92,24 +93,23 @@
             required
         ></textarea>
 
-        
-        <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+        <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
             <label for="post-image" style="
                 background: #99afc4;
                 color: #003082;
-                padding: 8px 16px;
-                border-radius: 20px;
+                padding: 6px 12px;
+                border-radius: 15px;
                 cursor: pointer;
                 font-weight: bold;
-                font-size: 14px;
+                font-size: 12px;
             ">Add Photo</label>
             <input type="file" id="post-image" name="image" accept="image/*" style="display: none;"
                    onchange="previewImage(this)">
-            <span id="file-label" style="color: #ffffff; font-size: 14px;"></span> </div>
+            <span id="file-label" style="color: #001f52; font-size: 12px;"></span>
+        </div>
 
         <img id="image-preview" src="" alt="Preview">
 
-        <br>
         <button type="submit" class="post-btn">Post</button>
     </form>
 </div>
@@ -144,15 +144,15 @@
         {% endif %}
 
         <p style="margin: 0 0 10px 0; font-size: 14px; color: #00225c;">
-    <strong>
-        {% if post.author %}
-            @{{ post.author.username }}
-        {% else %}
-            @Anonymous
-        {% endif %}
-    </strong>
-    · {{ post.created_at|date:"M d, Y · g:i A" }}
-</p>
+            strong>
+                {% if post.author %}
+                    @{{ post.author.username }}
+                {% else %}
+                    @Anonymous
+                {% endif %}
+            </strong>
+            · {{ post.created_at|date:"M d, Y · g:i A" }}
+        </p>
 
         {% if post.title and post.title != "Status Update" %}
             <p style="font-size: 16px; font-weight: bold; color: #003082; margin: 0 0 6px 0;">
