@@ -4,82 +4,96 @@
 {% block content %}
 
 <style>
-    .profile-card {
-        background: rgb(87, 163, 193);
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 30px;
+    .profile-card, .post-card {
+        background: #ffffff;
+        border: 2px solid #001f52;
+        padding: 12px 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        max-width: 600px;
+        box-sizing: border-box;
         position: relative;
     }
 
     .profile-pic {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         border-radius: 50%;
         object-fit: cover;
-        border: 4px solid #003082;
+        border: 2px solid #001f52;
     }
 
     .profile-pic-placeholder {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         border-radius: 50%;
-        background: #003082;
+        background: #001f52;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 40px;
+        font-size: 32px;
         color: white;
-        border: 4px solid #003082;
+        border: 2px solid #001f52;
     }
 
     .profile-info {
-        margin-top: 15px;
+        margin-top: 5px;
     }
 
     .profile-username {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
-        color: #003082;
+        color: #001f52;
     }
 
     .profile-detail {
         color: #00225c;
-        font-size: 15px;
-        margin-top: 5px;
+        font-size: 13px;
+        margin-top: 3px;
     }
 
     .edit-btn {
         position: absolute;
-        top: 20px;
-        right: 20px;
-        background: #b4cbff;
+        top: 12px;
+        right: 15px;
+        background: #99afc4;
         color: #003082;
-        padding: 8px 16px;
-        border-radius: 20px;
+        padding: 4px 10px;
+        border-radius: 15px;
         text-decoration: none;
         font-weight: bold;
-        font-size: 14px;
+        font-size: 11px;
     }
 
     .feed-heading {
         font-size: 24px;
         font-weight: bold;
-        color: #003082;
-        margin-bottom: 20px;
+        color: #001f52;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .no-posts {
+        text-align: center;
+        color: #c0d7fd;
+        font-style: italic;
+        background: #001f52;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
     }
 </style>
 
 <a href="{% url 'home' %}" style="
     display: inline-block;
     margin-bottom: 15px;
-    background: #b4cbff;
+    background: #99afc4;
     color: #003082;
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 6px 12px;
+    border-radius: 15px;
     text-decoration: none;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 ">Back to Dashboard</a>
 
 <div class="profile-card">
@@ -87,7 +101,7 @@
     <a href="{% url 'edit-profile' %}" class="edit-btn">Edit Profile</a>
     {% endif %}
 
-    <div style="display: flex; align-items: center; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
         {% if profile.profile_pic %}
             <img src="{{ profile.profile_pic.url }}" alt="Profile" class="profile-pic">
         {% else %}
@@ -108,7 +122,7 @@
                 <div class="profile-detail">{{ profile.birthday|date:"M d, Y" }}</div>
             {% endif %}
             {% if profile.bio %}
-                <div class="profile-detail" style="margin-top: 10px;">{{ profile.bio }}</div>
+                <div class="profile-detail" style="margin-top: 6px;">{{ profile.bio }}</div>
             {% endif %}
         </div>
     </div>
@@ -117,58 +131,58 @@
 <div class="feed-heading">Posts</div>
 
 {% for post in posts %}
-    <div class="card" style="position: relative;">
+    <div class="post-card">
 
         {% if request.user == post.author or request.user.is_staff %}
-        <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 8px;">
+        <div style="position: absolute; top: 12px; right: 15px; display: flex; gap: 8px;">
             <a href="{% url 'post-edit' post.pk %}" style="
-                background: #b4cbff;
+                background: #99afc4;
                 color: #003082;
-                padding: 5px 12px;
-                border-radius: 20px;
+                padding: 4px 10px;
+                border-radius: 15px;
                 text-decoration: none;
                 font-weight: bold;
-                font-size: 13px;
+                font-size: 11px;
             ">Edit</a>
             <a href="{% url 'post-delete' post.pk %}" style="
                 background: #ffb4b4;
                 color: #820000;
-                padding: 5px 12px;
-                border-radius: 20px;
+                padding: 4px 10px;
+                border-radius: 15px;
                 text-decoration: none;
                 font-weight: bold;
-                font-size: 13px;
+                font-size: 11px;
             ">Delete</a>
         </div>
         {% endif %}
 
-        <p style="font-size: 14px; color: #00225c; margin: 0 0 10px 0;">
+        <p style="margin: 0 0 8px 0; font-size: 13px; color: #00225c;">
             {{ post.created_at|localtime|date:"M d, Y · g:i A" }}
         </p>
 
         {% if post.title and post.title != "Status Update" %}
-            <p style="font-size: 16px; font-weight: bold; color: #003082; margin: 0 0 6px 0;">
+            <p style="font-size: 15px; font-weight: bold; color: #003082; margin: 0 0 4px 0;">
                 {{ post.title }}
             </p>
         {% endif %}
 
-        <p style="font-size: 18px; color: #003082; margin: 0; white-space: pre-line;">
+        <p style="font-size: 15px; color: #00235f; margin: 0; white-space: pre-line;">
             {{ post.content }}
         </p>
 
         {% if post.image %}
             <img src="{{ post.image.url }}" alt="Post image" style="
                 max-width: 50%;
-                max-height: 250px;
+                max-height: 200px;
                 object-fit: cover;
-                border-radius: 10px;
-                margin-top: 12px;
+                border-radius: 8px;
+                margin-top: 10px;
                 display: block;
             ">
         {% endif %}
     </div>
 {% empty %}
-    <div style="text-align: center; color: #003082; font-style: italic; background: rgb(87, 163, 193); padding: 20px; border-radius: 10px;">
+    <div class="no-posts">
         No posts yet!
     </div>
 {% endfor %}
