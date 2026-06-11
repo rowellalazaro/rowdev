@@ -72,13 +72,27 @@
         margin-bottom: 8px;
         display: block;
     }
+
+    .errorlist {
+        color: #ff4d4d;
+        font-size: 13px;
+        margin: 5px 0 0 0;
+        padding-left: 20px;
+    }
 </style>
 
 <div class="profile-form-box">
     <h1>Edit Profile</h1>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
+
+        {% if profile_form.errors %}
+            <div style="background: #ffe6e6; border: 1px solid #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                <p style="color: #820000; margin: 0; font-weight: bold; font-size: 14px;">Please correct the errors below:</p>
+                {{ profile_form.non_field_errors }}
+            </div>
+        {% endif %}
 
         {% if request.user.profile.profile_pic %}
             <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
@@ -109,12 +123,15 @@
 
         <label>Bio</label>
         {{ profile_form.bio }}
+        {{ profile_form.bio.errors }}
 
         <label>Location</label>
         {{ profile_form.location }}
+        {{ profile_form.location.errors }}
 
         <label>Birthday</label>
         {{ profile_form.birthday }}
+        {{ profile_form.birthday.errors }}
 
         <button type="submit" class="btn-save">Save Changes</button>
 

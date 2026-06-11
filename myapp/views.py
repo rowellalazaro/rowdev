@@ -138,6 +138,10 @@ def edit_profile(request):
             user_form.save()
             profile_form.save()
             return redirect('profile', username=request.user.username)
+        else:
+            print("--- Form Validation Failed ---")
+            print("User Form Errors:", user_form.errors)
+            print("Profile Form Errors:", profile_form.errors)
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileForm(instance=profile)
