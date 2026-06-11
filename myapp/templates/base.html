@@ -423,18 +423,39 @@
 
 <!-- About Modal -->
 <div class="about-modal" id="about-modal">
-    <div class="about-modal-box">
-        <button class="about-modal-close" onclick="closeAbout()">✕</button>
+    <div class="about-modal-box" style="max-width: 550px; width: 90%;"> <button class="about-modal-close" onclick="closeAbout()">✕</button>
+        
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
             <img src="{% static 'images/logo.jpg' %}" style="height:50px; width:auto; border-radius:10px;">
             <span style="font-size:22px; font-weight:bold; color:#003082;">Iramora</span>
         </div>
-        <p style="color:#444; font-size:14px; line-height:1.6; margin-bottom:10px;">
+        
+        <p style="color:#444; font-size:14px; line-height:1.6; margin-bottom:20px;">
             Iramora means a space for ideas, reflection, and expression shared through media and writing.
             It represents a digital environment where thoughts become stories, and stories connect people.
         </p>
-        <p style="color:#888; font-size:13px; margin:4px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
-        <p style="color:#888; font-size:13px; margin:4px 0;"><strong>Version:</strong> 1.0.0</p>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <div style="flex: 1;">
+                <h4 style="color:#003082; font-size:15px; margin: 0 0 6px 0; font-weight: bold;">Vision</h4>
+                <p style="color:#555; font-size:13px; line-height:1.5; margin: 0;">
+                    To become a leading digital platform where ideas, reflections, and stories inspire meaningful connections, 
+                    empowering individuals to express themselves freely and engage with diverse perspectives worldwide
+                </p>
+            </div>
+            
+            <div style="flex: 1;">
+                <h4 style="color:#003082; font-size:15px; margin: 0 0 6px 0; font-weight: bold;">Mission</h4>
+                <p style="color:#555; font-size:13px; line-height:1.5; margin: 0;">
+                    Iramora provides a welcoming space for people to share their thoughts, experiences, and creativity through writing and media. 
+                    We aim to foster authentic self-expression, encourage thoughtful conversations, and build a connected community 
+                    where every voice has the opportunity to be heard and valued.
+                </p>
+            </div>
+        </div>
+        
+        <p style="color:#003082a1; font-size:13px; margin:4px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
+        <p style="color:#003082a1; font-size:13px; margin:4px 0;"><strong>Version:</strong> 1.0.0</p>
     </div>
 </div>
 {% endif %}
