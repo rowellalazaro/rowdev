@@ -4,13 +4,31 @@
 {% block content %}
 
 <style>
+    .home-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+    }
+
+    .home-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .home-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
     .status-box, .post-card {
         background: #ffffff;
         border: 2px solid #001f52;
         padding: 12px 15px;
         border-radius: 10px;
         margin-bottom: 20px;
-        max-width: 600px;
         box-sizing: border-box;
     }
 
@@ -51,9 +69,7 @@
         transition: background 0.2s;
     }
 
-    .post-btn:hover {
-        background: #003082;
-    }
+    .post-btn:hover { background: #003082; }
 
     .feed-heading {
         font-size: 24px;
@@ -70,7 +86,6 @@
         background: #001f52;
         padding: 20px;
         border-radius: 10px;
-        max-width: 600px;
     }
 
     #image-preview {
@@ -81,107 +96,286 @@
         border-radius: 8px;
         margin-top: 8px;
     }
+
+    /* ── SIDEBAR WIDGETS ── */
+    .widget {
+        background: white;
+        border-radius: 10px;
+        padding: 16px;
+        border: 2px solid #001f52;
+        box-sizing: border-box;
+    }
+
+    .widget-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #001f52;
+        margin-bottom: 12px;
+    }
+
+    /* TODO */
+    .todo-input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .todo-input {
+        flex: 1;
+        padding: 7px 10px;
+        border: 1px solid #001f52;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+        color: #001f52;
+        background: white;
+    }
+
+    .todo-input:focus { border-color: #003082; }
+
+    .todo-add-btn {
+        background: #001f52;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 7px 12px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .todo-list { list-style: none; padding: 0; margin: 0; }
+
+    .todo-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 0;
+        border-bottom: 1px solid #e8eef5;
+        font-size: 13px;
+        color: #001f52;
+    }
+
+    .todo-item:last-child { border-bottom: none; }
+
+    .todo-item input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        flex-shrink: 0;
+    }
+
+    .todo-item.done span {
+        text-decoration: line-through;
+        color: #aaa;
+    }
+
+    .todo-item .todo-delete {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: #ccc;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .todo-item .todo-delete:hover { color: #820000; }
+
+    /* NOTES */
+    .notes-textarea {
+        width: 100%;
+        height: 100px;
+        padding: 9px;
+        border: 1px solid #001f52;
+        border-radius: 6px;
+        font-size: 13px;
+        resize: none;
+        font-family: Arial;
+        box-sizing: border-box;
+        outline: none;
+        color: #001f52;
+        background: white;
+    }
+
+    .notes-textarea:focus { border-color: #003082; }
+
+    .notes-save-btn {
+        margin-top: 8px;
+        background: #001f52;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .notes-saved {
+        font-size: 11px;
+        color: #4caf50;
+        margin-top: 4px;
+        display: none;
+    }
+
+    /* CALENDAR */
+    .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .calendar-month {
+        font-size: 13px;
+        font-weight: bold;
+        color: #001f52;
+    }
+
+    .calendar-nav {
+        background: none;
+        border: none;
+        color: #001f52;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .calendar-nav:hover { background: #e8eef5; }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        text-align: center;
+    }
+
+    .calendar-day-name {
+        font-size: 10px;
+        font-weight: bold;
+        color: #001f52;
+        padding: 3px 0;
+        opacity: 0.6;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+        padding: 4px 2px;
+        border-radius: 50%;
+        cursor: default;
+        color: #001f52;
+    }
+
+    .calendar-day.today {
+        background: #001f52;
+        color: white;
+        font-weight: bold;
+    }
+
+    .calendar-day.other-month { color: #ccc; }
+
+    /* Dark mode */
+    body.dark .widget { background: #1e3448 !important; border-color: #0f1f2e !important; }
+    body.dark .widget-title { color: #7ec8e3 !important; }
+    body.dark .todo-item { color: #d0e8f5 !important; border-bottom-color: #0f1f2e !important; }
+    body.dark .todo-input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .notes-textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .calendar-day { color: #d0e8f5 !important; }
+    body.dark .calendar-day.other-month { color: #333 !important; }
+    body.dark .calendar-month { color: #7ec8e3 !important; }
+    body.dark .calendar-day-name { color: #7ec8e3 !important; }
+    body.dark .status-box, body.dark .post-card { background: #1e3448 !important; border-color: #0f1f2e !important; }
+    body.dark .status-textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .feed-heading { color: #7ec8e3 !important; }
+    body.dark .status-title { color: #7ec8e3 !important; }
 </style>
 
-<div class="status-box">
-    <div class="status-title">What's on your mind?</div>
-    <form method="post" action="{% url 'post-create' %}" enctype="multipart/form-data">
-        {% csrf_token %}
+<div class="home-layout">
 
-        <textarea
-            name="content"
-            class="status-textarea"
-            placeholder="Write something..."
-            required
-        ></textarea>
-
-        <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
-            <label for="post-image" style="
-                background: #99afc4;
-                color: #003082;
-                padding: 6px 12px;
-                border-radius: 15px;
-                cursor: pointer;
-                font-weight: bold;
-                font-size: 12px;
-            ">Add Photo</label>
-            <input type="file" id="post-image" name="image" accept="image/*" style="display: none;"
-                   onchange="previewImage(this)">
-            <span id="file-label" style="color: #001f52; font-size: 12px;"></span>
+    <!-- MAIN FEED -->
+    <div class="home-main">
+        <div class="status-box">
+            <div class="status-title">What's on your mind?</div>
+            <form method="post" action="{% url 'post-create' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea name="content" class="status-textarea" placeholder="Write something..." required></textarea>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
+                    <label for="post-image" style="background:#99afc4; color:#003082; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:12px;">Add Photo</label>
+                    <input type="file" id="post-image" name="image" accept="image/*" style="display:none;" onchange="previewImage(this)">
+                    <span id="file-label" style="color:#001f52; font-size:12px;"></span>
+                </div>
+                <img id="image-preview" src="" alt="Preview">
+                <button type="submit" class="post-btn">Post</button>
+            </form>
         </div>
 
-        <img id="image-preview" src="" alt="Preview">
+        <div class="feed-heading">Recent Posts</div>
 
-        <button type="submit" class="post-btn">Post</button>
-    </form>
-</div>
-
-<div class="feed-heading">Recent Posts</div>
-
-{% for post in posts %}
-    <div class="post-card" style="position: relative;">
-
-        {% if request.user == post.author or request.user.is_staff %}
-        <div style="position: absolute; top: 12px; right: 15px; display: flex; gap: 8px;">
-            <a href="{% url 'post-edit' post.pk %}" style="
-                background: #99afc4;
-                color: #003082;
-                padding: 4px 10px;
-                border-radius: 15px;
-                text-decoration: none;
-                font-weight: bold;
-                font-size: 11px;
-            ">Edit</a>
-
-            <a href="{% url 'post-delete' post.pk %}" style="
-                background: #99afc4;
-                color: #003082;
-                padding: 4px 10px;
-                border-radius: 15px;
-                text-decoration: none;
-                font-weight: bold;
-                font-size: 11px;
-            ">Delete</a>
-        </div>
-        {% endif %}
-
-        <p style="margin: 0 0 8px 0; font-size: 13px; color: #00225c;">
-            <strong>
-                {% if post.author %}
-                    @{{ post.author.username }}
-                {% else %}
-                    @Anonymous
-                {% endif %}
-            </strong>
-            · {{ post.created_at|date:"M d, Y · g:i A" }}
-        </p>
-
-        {% if post.title and post.title != "Status Update" %}
-            <p style="font-size: 15px; font-weight: bold; color: #003082; margin: 0 0 4px 0;">
-                {{ post.title }}
+        {% for post in posts %}
+        <div class="post-card" style="position:relative;">
+            {% if request.user == post.author or request.user.is_staff %}
+            <div style="position:absolute; top:12px; right:15px; display:flex; gap:8px;">
+                <a href="{% url 'post-edit' post.pk %}" style="background:#99afc4; color:#003082; padding:4px 10px; border-radius:15px; text-decoration:none; font-weight:bold; font-size:11px;">Edit</a>
+                <a href="{% url 'post-delete' post.pk %}" style="background:#99afc4; color:#003082; padding:4px 10px; border-radius:15px; text-decoration:none; font-weight:bold; font-size:11px;">Delete</a>
+            </div>
+            {% endif %}
+            <p style="margin:0 0 8px 0; font-size:13px; color:#00225c;">
+                <strong>{% if post.author %}@{{ post.author.username }}{% else %}@Anonymous{% endif %}</strong>
+                · {{ post.created_at|date:"M d, Y · g:i A" }}
             </p>
-        {% endif %}
-
-        <p style="font-size: 15px; color: #00235f; margin: 0; white-space: pre-line;">
-            {{ post.content }}
-        </p>
-
-        {% if post.image %}
-            <img src="{{ post.image.url }}" alt="Post image" style="
-                max-width: 50%;
-                max-height: 200px;
-                object-fit: cover;
-                border-radius: 8px;
-                margin-top: 10px;
-                display: block;
-            ">
-        {% endif %}
+            {% if post.title and post.title != "Status Update" %}
+            <p style="font-size:15px; font-weight:bold; color:#003082; margin:0 0 4px 0;">{{ post.title }}</p>
+            {% endif %}
+            <p style="font-size:15px; color:#00235f; margin:0; white-space:pre-line;">{{ post.content }}</p>
+            {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image" style="max-width:50%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:10px; display:block;">
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="no-posts">No posts yet. Be the first!</div>
+        {% endfor %}
     </div>
-{% empty %}
-    <div class="no-posts">
-        No posts yet. Be the first!
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="home-sidebar">
+
+        <!-- TO DO LIST -->
+        <div class="widget">
+            <div class="widget-title">To Do</div>
+            <div class="todo-input-row">
+                <input type="text" class="todo-input" id="todo-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter') addTodo()">
+                <button class="todo-add-btn" onclick="addTodo()">+</button>
+            </div>
+            <ul class="todo-list" id="todo-list"></ul>
+        </div>
+
+        <!-- NOTES -->
+        <div class="widget">
+            <div class="widget-title">Notes</div>
+            <textarea class="notes-textarea" id="notes-area" placeholder="Jot something down..."></textarea>
+            <button class="notes-save-btn" onclick="saveNotes()">Save</button>
+            <div class="notes-saved" id="notes-saved">Saved!</div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="widget">
+            <div class="widget-title">Calendar</div>
+            <div class="calendar-header">
+                <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                <span class="calendar-month" id="cal-month"></span>
+                <button class="calendar-nav" onclick="changeMonth(1)">›</button>
+            </div>
+            <div class="calendar-grid" id="cal-grid"></div>
+        </div>
+
     </div>
-{% endfor %}
+</div>
 
 <script>
     function previewImage(input) {
@@ -197,6 +391,105 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    // ── TODO ──
+    let todos = JSON.parse(localStorage.getItem('iramora_todos') || '[]');
+
+    function saveTodos() { localStorage.setItem('iramora_todos', JSON.stringify(todos)); }
+
+    function renderTodos() {
+        const list = document.getElementById('todo-list');
+        list.innerHTML = '';
+        todos.forEach((todo, i) => {
+            const li = document.createElement('li');
+            li.className = 'todo-item' + (todo.done ? ' done' : '');
+            li.innerHTML = `
+                <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${i})">
+                <span>${todo.text}</span>
+                <button class="todo-delete" onclick="deleteTodo(${i})">×</button>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addTodo() {
+        const input = document.getElementById('todo-input');
+        const text = input.value.trim();
+        if (!text) return;
+        todos.push({ text, done: false });
+        saveTodos();
+        renderTodos();
+        input.value = '';
+    }
+
+    function toggleTodo(i) {
+        todos[i].done = !todos[i].done;
+        saveTodos();
+        renderTodos();
+    }
+
+    function deleteTodo(i) {
+        todos.splice(i, 1);
+        saveTodos();
+        renderTodos();
+    }
+
+    renderTodos();
+
+    // ── NOTES ──
+    const notesArea = document.getElementById('notes-area');
+    notesArea.value = localStorage.getItem('iramora_notes') || '';
+
+    function saveNotes() {
+        localStorage.setItem('iramora_notes', notesArea.value);
+        const saved = document.getElementById('notes-saved');
+        saved.style.display = 'block';
+        setTimeout(() => saved.style.display = 'none', 2000);
+    }
+
+    // ── CALENDAR ──
+    let calDate = new Date();
+
+    function renderCalendar() {
+        const today = new Date();
+        const year = calDate.getFullYear();
+        const month = calDate.getMonth();
+        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        document.getElementById('cal-month').textContent = monthNames[month] + ' ' + year;
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+        ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'calendar-day-name';
+            div.textContent = d;
+            grid.appendChild(div);
+        });
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const prevDays = new Date(year, month, 0).getDate();
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const div = document.createElement('div');
+            div.className = 'calendar-day other-month';
+            div.textContent = prevDays - i;
+            grid.appendChild(div);
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+            const div = document.createElement('div');
+            div.className = 'calendar-day';
+            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                div.classList.add('today');
+            }
+            div.textContent = d;
+            grid.appendChild(div);
+        }
+    }
+
+    function changeMonth(dir) {
+        calDate.setMonth(calDate.getMonth() + dir);
+        renderCalendar();
+    }
+
+    renderCalendar();
 </script>
 
 {% endblock %}
