@@ -6,7 +6,7 @@
 
 <style>
     .status-box {
-        background: #003082(255, 255, 255);
+        background: #001f52; /* Darker blue background */
         padding: 20px;
         border-radius: 12px;
         margin-bottom: 30px;
@@ -15,7 +15,7 @@
     .status-title {
         font-size: 24px;
         font-weight: bold;
-        color: #ffffff;
+        color: #ffffff; /* White text */
         margin-bottom: 15px;
     }
 
@@ -24,31 +24,39 @@
         height: 120px;
         padding: 15px;
         border-radius: 10px;
-        border: #003082;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1); /* Subtle white tint overlay */
+        color: #ffffff; /* White text while typing */
         resize: none;
         font-size: 16px;
         margin-top: 10px;
     }
 
+    /* Styles the placeholder text to be light white/gray */
+    .status-textarea::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
     .post-btn {
         margin-top: 15px;
-        background: #00308269;
+        background: #003082;
         color: white;
         border: none;
         padding: 12px 20px;
         border-radius: 8px;
         cursor: pointer;
         font-size: 16px;
+        transition: background 0.2s;
     }
 
     .post-btn:hover {
-        background: #001f52;
+        background: #0044b5;
     }
 
     .feed-heading {
         font-size: 28px;
         font-weight: bold;
-        color: #c0d7fd;
+        color: #001f52;
         margin-top: 40px;
         margin-bottom: 20px;
     }
@@ -57,7 +65,7 @@
         text-align: center;
         color: #c0d7fd;
         font-style: italic;
-        background: #001f52(90, 192, 232);
+        background: #001f52;
         padding: 20px;
         border-radius: 10px;
     }
@@ -97,8 +105,7 @@
             ">Add Photo</label>
             <input type="file" id="post-image" name="image" accept="image/*" style="display: none;"
                    onchange="previewImage(this)">
-            <span id="file-label" style="color: #003082; font-size: 14px;"></span>
-        </div>
+            <span id="file-label" style="color: #ffffff; font-size: 14px;"></span> </div>
 
         <img id="image-preview" src="" alt="Preview">
 
@@ -146,7 +153,6 @@
     </strong>
     · {{ post.created_at|date:"M d, Y · g:i A" }}
 </p>
-        </p>
 
         {% if post.title and post.title != "Status Update" %}
             <p style="font-size: 16px; font-weight: bold; color: #003082; margin: 0 0 6px 0;">
