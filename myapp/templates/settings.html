@@ -4,50 +4,51 @@
 
 <style>
     .settings-wrapper {
-        max-width: 540px;
-        margin: 40px auto;
+        max-width: 500px;
+        margin: 30px auto;
     }
 
     .settings-back {
-        font-size: 14px;
-        color: #003082;
+        font-size: 13px;
+        color: #001f52;
         font-weight: bold;
-        text-decoration: none;
+        text-decoration: underline;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
-    .settings-back:hover { text-decoration: underline; }
+    .settings-back:hover { color: #003082; }
 
     .settings-title {
-        font-size: 26px;
+        font-size: 22px;
         font-weight: bold;
-        color: #003082;
-        margin-bottom: 25px;
+        color: #001f52;
+        margin-bottom: 15px;
     }
 
     .settings-card {
-        background: white;
-        border-radius: 14px;
-        box-shadow: 0 2px 12px rgba(0,48,130,0.1);
+        background: #ffffff;
+        border: 2px solid #001f52;
+        border-radius: 10px;
         overflow: hidden;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
+        box-sizing: border-box;
     }
 
     .settings-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 18px 20px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 14px 18px;
+        border-bottom: 1px solid #001f52;
         cursor: pointer;
         transition: background 0.2s;
     }
 
     .settings-row:last-child { border-bottom: none; }
-    .settings-row:hover { background: #f5f8ff; }
+    .settings-row:hover { background: #fafbff; }
 
     .settings-row-left {
         display: flex;
@@ -56,34 +57,38 @@
     }
 
     .settings-row-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
         background: #e8f0ff;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .settings-row-label {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: bold;
-        color: #1a1a2e;
+        color: #001f52;
     }
 
     .settings-row-sub {
         font-size: 12px;
-        color: #888;
-        margin-top: 2px;
+        color: #666;
+        margin-top: 1px;
     }
 
-    .settings-row-arrow { color: #aaa; font-size: 18px; }
+    .settings-row-arrow { 
+        color: #001f52; 
+        font-size: 18px; 
+        font-weight: bold;
+    }
 
     .settings-expandable {
         display: none;
-        padding: 0 20px 18px 68px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 14px 18px 14px 62px;
+        border-bottom: 1px solid #001f52;
         background: #fafbff;
     }
 
@@ -91,33 +96,33 @@
 
     .settings-expandable a, .settings-expandable-link {
         display: inline-block;
-        background: #e8f0ff;
+        background: #99afc4;
         color: #003082;
-        padding: 8px 16px;
-        border-radius: 20px;
+        padding: 6px 12px;
+        border-radius: 15px;
         font-weight: bold;
-        font-size: 14px;
+        font-size: 12px;
         text-decoration: none;
-        margin: 6px 6px 0 0;
+        margin: 4px 4px 0 0;
         transition: background 0.2s;
     }
 
     .settings-expandable a:hover { background: #c8d8ff; }
 
     .settings-expandable p {
-        font-size: 14px;
-        color: #555;
-        margin: 8px 0;
+        font-size: 13px;
+        color: #333;
+        margin: 6px 0;
     }
 
-    .settings-expandable strong { color: #003082; }
+    .settings-expandable strong { color: #001f52; }
 
-    /* Theme toggle */
+    /* Theme toggle row configuration */
     .theme-toggle-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 18px 20px;
+        padding: 14px 18px;
     }
 
     .theme-toggle-left {
@@ -128,8 +133,8 @@
 
     .toggle-track {
         position: relative;
-        width: 52px;
-        height: 28px;
+        width: 46px;
+        height: 24px;
         display: inline-block;
     }
 
@@ -144,46 +149,47 @@
         cursor: pointer;
         top: 0; left: 0; right: 0; bottom: 0;
         background: #b4cbff;
-        border-radius: 28px;
+        border-radius: 24px;
         transition: 0.3s;
     }
 
     .toggle-slider:before {
         content: '';
         position: absolute;
-        height: 22px; width: 22px;
+        height: 18px; width: 18px;
         left: 3px; bottom: 3px;
         background: white;
         border-radius: 50%;
         transition: 0.3s;
     }
 
-    input:checked + .toggle-slider { background: #003082; }
-    input:checked + .toggle-slider:before { transform: translateX(24px); }
+    input:checked + .toggle-slider { background: #001f52; }
+    input:checked + .toggle-slider:before { transform: translateX(22px); }
 
-    .toggle-label { font-size: 14px; color: #888; }
+    .toggle-label { font-size: 13px; color: #666; font-weight: bold; }
 
-    /* About logo */
+    /* About identity block styling */
     .about-logo-row {
         display: flex;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 14px;
+        gap: 12px;
+        margin-bottom: 10px;
     }
 
     .about-logo-row img {
-        height: 50px;
+        height: 40px;
         width: auto;
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     .about-logo-row .site-name {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
-        color: #003082;
+        color: #001f52;
     }
 
-    body.dark .settings-card { background: #1e3448 !important; box-shadow: 0 2px 12px rgba(0,0,0,0.3) !important; }
+    /* Dark Mode Theme Rules override fallback elements safely */
+    body.dark .settings-card { background: #1e3448 !important; border-color: #7ec8e3 !important; }
     body.dark .settings-row:hover { background: #1a2f45 !important; }
     body.dark .settings-row { border-bottom-color: #0f1f2e !important; }
     body.dark .settings-row-label { color: #d0e8f5 !important; }
@@ -194,17 +200,18 @@
     body.dark .settings-row-icon { background: #1a2f45 !important; }
     body.dark .settings-back { color: #7ec8e3 !important; }
     body.dark .settings-title { color: #7ec8e3 !important; }
+    body.dark .settings-row-arrow { color: #7ec8e3 !important; }
+    body.dark .about-logo-row .site-name { color: #7ec8e3 !important; }
 </style>
 
 <div class="settings-wrapper">
     <a href="{% url 'home' %}" class="settings-back">Back to Dashboard</a>
     <div class="settings-title">Settings</div>
 
-    <!-- THEME -->
     <div class="settings-card">
         <div class="theme-toggle-row">
             <div class="theme-toggle-left">
-                <div class="settings-row-icon"></div>
+                <div class="settings-row-icon">🎨</div>
                 <div>
                     <div class="settings-row-label">Theme</div>
                     <div class="settings-row-sub">Light / Dark mode</div>
@@ -221,7 +228,6 @@
         </div>
     </div>
 
-    <!-- ACCOUNT -->
     <div class="settings-card">
         <div class="settings-row" onclick="toggleExpand('account-expand', this)">
             <div class="settings-row-left">
@@ -239,7 +245,6 @@
         </div>
     </div>
 
-    <!-- HELP & ADMIN REQUEST -->
     <div class="settings-card">
         <div class="settings-row" onclick="toggleExpand('help-expand', this)">
             <div class="settings-row-left">
@@ -256,18 +261,6 @@
             <a href="{% url 'user_request' %}">Request to Admin</a>
         </div>
     </div>
-
-        <div class="settings-expandable" id="about-expand">
-            <div class="about-logo-row">
-                <img src="{% static 'images/logo.jpg' %}" alt="Iramora Logo">
-                <span class="site-name">Iramora</span>
-            </div>
-            <p><strong>Developer:</strong> Rowella L. Lazaro</p>
-            <p><strong>Description:</strong> Iramora means a space for ideas, reflection, and expression shared through media and writing. It represents a digital environment where thoughts become stories, and stories connect people.</p>
-            <p><strong>Version:</strong> 1.0.0</p>
-        </div>
-    </div>
-
 </div>
 
 <script>

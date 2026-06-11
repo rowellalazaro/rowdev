@@ -141,7 +141,7 @@
 </style>
 
 <div class="files-wrapper">
-    <a href="{% url 'home' %}" class="files-back">← Back to Dashboard</a>
+    <a href="{% url 'home' %}" class="files-back">Back to Dashboard</a>
     <div class="files-title">My Files</div>
     <div class="files-subtitle">Your uploaded photos organized by date</div>
 
@@ -164,7 +164,7 @@
         {% endfor %}
     {% else %}
         <div class="no-files">
-            <div class="no-files-icon">🖼️</div>
+            <div class="no-files-icon"></div>
             <p>No uploaded photos yet.</p>
         </div>
     {% endif %}
