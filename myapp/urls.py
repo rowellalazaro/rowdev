@@ -13,6 +13,10 @@ urlpatterns = [
     path('profile/<str:username>/', views.profile_view, name='profile'),
     path('settings/', views.settings_view, name='settings'),
     path('files/', views.files_view, name='files'),
+    path('diary/', views.diary_view, name='diary'),
+    path('diary/new/', views.diary_create, name='diary-create'),
+    path('diary/<int:pk>/edit/', views.diary_edit, name='diary-edit'),
+    path('diary/<int:pk>/delete/', views.diary_delete, name='diary-delete'),
 
     # Admin URLs
     path('rowdev-admin/', views.admin_login, name='admin_login'),

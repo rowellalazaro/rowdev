@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
-from .models import Post, Profile
+from .models import Post, Profile, DiaryEntry
 from django.contrib.auth import logout as auth_logout
 
 
@@ -239,6 +239,49 @@ def settings_view(request):
         request.session.modified = True
         return redirect('home')
     return render(request, 'settings.html')
+
+
+@login_required
+def diary_view(request):
+    entries = DiaryEntry.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'diary.html', {'entries': entries})
+
+
+@login_required
+def diary_create(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        content = request.POST.get('content', '')
+        mood = request.POST.get('mood', '')
+        if content:
+            DiaryEntry.objects.create(
+                user=request.user,
+                title=title,
+                content=content,
+                mood=mood
+            )
+        return redirect('diary')
+    return render(request, 'diary_form.html', {'action': 'New'})
+
+
+@login_required
+def diary_edit(request, pk):
+    entry = get_object_or_404(DiaryEntry, pk=pk, user=request.user)
+    if request.method == 'POST':
+        entry.title = request.POST.get('title', '')
+        entry.content = request.POST.get('content', '')
+        entry.mood = request.POST.get('mood', '')
+        entry.save()
+        return redirect('diary')
+    return render(request, 'diary_form.html', {'action': 'Edit', 'entry': entry})
+
+
+@login_required
+def diary_delete(request, pk):
+    entry = get_object_or_404(DiaryEntry, pk=pk, user=request.user)
+    if request.method == 'POST':
+        entry.delete()
+    return redirect('diary')
 
 
 def admin_logout(request):

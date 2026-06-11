@@ -197,18 +197,18 @@
             border-radius: 0;
         }
 
-        .side-menu-links a:hover {
+      .side-menu-links a:hover {
     background: rgba(255,255,255,0.92);
     color: #0f1f3d;
     border-radius: 0 30px 30px 0;
-    margin-right: 16px;
+    width: calc(100% - 16px);
 }
 
 .side-menu-links a.active {
     background: white;
     color: #0f1f3d;
     border-radius: 0 30px 30px 0;
-    margin-right: 16px;
+    width: calc(100% - 16px);
 }
 
         .side-menu-divider {
@@ -407,7 +407,7 @@
         <a href="{% url 'home' %}" onclick="closeSideMenu()">Dashboard</a>
         <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
         <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
-        <a href="#" onclick="closeSideMenu()">Diary</a>
+        <a href="{% url 'diary' %}" onclick="closeSideMenu()">Diary</a>
         <hr class="side-menu-divider">
         <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
         <a href="#" onclick="showAbout()">About</a>

@@ -25,7 +25,6 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
-# Auto-create profile when user is created
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
@@ -36,15 +35,16 @@ def save_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
 
+
 class UserRequest(models.Model):
     REQUEST_TYPES = [
-    ('bug', 'Bug Report'),
-    ('error', 'Error / Something Not Working'),
-    ('suggestion', 'Suggestion / Feature Request'),
-    ('account', 'Account Concern'),
-    ('content', 'Content Concern'),
-    ('other', 'Other'),
-]
+        ('bug', 'Bug Report'),
+        ('error', 'Error / Something Not Working'),
+        ('suggestion', 'Suggestion / Feature Request'),
+        ('account', 'Account Concern'),
+        ('content', 'Content Concern'),
+        ('other', 'Other'),
+    ]
 
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -64,3 +64,29 @@ class UserRequest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.request_type} - {self.status}"
+
+
+class DiaryEntry(models.Model):
+    MOOD_CHOICES = [
+        ('happy', '😊 Happy'),
+        ('sad', '😢 Sad'),
+        ('angry', '😠 Angry'),
+        ('anxious', '😰 Anxious'),
+        ('calm', '😌 Calm'),
+        ('excited', '🤩 Excited'),
+        ('tired', '😴 Tired'),
+        ('neutral', '😐 Neutral'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200, blank=True, null=True)
+    content = models.TextField()
+    mood = models.CharField(max_length=20, choices=MOOD_CHOICES, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title or 'Entry'} - {self.created_at.date()}"
+
+    class Meta:
+        ordering = ['-created_at']
