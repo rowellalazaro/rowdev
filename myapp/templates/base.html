@@ -17,14 +17,6 @@
         body.dark .card p, body.dark .card span, body.dark .card a,
         body.dark .card h1, body.dark .card h2, body.dark .card h3,
         body.dark .card h4, body.dark .card h5, body.dark .card small { color: #ffffff !important; }
-        body.dark .side-menu { background: #0f1f2e !important; }
-        body.dark .side-menu a, body.dark .side-menu-btn { color: #d0e8f5 !important; border-bottom-color: #1a2a3a !important; }
-        body.dark .side-menu a:hover, body.dark .side-menu-btn:hover { background: #1e3448 !important; }
-        body.dark .side-menu .logout-item { color: #ff6b6b !important; }
-        body.dark .side-menu-user-info { border-bottom-color: #1a2a3a !important; }
-        body.dark .side-menu-user-info .display-name { color: #d0e8f5 !important; }
-        body.dark .side-menu-divider { border-color: #1a2a3a !important; }
-        body.dark .side-menu-section-label { color: #7ec8e3 !important; }
         body.dark .settings-box { background: #1e3448 !important; color: #d0e8f5 !important; }
         body.dark .settings-box h2 { color: #7ec8e3 !important; }
         body.dark .settings-section { border-bottom-color: #0f1f2e !important; }
@@ -107,94 +99,91 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             z-index: 200;
         }
 
+        /* ── SIDE MENU ── */
         .side-menu {
             position: fixed;
             top: 0; left: -300px;
-            width: 260px;
+            width: 270px;
             height: 100%;
-            background: white;
+            background: #0f1f3d;
             z-index: 300;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
             transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .side-menu.open { left: 0; }
 
-        .side-menu-header {
+        /* Close button */
+        .side-menu-close-row {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: #003082;
-            flex-shrink: 0;
-        }
-
-        .side-menu-header span {
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
+            justify-content: flex-end;
+            padding: 12px 16px 0 16px;
         }
 
         .side-menu-close {
             background: none;
             border: none;
-            color: white;
-            font-size: 22px;
+            color: rgba(255,255,255,0.6);
+            font-size: 20px;
             cursor: pointer;
-            padding: 0;
-            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
         }
 
+        .side-menu-close:hover { background: rgba(255,255,255,0.1); }
+
+        /* User info */
         .side-menu-user-info {
-            padding: 18px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            flex-shrink: 0;
+            padding: 16px 20px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .side-menu-avatar {
-            width: 52px;
-            height: 52px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: #7ec8e3;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            color: #003082;
+            color: #0f1f3d;
             margin-bottom: 10px;
         }
 
         .side-menu-user-info .display-name {
             font-size: 16px;
             font-weight: bold;
-            color: #003082;
+            color: #ffffff;
         }
 
         .side-menu-user-info .display-email {
-            font-size: 13px;
-            color: #666;
-            margin-top: 2px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 3px;
         }
 
+        /* Nav links */
         .side-menu-links {
             flex: 1;
-            display: flex;
-            flex-direction: column;
+            padding: 12px 0;
+            overflow-y: auto;
         }
 
-        .side-menu a, .side-menu-btn {
+        .side-menu-links a, .side-menu-btn {
             display: block;
             width: 100%;
-            padding: 15px 20px;
-            color: #003082;
+            padding: 13px 24px;
+            color: rgba(255,255,255,0.75);
             font-weight: bold;
             text-decoration: none;
             border: none;
@@ -203,38 +192,53 @@
             cursor: pointer;
             font-family: Arial;
             font-size: 15px;
-            border-bottom: 1px solid #f0f0f0;
+            box-sizing: border-box;
+            transition: background 0.2s, color 0.2s;
+            border-radius: 0;
+        }
+
+        .side-menu-links a:hover {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .side-menu-links a.active {
+            background: rgba(126, 200, 227, 0.15);
+            color: #7ec8e3;
+            border-left: 3px solid #7ec8e3;
+        }
+
+        .side-menu-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 8px 16px;
+        }
+
+        /* Bottom logout */
+        .side-menu-bottom {
+            padding: 12px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .side-menu-bottom .logout-item {
+            display: block;
+            width: 100%;
+            padding: 13px 24px;
+            color: #ff6b6b;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-family: Arial;
+            font-size: 15px;
             box-sizing: border-box;
             transition: background 0.2s;
         }
 
-        .side-menu a:hover, .side-menu-btn:hover { background: #f0f4ff; }
-
-        .side-menu-divider {
-            border: none;
-            border-top: 1px solid #e0e0e0;
-            margin: 8px 0;
-        }
-
-        .side-menu-section-label {
-            padding: 8px 20px 4px 20px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .side-menu-bottom {
-            flex-shrink: 0;
-            border-top: 2px solid #e0e0e0;
-            margin-top: auto;
-        }
-
-        .side-menu .logout-item {
-            color: #820000;
-            border-bottom: none;
-            width: 100%;
+        .side-menu-bottom .logout-item:hover {
+            background: rgba(255, 107, 107, 0.1);
         }
 
         .container {
@@ -302,6 +306,39 @@
             text-decoration: none;
             font-weight: bold;
         }
+
+        /* About modal */
+        .about-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 400;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-modal.open { display: flex; }
+
+        .about-modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 380px;
+            width: 90%;
+            position: relative;
+        }
+
+        .about-modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
     </style>
 
     <script>
@@ -352,8 +389,8 @@
 
 {% if user.is_authenticated %}
 <div class="side-menu" id="side-menu">
-    <div class="side-menu-header">
-        <span>Menu</span>
+
+    <div class="side-menu-close-row">
         <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
     </div>
 
@@ -368,25 +405,23 @@
         <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
         <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
         <a href="#" onclick="closeSideMenu()">Diary</a>
-
         <hr class="side-menu-divider">
-
         <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
-        <a href="#about-section" onclick="showAbout()">About</a>
+        <a href="#" onclick="showAbout()">About</a>
     </div>
 
     <div class="side-menu-bottom">
         <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
             {% csrf_token %}
-            <button type="submit" class="side-menu-btn logout-item">Logout</button>
+            <button type="submit" class="logout-item">Logout</button>
         </form>
     </div>
 </div>
 
 <!-- About Modal -->
-<div id="about-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:400; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:16px; padding:30px; max-width:380px; width:90%; position:relative;">
-        <button onclick="closeAbout()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:20px; cursor:pointer; color:#666;">✕</button>
+<div class="about-modal" id="about-modal">
+    <div class="about-modal-box">
+        <button class="about-modal-close" onclick="closeAbout()">✕</button>
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
             <img src="{% static 'images/logo.jpg' %}" style="height:50px; width:auto; border-radius:10px;">
             <span style="font-size:22px; font-weight:bold; color:#003082;">Iramora</span>
@@ -421,12 +456,11 @@
 
     function showAbout() {
         closeSideMenu();
-        const modal = document.getElementById('about-modal');
-        modal.style.display = 'flex';
+        document.getElementById('about-modal').classList.add('open');
     }
 
     function closeAbout() {
-        document.getElementById('about-modal').style.display = 'none';
+        document.getElementById('about-modal').classList.remove('open');
     }
 </script>
 
