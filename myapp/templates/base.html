@@ -23,6 +23,8 @@
         body.dark .side-menu .logout-item { color: #ff6b6b !important; }
         body.dark .side-menu-user-info { border-bottom-color: #1a2a3a !important; }
         body.dark .side-menu-user-info .display-name { color: #d0e8f5 !important; }
+        body.dark .side-menu-divider { border-color: #1a2a3a !important; }
+        body.dark .side-menu-section-label { color: #7ec8e3 !important; }
         body.dark .settings-box { background: #1e3448 !important; color: #d0e8f5 !important; }
         body.dark .settings-box h2 { color: #7ec8e3 !important; }
         body.dark .settings-section { border-bottom-color: #0f1f2e !important; }
@@ -100,7 +102,6 @@
             border-radius: 20px;
         }
 
-        /* ── OVERLAY ── */
         .overlay {
             display: none;
             position: fixed;
@@ -110,7 +111,6 @@
             z-index: 200;
         }
 
-        /* ── SIDE MENU ── */
         .side-menu {
             position: fixed;
             top: 0; left: -300px;
@@ -133,6 +133,7 @@
             justify-content: space-between;
             padding: 16px 20px;
             background: #003082;
+            flex-shrink: 0;
         }
 
         .side-menu-header span {
@@ -154,6 +155,7 @@
         .side-menu-user-info {
             padding: 18px 20px;
             border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
         }
 
         .side-menu-avatar {
@@ -182,6 +184,12 @@
             margin-top: 2px;
         }
 
+        .side-menu-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .side-menu a, .side-menu-btn {
             display: block;
             width: 100%;
@@ -202,9 +210,31 @@
 
         .side-menu a:hover, .side-menu-btn:hover { background: #f0f4ff; }
 
+        .side-menu-divider {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .side-menu-section-label {
+            padding: 8px 20px 4px 20px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .side-menu-bottom {
+            flex-shrink: 0;
+            border-top: 2px solid #e0e0e0;
+            margin-top: auto;
+        }
+
         .side-menu .logout-item {
             color: #820000;
             border-bottom: none;
+            width: 100%;
         }
 
         .container {
@@ -333,13 +363,41 @@
         <div class="display-email">{{ user.email }}</div>
     </div>
 
-    <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
-    <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
-    <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
-    <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
-        {% csrf_token %}
-        <button type="submit" class="side-menu-btn logout-item">Logout</button>
-    </form>
+    <div class="side-menu-links">
+        <a href="{% url 'home' %}" onclick="closeSideMenu()">Dashboard</a>
+        <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
+        <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
+        <a href="#" onclick="closeSideMenu()">Diary</a>
+
+        <hr class="side-menu-divider">
+
+        <a href="{% url 'settings' %}" onclick="closeSideMenu()">Settings</a>
+        <a href="#about-section" onclick="showAbout()">About</a>
+    </div>
+
+    <div class="side-menu-bottom">
+        <form action="{% url 'logout' %}" method="post" style="margin:0; padding:0;">
+            {% csrf_token %}
+            <button type="submit" class="side-menu-btn logout-item">Logout</button>
+        </form>
+    </div>
+</div>
+
+<!-- About Modal -->
+<div id="about-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:400; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; padding:30px; max-width:380px; width:90%; position:relative;">
+        <button onclick="closeAbout()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:20px; cursor:pointer; color:#666;">✕</button>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <img src="{% static 'images/logo.jpg' %}" style="height:50px; width:auto; border-radius:10px;">
+            <span style="font-size:22px; font-weight:bold; color:#003082;">Iramora</span>
+        </div>
+        <p style="color:#444; font-size:14px; line-height:1.6; margin-bottom:10px;">
+            Iramora means a space for ideas, reflection, and expression shared through media and writing.
+            It represents a digital environment where thoughts become stories, and stories connect people.
+        </p>
+        <p style="color:#888; font-size:13px; margin:4px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
+        <p style="color:#888; font-size:13px; margin:4px 0;"><strong>Version:</strong> 1.0.0</p>
+    </div>
 </div>
 {% endif %}
 
@@ -359,6 +417,16 @@
         document.getElementById('side-menu').classList.remove('open');
         document.getElementById('overlay').style.display = 'none';
         document.body.style.overflow = '';
+    }
+
+    function showAbout() {
+        closeSideMenu();
+        const modal = document.getElementById('about-modal');
+        modal.style.display = 'flex';
+    }
+
+    function closeAbout() {
+        document.getElementById('about-modal').style.display = 'none';
     }
 </script>
 
