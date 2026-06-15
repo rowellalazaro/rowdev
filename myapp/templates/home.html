@@ -119,7 +119,6 @@
         border-radius: 8px;
     }
 
-    /* ── SIDEBAR WIDGETS ── */
     .widget {
         background: white;
         border-radius: 10px;
@@ -299,7 +298,6 @@
 
     .calendar-day.other-month { color: #ccc; }
 
-    /* Dark mode */
     body.dark .widget { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .widget-title { color: #7ec8e3 !important; }
     body.dark .todo-item { color: #d0e8f5 !important; border-bottom-color: #0f1f2e !important; }
@@ -319,7 +317,6 @@
 
 <div class="home-layout">
 
-    <!-- MAIN FEED -->
     <div class="home-main">
         <div class="status-box">
             <div class="status-title">What's on your mind?</div>
@@ -384,7 +381,6 @@
         {% endfor %}
     </div>
 
-    <!-- RIGHT SIDEBAR -->
     <div class="home-sidebar">
 
         <div class="widget">
@@ -399,7 +395,6 @@
         <div class="widget">
             <div class="widget-title">Notes</div>
             <textarea class="notes-textarea" id="notes-area" placeholder="Jot something down..."></textarea>
-            <button class="notes-save-btn" onclick="saveNotes()">Save</button>
             <div class="notes-saved" id="notes-saved">Saved!</div>
         </div>
 
@@ -451,7 +446,6 @@
         }
     }
 
-    // ── TODO ──
     let todos = JSON.parse(localStorage.getItem('iramora_todos') || '[]');
 
     function saveTodos() { localStorage.setItem('iramora_todos', JSON.stringify(todos)); }
@@ -495,18 +489,22 @@
 
     renderTodos();
 
-    // ── NOTES ──
     const notesArea = document.getElementById('notes-area');
-    notesArea.value = localStorage.getItem('iramora_notes') || '';
-
-    function saveNotes() {
-        localStorage.setItem('iramora_notes', notesArea.value);
-        const saved = document.getElementById('notes-saved');
-        saved.style.display = 'block';
-        setTimeout(() => saved.style.display = 'none', 2000);
+    if (notesArea) {
+        notesArea.value = localStorage.getItem('iramora_notes') || '';
+        notesArea.addEventListener('input', function() {
+            localStorage.setItem('iramora_notes', notesArea.value);
+            const saved = document.getElementById('notes-saved');
+            if (saved) {
+                saved.style.display = 'block';
+                if (window.notesTimeout) clearTimeout(window.notesTimeout);
+                window.notesTimeout = setTimeout(() => {
+                    saved.style.display = 'none';
+                }, 1500);
+            }
+        });
     }
 
-    // ── CALENDAR ──
     let calDate = new Date();
 
     function renderCalendar() {
