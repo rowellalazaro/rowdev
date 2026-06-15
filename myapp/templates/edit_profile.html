@@ -79,6 +79,57 @@
         margin: 5px 0 0 0;
         padding-left: 20px;
     }
+
+    /* ── DARK MODE COMPATIBILITY OVERRIDES (Sakto sa kulay ng base.html) ── */
+    body.dark .profile-form-box {
+        background: #1e3448 !important; /* Parehas sa card container dark style ng base */
+        border-color: #0f1f2e !important;
+    }
+
+    body.dark .profile-form-box h1 {
+        color: #7ec8e3 !important; /* Light blue accent */
+    }
+
+    body.dark .profile-form-box label {
+        color: #ffffff !important;
+    }
+
+    body.dark .profile-form-box input[type="text"],
+    body.dark .profile-form-box input[type="email"],
+    body.dark .profile-form-box input[type="date"],
+    body.dark .profile-form-box textarea {
+        background: #1a2a3a !important; /* Madilim na input background sa base */
+        color: #d0e8f5 !important;
+        border-color: #0f1f2e !important;
+    }
+
+    body.dark .btn-save {
+        background-color: #1e3a52 !important; /* Matingkad na button override para sa dark screen */
+        color: #7ec8e3 !important;
+    }
+
+    body.dark .btn-save:hover {
+        background-color: #254a6a !important;
+    }
+
+    body.dark .profile-pic-preview {
+        border-color: #7ec8e3 !important;
+    }
+
+    body.dark .pic-placeholder-box {
+        background: #1a2a3a !important;
+        border-color: #7ec8e3 !important;
+        color: #ffffff !important;
+    }
+
+    body.dark .photo-upload-label {
+        background: #1e3a52 !important;
+        color: #7ec8e3 !important;
+    }
+
+    body.dark .cancel-link {
+        color: #7ec8e3 !important;
+    }
 </style>
 
 <div class="profile-form-box">
@@ -98,7 +149,7 @@
         {% if request.user.profile.profile_pic %}
             <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
         {% else %}
-            <div style="
+            <div class="pic-placeholder-box" style="
                 width: 70px; height: 70px; border-radius: 50%;
                 background: #001f52; display: flex; align-items: center;
                 justify-content: center; font-size: 26px; color: white;
@@ -107,7 +158,7 @@
         {% endif %}
 
         <label>Profile Picture</label>
-        <label for="id_profile_pic" style="
+        <label for="id_profile_pic" class="photo-upload-label" style="
             display: inline-block;
             background: #99afc4;
             color: #003082;
@@ -136,7 +187,7 @@
 
         <button type="submit" class="btn-save">Save Changes</button>
 
-        <a href="{% url 'profile' request.user.username %}" style="
+        <a href="{% url 'profile' request.user.username %}" class="cancel-link" style="
             display: block;
             text-align: center;
             margin-top: 12px;

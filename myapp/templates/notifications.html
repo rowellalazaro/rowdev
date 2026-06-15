@@ -28,6 +28,11 @@
         cursor: pointer;
         font-size: 13px;
         font-weight: bold;
+        transition: background 0.2s;
+    }
+
+    .mark-read-btn:hover {
+        background: #002d75;
     }
 
     .notif-card {
@@ -76,6 +81,45 @@
         background: white;
         border-radius: 10px;
         border: 1px solid #e0e6f0;
+    }
+
+    /* ── DARK MODE COMPATIBILITY OVERRIDES (Walang binago sa structure) ── */
+    body.dark .notif-header h2 {
+        color: #7ec8e3 !important; /* Kaparehas ng light blue accent mo sa settings */
+    }
+
+    body.dark .mark-read-btn {
+        background: #1e3a52 !important;
+        color: #7ec8e3 !important;
+    }
+
+    body.dark .mark-read-btn:hover {
+        background: #254a6a !important;
+    }
+
+    body.dark .notif-card {
+        background: #1e3448 !important; /* Kaparehas ng card style mo sa base */
+        border-color: #0f1f2e !important;
+        border-left-color: #ffffff !important;
+    }
+
+    body.dark .notif-card.unread {
+        background: #152433 !important; /* Mas madilim nang bahagya para sa unread contrast */
+        border-left-color: #7ec8e3 !important;
+    }
+
+    body.dark .notif-message {
+        color: #ffffff !important;
+    }
+
+    body.dark .notif-date {
+        color: #a4cbd6 !important;
+    }
+
+    body.dark .no-notifs {
+        background: #1e3448 !important;
+        border-color: #0f1f2e !important;
+        color: #a4cbd6 !important;
     }
 </style>
 
