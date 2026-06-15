@@ -17,11 +17,15 @@ urlpatterns = [
     path('diary/new/', views.diary_create, name='diary-create'),
     path('diary/<int:pk>/edit/', views.diary_edit, name='diary-edit'),
     path('diary/<int:pk>/delete/', views.diary_delete, name='diary-delete'),
+    path('notifications/', views.notifications_view, name='notifications'),
+    path('notifications/mark-read/', views.mark_notifications_read, name='mark_notifications_read'),
 
     # Admin URLs
     path('rowdev-admin/', views.admin_login, name='admin_login'),
     path('rowdev-admin/dashboard/', views.admin_page, name='admin_page'),
     path('rowdev-admin/user/<int:user_id>/', views.admin_user_detail, name='admin_user_detail'),
+    path('rowdev-admin/user/<int:user_id>/edit/', views.admin_edit_user, name='admin_edit_user'),
+    path('rowdev-admin/user/<int:user_id>/message/', views.admin_message_user, name='admin_message_user'),
     path('rowdev-admin/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
     path('rowdev-admin/toggle/<int:user_id>/', views.admin_toggle_user, name='admin_toggle_user'),
     path('rowdev-admin/post/delete/<int:post_id>/', views.admin_delete_post, name='admin_delete_post'),

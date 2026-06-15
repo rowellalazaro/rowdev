@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
-from .models import Post, Profile, DiaryEntry, PostImage
+from .models import Post, Profile, DiaryEntry, PostImage, Notification
 from django.contrib.auth import logout as auth_logout
 
 
@@ -113,6 +113,66 @@ def admin_user_detail(request, user_id):
     profile, created = Profile.objects.get_or_create(user=u)
     posts = Post.objects.filter(author=u).order_by('-created_at')
     return render(request, 'admin_user_detail.html', {'u': u, 'profile': profile, 'posts': posts})
+
+
+def admin_edit_user(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    u = get_object_or_404(User, id=user_id)
+    error = None
+    success = None
+    if request.method == 'POST':
+        new_username = request.POST.get('username', '').strip()
+        new_email = request.POST.get('email', '').strip()
+        if new_username and new_username != u.username:
+            if User.objects.filter(username=new_username).exclude(id=u.id).exists():
+                error = 'Username already taken.'
+            else:
+                u.username = new_username
+        if new_email:
+            u.email = new_email
+        if not error:
+            u.save()
+            Notification.objects.create(
+                user=u,
+                message=f'Your account details have been updated by the admin.'
+            )
+            success = 'User updated successfully.'
+    return render(request, 'admin_user_detail.html', {
+        'u': u,
+        'profile': Profile.objects.get_or_create(user=u)[0],
+        'posts': Post.objects.filter(author=u).order_by('-created_at'),
+        'edit_error': error,
+        'edit_success': success,
+    })
+
+
+def admin_message_user(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    u = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        message = request.POST.get('message', '').strip()
+        if message:
+            Notification.objects.create(user=u, message=message)
+    return redirect('admin_user_detail', user_id=user_id)
+
+
+@login_required
+def notifications_view(request):
+    notifs = Notification.objects.filter(user=request.user).order_by('-created_at')
+    unread_count = notifs.filter(is_read=False).count()
+    return render(request, 'notifications.html', {
+        'notifs': notifs,
+        'unread_count': unread_count,
+    })
+
+
+@login_required
+def mark_notifications_read(request):
+    if request.method == 'POST':
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return redirect('notifications')
 
 
 @login_required
@@ -329,8 +389,16 @@ def admin_handle_request(request, request_id):
                 profile, _ = Profile.objects.get_or_create(user=u)
                 profile.birthday = req.requested_value
                 profile.save()
+            Notification.objects.create(
+                user=u,
+                message=f'Your request ({req.get_request_type_display()}) has been approved. {admin_note}'
+            )
         elif action == 'reject':
             req.status = 'rejected'
             req.admin_note = admin_note
             req.save()
+            Notification.objects.create(
+                user=req.user,
+                message=f'Your request ({req.get_request_type_display()}) has been rejected. {admin_note}'
+            )
     return redirect('admin_page')

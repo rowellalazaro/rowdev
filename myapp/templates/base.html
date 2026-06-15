@@ -380,14 +380,22 @@
         <span>Iramora</span>
     </a>
 
-    {% if not user.is_authenticated %}
-    <div class="nav-right">
-        <div class="auth-links">
-            <a href="{% url 'account_login' %}">Login</a>
-            <a class="btn" href="{% url 'register' %}">Join Now</a>
-        </div>
-    </div>
-    {% endif %}
+    {% if user.is_authenticated %}
+<div class="nav-right" style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+    <a href="{% url 'notifications' %}" style="position:relative; color:white; text-decoration:none; font-size:20px;">
+        🔔
+        {% with unread=request.user.notifications.all %}
+        {% with count=unread|length %}
+        {% if count > 0 %}
+        <span style="position:absolute; top:-6px; right:-8px; background:#ff4d4d; color:white; border-radius:50%; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+            {{ count }}
+        </span>
+        {% endif %}
+        {% endwith %}
+        {% endwith %}
+    </a>
+</div>
+{% endif %}
 </div>
 
 {% if user.is_authenticated %}
@@ -406,6 +414,7 @@
     <div class="side-menu-links">
         <a href="{% url 'home' %}" onclick="closeSideMenu()">Dashboard</a>
         <a href="{% url 'profile' user.username %}" onclick="closeSideMenu()">My Profile</a>
+        <a href="{% url 'notifications' %}" onclick="closeSideMenu()">🔔 Notifications</a>
         <a href="{% url 'files' %}" onclick="closeSideMenu()">Files</a>
         <a href="{% url 'diary' %}" onclick="closeSideMenu()">Diary</a>
         <hr class="side-menu-divider">

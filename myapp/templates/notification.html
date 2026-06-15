@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .notif-box {
+        max-width: 600px;
+        margin: 30px auto;
+    }
+
+    .notif-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .notif-header h2 {
+        color: #001f52;
+        margin: 0;
+    }
+
+    .mark-read-btn {
+        background: #001f52;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .notif-card {
+        background: white;
+        border: 1px solid #e0e6f0;
+        border-radius: 10px;
+        padding: 15px 18px;
+        margin-bottom: 12px;
+        border-left: 4px solid #001f52;
+        position: relative;
+    }
+
+    .notif-card.unread {
+        border-left-color: #57a3c1;
+        background: #f0f7ff;
+    }
+
+    .notif-card.unread::after {
+        content: '';
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 8px;
+        height: 8px;
+        background: #57a3c1;
+        border-radius: 50%;
+    }
+
+    .notif-message {
+        color: #001f52;
+        font-size: 14px;
+        margin: 0 0 6px 0;
+    }
+
+    .notif-date {
+        color: #888;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .no-notifs {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+        padding: 40px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e0e6f0;
+    }
+</style>
+
+<div class="notif-box">
+    <div class="notif-header">
+        <h2>🔔 Notifications</h2>
+        {% if unread_count > 0 %}
+        <form action="{% url 'mark_notifications_read' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="mark-read-btn">Mark all as read</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if notifs %}
+        {% for notif in notifs %}
+        <div class="notif-card {% if not notif.is_read %}unread{% endif %}">
+            <p class="notif-message">{{ notif.message }}</p>
+            <p class="notif-date">{{ notif.created_at|date:"M d, Y · g:i A" }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-notifs">No notifications yet.</div>
+    {% endif %}
+</div>
+
+{% endblock %}
