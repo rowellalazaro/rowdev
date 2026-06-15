@@ -45,7 +45,14 @@ def home(request):
         return redirect('home')
 
     posts = Post.objects.filter(author__is_active=True).order_by('-created_at')
-    return render(request, 'home.html', {'posts': posts})
+    
+    # Kukunin ang unread count para sa notification badge sa home navbar
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    return render(request, 'home.html', {
+        'posts': posts,
+        'unread_count': unread_count, # Ipinasa ang tamang bilang dito
+    })
 
 
 def admin_check(user):
@@ -180,10 +187,14 @@ def profile_view(request, username):
     user_obj = get_object_or_404(User, username=username)
     profile, created = Profile.objects.get_or_create(user=user_obj)
     posts = Post.objects.filter(author=user_obj).order_by('-created_at')
+    
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
     return render(request, 'profile.html', {
         'profile_user': user_obj,
         'profile': profile,
         'posts': posts,
+        'unread_count': unread_count,
     })
 
 
@@ -210,9 +221,12 @@ def edit_profile(request):
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileForm(instance=profile)
 
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+
     return render(request, 'edit_profile.html', {
         'user_form': user_form,
         'profile_form': profile_form,
+        'unread_count': unread_count,
     })
 
 
@@ -244,7 +258,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
             PostImage.objects.create(post=self.object, image=img)
         return response
 
-    def get_context_data(**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Create Post'
         return context
@@ -263,7 +277,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         return super().form_valid(form)
 
-    def get_context_data(**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Edit Post'
         return context
@@ -294,13 +308,15 @@ def user_request(request):
         )
         return redirect('user_request')
     my_requests = UserRequest.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'user_request.html', {'my_requests': my_requests})
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'user_request.html', {'my_requests': my_requests, 'unread_count': unread_count})
 
 
 @login_required
 def files_view(request):
     posts = Post.objects.filter(author=request.user, image__isnull=False).exclude(image='').order_by('-created_at')
-    return render(request, 'files.html', {'posts': posts})
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'files.html', {'posts': posts, 'unread_count': unread_count})
 
 
 @login_required
@@ -310,13 +326,15 @@ def settings_view(request):
         request.session['theme'] = request.POST.get('theme', 'light')
         request.session.modified = True
         return redirect('home')
-    return render(request, 'settings.html')
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'settings.html', {'unread_count': unread_count})
 
 
 @login_required
 def diary_view(request):
     entries = DiaryEntry.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'diary.html', {'entries': entries})
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'diary.html', {'entries': entries, 'unread_count': unread_count})
 
 
 @login_required
@@ -333,7 +351,8 @@ def diary_create(request):
                 mood=mood
             )
         return redirect('diary')
-    return render(request, 'diary_form.html', {'action': 'New'})
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'diary_form.html', {'action': 'New', 'unread_count': unread_count})
 
 
 @login_required
@@ -345,7 +364,8 @@ def diary_edit(request, pk):
         entry.mood = request.POST.get('mood', '')
         entry.save()
         return redirect('diary')
-    return render(request, 'diary_form.html', {'action': 'Edit', 'entry': entry})
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, 'diary_form.html', {'action': 'Edit', 'entry': entry, 'unread_count': unread_count})
 
 
 @login_required
