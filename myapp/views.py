@@ -244,7 +244,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
             PostImage.objects.create(post=self.object, image=img)
         return response
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(**kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Create Post'
         return context
@@ -263,7 +263,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         return super().form_valid(form)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(**kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Edit Post'
         return context
