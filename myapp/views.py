@@ -136,7 +136,10 @@ def edit_profile(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_form.save()
+            profile_obj = profile_form.save(commit=False)
+            if not request.FILES.get('profile_pic'):
+                profile_obj.profile_pic = profile.profile_pic
+            profile_obj.save()
             return redirect('profile', username=request.user.username)
         else:
             print("--- Form Validation Failed ---")
