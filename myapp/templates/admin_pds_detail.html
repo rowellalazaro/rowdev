@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDS Detail - Iramora Admin</title>
+    <style>
+        body { margin: 0; font-family: Arial; background: #f0f4ff; }
+        .admin-navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #003082; color: white; }
+        .admin-navbar h1 { margin: 0; font-size: 20px; color: white; }
+        .back-btn { background: #b4cbff; color: #003082; padding: 8px 16px; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .container { width: 75%; margin: 30px auto; }
+        .detail-box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .detail-box h2 { color: #003082; margin-bottom: 20px; border-bottom: 2px solid #b4cbff; padding-bottom: 10px; }
+        .detail-row { display: flex; padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
+        .detail-label { font-weight: bold; color: #003082; width: 220px; min-width: 220px; font-size: 13px; }
+        .detail-value { color: #333; font-size: 13px; }
+        .skill-tag { display: inline-block; background: #e8f0ff; color: #003082; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; margin: 3px; }
+        .work-card { background: #f0f4ff; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; border-left: 3px solid #57a3c1; }
+        .work-card p { margin: 3px 0; color: #003082; font-size: 13px; }
+        .edu-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .edu-table th { background: #e8f0ff; color: #003082; padding: 8px 12px; text-align: left; }
+        .edu-table td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; color: #333; }
+        .no-data { color: #888; font-style: italic; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="admin-navbar">
+    <h1>📋 PDS — @{{ u.username }}</h1>
+    <a href="{% url 'admin_pds_list' %}" class="back-btn">Back to PDS List</a>
+</div>
+
+<div class="container">
+
+    <!-- Personal Info -->
+    <div class="detail-box">
+        <h2>I. Personal Information</h2>
+        <div class="detail-row"><span class="detail-label">Full Name</span><span class="detail-value">{{ pds.surname }}, {{ pds.first_name }} {{ pds.middle_name }} {{ pds.name_extension }}</span></div>
+        <div class="detail-row"><span class="detail-label">Date of Birth</span><span class="detail-value">{{ pds.date_of_birth|date:"M d, Y"|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Place of Birth</span><span class="detail-value">{{ pds.place_of_birth|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Sex</span><span class="detail-value">{{ pds.get_sex_display|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Civil Status</span><span class="detail-value">{{ pds.get_civil_status_display|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Height</span><span class="detail-value">{{ pds.height|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Weight</span><span class="detail-value">{{ pds.weight|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Blood Type</span><span class="detail-value">{{ pds.blood_type|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Citizenship</span><span class="detail-value">{{ pds.get_citizenship_display|default:"-" }}</span></div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="detail-box">
+        <h2>II. Contact Information</h2>
+        <div class="detail-row"><span class="detail-label">Residential Address</span><span class="detail-value">{{ pds.res_house_no }} {{ pds.res_street }}, {{ pds.res_subdivision }}, Brgy. {{ pds.res_barangay }}, {{ pds.res_city }}, {{ pds.res_province }} {{ pds.res_zip }}</span></div>
+        <div class="detail-row"><span class="detail-label">Permanent Address</span><span class="detail-value">{{ pds.perm_house_no }} {{ pds.perm_street }}, {{ pds.perm_subdivision }}, Brgy. {{ pds.perm_barangay }}, {{ pds.perm_city }}, {{ pds.perm_province }} {{ pds.perm_zip }}</span></div>
+        <div class="detail-row"><span class="detail-label">Telephone</span><span class="detail-value">{{ pds.telephone|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Mobile</span><span class="detail-value">{{ pds.mobile|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">{{ pds.email|default:"-" }}</span></div>
+    </div>
+
+    <!-- Education -->
+    <div class="detail-box">
+        <h2>III. Educational Background</h2>
+        <table class="edu-table">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>School</th>
+                    <th>Course/Strand</th>
+                    <th>Year Graduated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for level in 'elementary,secondary,college,vocational'|split:',' %}
+                <tr>
+                    <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
+                    {% with edu=education|get:level %}
+                    <td>{{ edu.school|default:"-" }}</td>
+                    <td>{{ edu.course|default:"-" }}</td>
+                    <td>{{ edu.year_graduated|default:"-" }}</td>
+                    {% endwith %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="detail-box">
+        <h2>IV. Work Experience</h2>
+        {% for work in work_list %}
+        <div class="work-card">
+            <p><strong>{{ work.position }}</strong> — {{ work.company }}</p>
+            <p style="color:#888;">{{ work.date_from|date:"M Y"|default:"" }} — {% if work.is_current %}Present{% else %}{{ work.date_to|date:"M Y"|default:"" }}{% endif %}</p>
+        </div>
+        {% empty %}
+        <p class="no-data">No work experience recorded.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Skills -->
+    <div class="detail-box">
+        <h2>V. Skills / Eligibility</h2>
+        {% for skill in skills %}
+        <span class="skill-tag">{{ skill.name }}</span>
+        {% empty %}
+        <p class="no-data">No skills recorded.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Emergency Contact -->
+    <div class="detail-box">
+        <h2>VI. Emergency Contact</h2>
+        <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">{{ pds.emergency_name|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Relationship</span><span class="detail-value">{{ pds.emergency_relationship|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">{{ pds.emergency_phone|default:"-" }}</span></div>
+        <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">{{ pds.emergency_address|default:"-" }}</span></div>
+    </div>
+
+</div>
+
+</body>
+</html>

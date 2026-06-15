@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 class Post(models.Model):
     title = models.CharField(max_length=200, blank=True, null=True)
     content = models.TextField()
@@ -38,6 +39,7 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.get_or_create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
@@ -53,13 +55,11 @@ class UserRequest(models.Model):
         ('content', 'Content Concern'),
         ('other', 'Other'),
     ]
-
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     request_type = models.CharField(max_length=20, choices=REQUEST_TYPES)
     current_value = models.CharField(max_length=200, blank=True, null=True)
@@ -85,7 +85,6 @@ class DiaryEntry(models.Model):
         ('tired', '😴 Tired'),
         ('neutral', '😐 Neutral'),
     ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, blank=True, null=True)
     content = models.TextField()
@@ -111,3 +110,98 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class PDS(models.Model):
+    SEX_CHOICES = [('male', 'Male'), ('female', 'Female')]
+    CIVIL_STATUS_CHOICES = [
+        ('single', 'Single'),
+        ('married', 'Married'),
+        ('widowed', 'Widowed'),
+        ('separated', 'Separated'),
+        ('other', 'Other'),
+    ]
+    CITIZENSHIP_CHOICES = [('filipino', 'Filipino'), ('dual', 'Dual Citizenship')]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='pds')
+
+    # Personal Info
+    surname = models.CharField(max_length=100, blank=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    middle_name = models.CharField(max_length=100, blank=True)
+    name_extension = models.CharField(max_length=20, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    place_of_birth = models.CharField(max_length=200, blank=True)
+    sex = models.CharField(max_length=10, choices=SEX_CHOICES, blank=True)
+    civil_status = models.CharField(max_length=20, choices=CIVIL_STATUS_CHOICES, blank=True)
+    height = models.CharField(max_length=20, blank=True)
+    weight = models.CharField(max_length=20, blank=True)
+    blood_type = models.CharField(max_length=5, blank=True)
+    citizenship = models.CharField(max_length=20, choices=CITIZENSHIP_CHOICES, blank=True)
+
+    # Contact Info
+    res_house_no = models.CharField(max_length=100, blank=True)
+    res_street = models.CharField(max_length=100, blank=True)
+    res_subdivision = models.CharField(max_length=100, blank=True)
+    res_barangay = models.CharField(max_length=100, blank=True)
+    res_city = models.CharField(max_length=100, blank=True)
+    res_province = models.CharField(max_length=100, blank=True)
+    res_zip = models.CharField(max_length=10, blank=True)
+    perm_house_no = models.CharField(max_length=100, blank=True)
+    perm_street = models.CharField(max_length=100, blank=True)
+    perm_subdivision = models.CharField(max_length=100, blank=True)
+    perm_barangay = models.CharField(max_length=100, blank=True)
+    perm_city = models.CharField(max_length=100, blank=True)
+    perm_province = models.CharField(max_length=100, blank=True)
+    perm_zip = models.CharField(max_length=10, blank=True)
+    telephone = models.CharField(max_length=30, blank=True)
+    mobile = models.CharField(max_length=30, blank=True)
+    email = models.CharField(max_length=100, blank=True)
+
+    # Emergency Contact
+    emergency_name = models.CharField(max_length=200, blank=True)
+    emergency_relationship = models.CharField(max_length=100, blank=True)
+    emergency_address = models.TextField(blank=True)
+    emergency_phone = models.CharField(max_length=30, blank=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"PDS of {self.user.username}"
+
+
+class Education(models.Model):
+    LEVEL_CHOICES = [
+        ('elementary', 'Elementary'),
+        ('secondary', 'Secondary'),
+        ('vocational', 'Vocational'),
+        ('college', 'College'),
+    ]
+    pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='education')
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
+    school = models.CharField(max_length=200, blank=True)
+    course = models.CharField(max_length=200, blank=True)
+    year_graduated = models.CharField(max_length=10, blank=True)
+
+    def __str__(self):
+        return f"{self.level} - {self.school}"
+
+
+class WorkExperience(models.Model):
+    pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='work_experience')
+    company = models.CharField(max_length=200, blank=True)
+    position = models.CharField(max_length=200, blank=True)
+    date_from = models.DateField(blank=True, null=True)
+    date_to = models.DateField(blank=True, null=True)
+    is_current = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.position} at {self.company}"
+
+
+class Skill(models.Model):
+    pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='skills')
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name

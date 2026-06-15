@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDS Records - Iramora Admin</title>
+    <style>
+        body { margin: 0; font-family: Arial; background: #f0f4ff; }
+        .admin-navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #003082; color: white; }
+        .admin-navbar h1 { margin: 0; font-size: 20px; color: white; }
+        .back-btn { background: #b4cbff; color: #003082; padding: 8px 16px; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .container { width: 90%; margin: 30px auto; }
+        .admin-box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .admin-box h2 { color: #003082; margin-bottom: 20px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .controls input { padding: 8px 14px; border-radius: 20px; border: 1px solid #b4cbff; font-size: 14px; width: 250px; color: #003082; }
+        .controls select { padding: 8px 14px; border-radius: 20px; border: 1px solid #b4cbff; font-size: 14px; color: #003082; cursor: pointer; }
+        .controls button { padding: 8px 16px; border-radius: 20px; background: #003082; color: white; border: none; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .pds-table { width: 100%; border-collapse: collapse; }
+        .pds-table th { background: rgb(87,163,193); color: #003082; padding: 12px; text-align: left; font-weight: bold; }
+        .pds-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; color: #003082; }
+        .pds-table tr:hover { background: #e8f0ff; }
+        .action-btn { padding: 5px 12px; border: none; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-view { background: #b4cbff; color: #003082; }
+        .badge-complete { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-incomplete { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="admin-navbar">
+    <h1>📋 PDS Records</h1>
+    <a href="{% url 'admin_page' %}" class="back-btn">Back to Dashboard</a>
+</div>
+
+<div class="container">
+    <div class="admin-box">
+        <h2>All User PDS</h2>
+        <p style="color:#003082;">Total: <strong>{{ pds_list.count }}</strong></p>
+
+        <form method="get" class="controls">
+            <input type="text" name="search" value="{{ search }}" placeholder="🔍 Search by name or username...">
+            <select name="sort">
+                <option value="username" {% if sort == 'username' %}selected{% endif %}>Sort: Username</option>
+                <option value="surname" {% if sort == 'surname' %}selected{% endif %}>Sort: Surname</option>
+                <option value="first_name" {% if sort == 'first_name' %}selected{% endif %}>Sort: First Name</option>
+                <option value="updated" {% if sort == 'updated' %}selected{% endif %}>Sort: Last Updated</option>
+            </select>
+            <button type="submit">Apply</button>
+        </form>
+
+        <table class="pds-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Civil Status</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Last Updated</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pds in pds_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>@{{ pds.user.username }}</strong></td>
+                    <td>{{ pds.surname }} {{ pds.first_name }} {{ pds.middle_name }}</td>
+                    <td>{{ pds.get_civil_status_display|default:"-" }}</td>
+                    <td>{{ pds.mobile|default:"-" }}</td>
+                    <td>{{ pds.email|default:"-" }}</td>
+                    <td>{{ pds.updated_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if pds.surname and pds.first_name and pds.mobile %}
+                            <span class="badge-complete">✅ Complete</span>
+                        {% else %}
+                            <span class="badge-incomplete">⚠️ Incomplete</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_pds_detail' pds.user.id %}" class="action-btn btn-view">👁 View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" style="text-align:center; color:#888;">No PDS records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

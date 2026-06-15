@@ -1,0 +1,541 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .pds-container {
+        max-width: 750px;
+        margin: 30px auto;
+    }
+
+    .pds-section {
+        background: white;
+        border: 2px solid #001f52;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 24px;
+    }
+
+    .pds-section h2 {
+        color: #001f52;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 18px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e6f0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .pds-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .pds-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .pds-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .pds-grid.full { grid-template-columns: 1fr; }
+
+    .pds-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .pds-field label {
+        font-size: 11px;
+        font-weight: bold;
+        color: #001f52;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .pds-field input,
+    .pds-field select,
+    .pds-field textarea {
+        padding: 8px 10px;
+        border: 1px solid #c0cfe0;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #001f52;
+        background: #f8faff;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .pds-field input:focus,
+    .pds-field select:focus,
+    .pds-field textarea:focus {
+        outline: none;
+        border-color: #001f52;
+        background: white;
+    }
+
+    .pds-save-btn {
+        margin-top: 16px;
+        background: #001f52;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .pds-save-btn:hover { background: #003082; }
+
+    .work-card {
+        background: #f0f4ff;
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        border-left: 3px solid #57a3c1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .work-info p { margin: 2px 0; font-size: 13px; color: #001f52; }
+    .work-info strong { font-size: 14px; }
+
+    .delete-btn {
+        background: #f8d7da;
+        color: #721c24;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e8f0ff;
+        color: #001f52;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 4px;
+    }
+
+    .skill-tag button {
+        background: none;
+        border: none;
+        color: #721c24;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .add-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .add-row input {
+        padding: 8px 10px;
+        border: 1px solid #c0cfe0;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #001f52;
+        background: #f8faff;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .add-btn {
+        background: #57a3c1;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .edu-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .edu-table th {
+        background: #e8f0ff;
+        color: #001f52;
+        padding: 8px 10px;
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .edu-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e0e6f0;
+        color: #001f52;
+    }
+
+    .edu-table td input {
+        width: 100%;
+        padding: 6px 8px;
+        border: 1px solid #c0cfe0;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #001f52;
+        background: #f8faff;
+        box-sizing: border-box;
+    }
+
+    body.dark .pds-section { background: #1e3448 !important; border-color: #0f1f2e !important; }
+    body.dark .pds-section h2 { color: #7ec8e3 !important; border-bottom-color: #0f1f2e !important; }
+    body.dark .pds-field label { color: #7ec8e3 !important; }
+    body.dark .pds-field input,
+    body.dark .pds-field select,
+    body.dark .pds-field textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .work-card { background: #1a2a3a !important; }
+    body.dark .work-info p { color: #d0e8f5 !important; }
+    body.dark .skill-tag { background: #1a2a3a !important; color: #d0e8f5 !important; }
+    body.dark .edu-table th { background: #1a2a3a !important; color: #7ec8e3 !important; }
+    body.dark .edu-table td { border-bottom-color: #0f1f2e !important; color: #d0e8f5 !important; }
+    body.dark .edu-table td input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .add-row input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+</style>
+
+<div class="pds-container">
+
+    <h1 style="color:#001f52; margin-bottom:24px;">📋 My Personal Data Sheet</h1>
+
+    <!-- I. PERSONAL INFORMATION -->
+    <div class="pds-section">
+        <h2>I. Personal Information</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_personal">
+            <div class="pds-grid">
+                <div class="pds-field">
+                    <label>Surname</label>
+                    <input type="text" name="surname" value="{{ pds.surname }}">
+                </div>
+                <div class="pds-field">
+                    <label>First Name</label>
+                    <input type="text" name="first_name" value="{{ pds.first_name }}">
+                </div>
+                <div class="pds-field">
+                    <label>Middle Name</label>
+                    <input type="text" name="middle_name" value="{{ pds.middle_name }}">
+                </div>
+                <div class="pds-field">
+                    <label>Name Extension (Jr, Sr)</label>
+                    <input type="text" name="name_extension" value="{{ pds.name_extension }}">
+                </div>
+                <div class="pds-field">
+                    <label>Date of Birth</label>
+                    <input type="date" name="date_of_birth" value="{{ pds.date_of_birth|date:'Y-m-d' }}">
+                </div>
+                <div class="pds-field">
+                    <label>Place of Birth</label>
+                    <input type="text" name="place_of_birth" value="{{ pds.place_of_birth }}">
+                </div>
+                <div class="pds-field">
+                    <label>Sex at Birth</label>
+                    <select name="sex">
+                        <option value="">-- Select --</option>
+                        <option value="male" {% if pds.sex == 'male' %}selected{% endif %}>Male</option>
+                        <option value="female" {% if pds.sex == 'female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <div class="pds-field">
+                    <label>Civil Status</label>
+                    <select name="civil_status">
+                        <option value="">-- Select --</option>
+                        <option value="single" {% if pds.civil_status == 'single' %}selected{% endif %}>Single</option>
+                        <option value="married" {% if pds.civil_status == 'married' %}selected{% endif %}>Married</option>
+                        <option value="widowed" {% if pds.civil_status == 'widowed' %}selected{% endif %}>Widowed</option>
+                        <option value="separated" {% if pds.civil_status == 'separated' %}selected{% endif %}>Separated</option>
+                        <option value="other" {% if pds.civil_status == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="pds-field">
+                    <label>Height (m)</label>
+                    <input type="text" name="height" value="{{ pds.height }}" placeholder="e.g. 1.65">
+                </div>
+                <div class="pds-field">
+                    <label>Weight (kg)</label>
+                    <input type="text" name="weight" value="{{ pds.weight }}" placeholder="e.g. 60">
+                </div>
+                <div class="pds-field">
+                    <label>Blood Type</label>
+                    <select name="blood_type">
+                        <option value="">-- Select --</option>
+                        {% for bt in 'A+,A-,B+,B-,O+,O-,AB+,AB-'|split:',' %}
+                        <option value="{{ bt }}" {% if pds.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="pds-field">
+                    <label>Citizenship</label>
+                    <select name="citizenship">
+                        <option value="">-- Select --</option>
+                        <option value="filipino" {% if pds.citizenship == 'filipino' %}selected{% endif %}>Filipino</option>
+                        <option value="dual" {% if pds.citizenship == 'dual' %}selected{% endif %}>Dual Citizenship</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="pds-save-btn">💾 Save Personal Info</button>
+        </form>
+    </div>
+
+    <!-- II. CONTACT INFORMATION -->
+    <div class="pds-section">
+        <h2>II. Contact Information</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_contact">
+
+            <p style="color:#001f52; font-weight:bold; font-size:13px; margin-bottom:10px;">Residential Address</p>
+            <div class="pds-grid three">
+                <div class="pds-field">
+                    <label>House/Block/Lot No.</label>
+                    <input type="text" name="res_house_no" value="{{ pds.res_house_no }}">
+                </div>
+                <div class="pds-field">
+                    <label>Street</label>
+                    <input type="text" name="res_street" value="{{ pds.res_street }}">
+                </div>
+                <div class="pds-field">
+                    <label>Subdivision/Village</label>
+                    <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}">
+                </div>
+                <div class="pds-field">
+                    <label>Barangay</label>
+                    <input type="text" name="res_barangay" value="{{ pds.res_barangay }}">
+                </div>
+                <div class="pds-field">
+                    <label>City/Municipality</label>
+                    <input type="text" name="res_city" value="{{ pds.res_city }}">
+                </div>
+                <div class="pds-field">
+                    <label>Province</label>
+                    <input type="text" name="res_province" value="{{ pds.res_province }}">
+                </div>
+            </div>
+            <div class="pds-grid" style="margin-top:8px; grid-template-columns: 120px 1fr;">
+                <div class="pds-field">
+                    <label>ZIP Code</label>
+                    <input type="text" name="res_zip" value="{{ pds.res_zip }}">
+                </div>
+            </div>
+
+            <p style="color:#001f52; font-weight:bold; font-size:13px; margin:16px 0 10px 0;">Permanent Address</p>
+            <div class="pds-grid three">
+                <div class="pds-field">
+                    <label>House/Block/Lot No.</label>
+                    <input type="text" name="perm_house_no" value="{{ pds.perm_house_no }}">
+                </div>
+                <div class="pds-field">
+                    <label>Street</label>
+                    <input type="text" name="perm_street" value="{{ pds.perm_street }}">
+                </div>
+                <div class="pds-field">
+                    <label>Subdivision/Village</label>
+                    <input type="text" name="perm_subdivision" value="{{ pds.perm_subdivision }}">
+                </div>
+                <div class="pds-field">
+                    <label>Barangay</label>
+                    <input type="text" name="perm_barangay" value="{{ pds.perm_barangay }}">
+                </div>
+                <div class="pds-field">
+                    <label>City/Municipality</label>
+                    <input type="text" name="perm_city" value="{{ pds.perm_city }}">
+                </div>
+                <div class="pds-field">
+                    <label>Province</label>
+                    <input type="text" name="perm_province" value="{{ pds.perm_province }}">
+                </div>
+            </div>
+            <div class="pds-grid" style="margin-top:8px; grid-template-columns: 120px 1fr;">
+                <div class="pds-field">
+                    <label>ZIP Code</label>
+                    <input type="text" name="perm_zip" value="{{ pds.perm_zip }}">
+                </div>
+            </div>
+
+            <p style="color:#001f52; font-weight:bold; font-size:13px; margin:16px 0 10px 0;">Contact Numbers</p>
+            <div class="pds-grid three">
+                <div class="pds-field">
+                    <label>Telephone No.</label>
+                    <input type="text" name="telephone" value="{{ pds.telephone }}">
+                </div>
+                <div class="pds-field">
+                    <label>Mobile No.</label>
+                    <input type="text" name="mobile" value="{{ pds.mobile }}">
+                </div>
+                <div class="pds-field">
+                    <label>Email Address</label>
+                    <input type="email" name="email" value="{{ pds.email }}">
+                </div>
+            </div>
+            <button type="submit" class="pds-save-btn">💾 Save Contact Info</button>
+        </form>
+    </div>
+
+    <!-- III. EDUCATION -->
+    <div class="pds-section">
+        <h2>III. Educational Background</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_education">
+            <table class="edu-table">
+                <thead>
+                    <tr>
+                        <th style="width:120px;">Level</th>
+                        <th>School</th>
+                        <th>Course/Strand</th>
+                        <th style="width:100px;">Year Graduated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for level in 'elementary,secondary,college,vocational'|split:',' %}
+                    <tr>
+                        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
+                        <td><input type="text" name="{{ level }}_school" value="{% if education|get:level %}{{ education|get:level.school }}{% endif %}"></td>
+                        <td><input type="text" name="{{ level }}_course" value="{% if education|get:level %}{{ education|get:level.course }}{% endif %}"></td>
+                        <td><input type="text" name="{{ level }}_year" value="{% if education|get:level %}{{ education|get:level.year_graduated }}{% endif %}" placeholder="e.g. 2020"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="pds-save-btn">💾 Save Education</button>
+        </form>
+    </div>
+
+    <!-- IV. WORK EXPERIENCE -->
+    <div class="pds-section">
+        <h2>IV. Work Experience</h2>
+
+        {% for work in work_list %}
+        <div class="work-card">
+            <div class="work-info">
+                <strong>{{ work.position }}</strong>
+                <p>{{ work.company }}</p>
+                <p style="color:#888;">
+                    {{ work.date_from|date:"M Y"|default:"" }}
+                    —
+                    {% if work.is_current %}Present{% else %}{{ work.date_to|date:"M Y"|default:"" }}{% endif %}
+                </p>
+            </div>
+            <form method="post" style="margin:0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_work">
+                <input type="hidden" name="work_id" value="{{ work.id }}">
+                <button type="submit" class="delete-btn">✕ Remove</button>
+            </form>
+        </div>
+        {% empty %}
+        <p style="color:#888; font-size:13px;">No work experience added yet.</p>
+        {% endfor %}
+
+        <form method="post" style="margin-top:16px;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_work">
+            <div class="pds-grid">
+                <div class="pds-field">
+                    <label>Company / Employer</label>
+                    <input type="text" name="company" placeholder="Company name">
+                </div>
+                <div class="pds-field">
+                    <label>Position / Title</label>
+                    <input type="text" name="position" placeholder="Job title">
+                </div>
+                <div class="pds-field">
+                    <label>Date From</label>
+                    <input type="date" name="date_from">
+                </div>
+                <div class="pds-field">
+                    <label>Date To</label>
+                    <input type="date" name="date_to">
+                </div>
+            </div>
+            <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" name="is_current"> Currently working here
+                </label>
+            </div>
+            <button type="submit" class="pds-save-btn" style="background:#57a3c1;">+ Add Work Experience</button>
+        </form>
+    </div>
+
+    <!-- V. SKILLS / ELIGIBILITY -->
+    <div class="pds-section">
+        <h2>V. Skills / Eligibility</h2>
+
+        <div style="margin-bottom:12px;">
+            {% for skill in skills %}
+            <span class="skill-tag">
+                {{ skill.name }}
+                <form method="post" style="display:inline; margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_skill">
+                    <input type="hidden" name="skill_id" value="{{ skill.id }}">
+                    <button type="submit">✕</button>
+                </form>
+            </span>
+            {% empty %}
+            <p style="color:#888; font-size:13px;">No skills added yet.</p>
+            {% endfor %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_skill">
+            <div class="add-row">
+                <input type="text" name="skill_name" placeholder="e.g. Python, Leadership, CSE Passer...">
+                <button type="submit" class="add-btn">+ Add Skill</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- VI. EMERGENCY CONTACT -->
+    <div class="pds-section">
+        <h2>VI. Emergency Contact</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_emergency">
+            <div class="pds-grid">
+                <div class="pds-field">
+                    <label>Full Name</label>
+                    <input type="text" name="emergency_name" value="{{ pds.emergency_name }}">
+                </div>
+                <div class="pds-field">
+                    <label>Relationship</label>
+                    <input type="text" name="emergency_relationship" value="{{ pds.emergency_relationship }}">
+                </div>
+                <div class="pds-field">
+                    <label>Phone Number</label>
+                    <input type="text" name="emergency_phone" value="{{ pds.emergency_phone }}">
+                </div>
+            </div>
+            <div class="pds-field" style="margin-top:14px;">
+                <label>Address</label>
+                <textarea name="emergency_address" rows="2">{{ pds.emergency_address }}</textarea>
+            </div>
+            <button type="submit" class="pds-save-btn">💾 Save Emergency Contact</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

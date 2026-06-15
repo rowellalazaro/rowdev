@@ -24,6 +24,12 @@
             color: white;
         }
 
+        .admin-navbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
         .logout-btn {
             background: #b4cbff;
             color: #003082;
@@ -34,6 +40,23 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+        }
+
+        .nav-link-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .nav-link-btn:hover {
+            background: rgba(255,255,255,0.25);
         }
 
         .container {
@@ -131,6 +154,39 @@
         .btn-disable { background: #fff3cd; color: #856404; }
         .btn-enable { background: #d4edda; color: #155724; }
         .btn-delete { background: #f8d7da; color: #721c24; }
+        .btn-pds { background: #e8f0ff; color: #003082; }
+
+        .quick-links {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .quick-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #003082;
+            font-weight: bold;
+            font-size: 15px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            border-left: 4px solid #57a3c1;
+        }
+
+        .quick-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .quick-card span.icon {
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
@@ -141,13 +197,43 @@
 
 <div class="admin-navbar">
     <h1>🛡️ Iramora Admin Dashboard</h1>
-    <form action="{% url 'logout' %}" method="post" style="margin:0;">
-    {% csrf_token %}
-    <button type="submit" class="logout-btn">Logout</button>
-</form>
+    <div class="admin-navbar-right">
+        <a href="{% url 'admin_pds_list' %}" class="nav-link-btn">📋 PDS Records</a>
+        <form action="{% url 'logout' %}" method="post" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
 </div>
 
 <div class="container">
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+        <a href="{% url 'admin_pds_list' %}" class="quick-card">
+            <span class="icon">📋</span>
+            <div>
+                <div>PDS Records</div>
+                <div style="font-size:12px; font-weight:normal; color:#57a3c1;">View all user data sheets</div>
+            </div>
+        </a>
+        <div class="quick-card" style="cursor:default;">
+            <span class="icon">👥</span>
+            <div>
+                <div>{{ users.count }} Users</div>
+                <div style="font-size:12px; font-weight:normal; color:#57a3c1;">Total registered users</div>
+            </div>
+        </div>
+        <div class="quick-card" style="cursor:default;">
+            <span class="icon">📨</span>
+            <div>
+                <div>{{ requests_list|length }} Requests</div>
+                <div style="font-size:12px; font-weight:normal; color:#57a3c1;">Total user requests</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management -->
     <div class="admin-box">
         <h2>👥 User Management</h2>
         <p style="color:#003082;">Total users: <strong>{{ users.count }}</strong></p>
@@ -200,6 +286,7 @@
                     </td>
                     <td>
                         <a href="{% url 'admin_user_detail' u.id %}" class="action-btn btn-view">👁 View</a>
+                        <a href="{% url 'admin_pds_detail' u.id %}" class="action-btn btn-pds">📋 PDS</a>
                         {% if u != request.user %}
                             <form action="{% url 'admin_toggle_user' u.id %}" method="post" style="display:inline;">
                                 {% csrf_token %}
@@ -220,11 +307,11 @@
             </tbody>
         </table>
     </div>
-</div>
 
-<div class="admin-box" style="margin-top:20px;">
-        <h2>User Requests</h2>
-        <p style="color:#003082;">Total pending: <strong>{{ requests_list|length }}</strong></p>
+    <!-- User Requests -->
+    <div class="admin-box">
+        <h2>📨 User Requests</h2>
+        <p style="color:#003082;">Total: <strong>{{ requests_list|length }}</strong></p>
 
         {% if requests_list %}
         <table class="user-table">
@@ -280,6 +367,8 @@
             <p style="color:#888;">No requests yet.</p>
         {% endif %}
     </div>
+
+</div>
 
 <script>
     function searchUsers() {

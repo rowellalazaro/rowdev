@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, login as auth_login
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 from django.urls import reverse_lazy
-
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
-from .models import Post, Profile, DiaryEntry, PostImage, Notification
+from .models import Post, Profile, DiaryEntry, PostImage, Notification, PDS, Education, WorkExperience, Skill
 from django.contrib.auth import logout as auth_logout
 
 
@@ -30,7 +28,6 @@ def register(request):
 def home(request):
     if request.user.is_staff:
         return redirect('admin_page')
-
     if request.method == 'POST':
         content = request.POST.get('content')
         images = request.FILES.getlist('images')
@@ -43,16 +40,8 @@ def home(request):
             for img in images:
                 PostImage.objects.create(post=post, image=img)
         return redirect('home')
-
     posts = Post.objects.filter(author__is_active=True).order_by('-created_at')
-    
-    # Kukunin ang unread count para sa notification badge sa home navbar
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    
-    return render(request, 'home.html', {
-        'posts': posts,
-        'unread_count': unread_count, # Ipinasa ang tamang bilang dito
-    })
+    return render(request, 'home.html', {'posts': posts})
 
 
 def admin_check(user):
@@ -62,7 +51,6 @@ def admin_check(user):
 def admin_login(request):
     if request.user.is_authenticated and request.user.is_staff:
         return redirect('admin_page')
-
     error = None
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -73,7 +61,6 @@ def admin_login(request):
             return redirect('admin_page')
         else:
             error = 'Invalid credentials or not an admin!'
-
     return render(request, 'admin_login.html', {'error': error})
 
 
@@ -142,7 +129,7 @@ def admin_edit_user(request, user_id):
             u.save()
             Notification.objects.create(
                 user=u,
-                message=f'Your account details have been updated by the admin.'
+                message='Your account details have been updated by the admin.'
             )
             success = 'User updated successfully.'
     return render(request, 'admin_user_detail.html', {
@@ -169,17 +156,14 @@ def admin_message_user(request, user_id):
 def notifications_view(request):
     notifs = Notification.objects.filter(user=request.user).order_by('-created_at')
     unread_count = notifs.filter(is_read=False).count()
-    return render(request, 'notifications.html', {
-        'notifs': notifs,
-        'unread_count': unread_count,
-    })
+    return render(request, 'notifications.html', {'notifs': notifs, 'unread_count': unread_count})
 
 
 @login_required
 def mark_notifications_read(request):
     if request.method == 'POST':
         Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-    return redirect('/notifications/')
+    return redirect('notifications')
 
 
 @login_required
@@ -187,25 +171,19 @@ def profile_view(request, username):
     user_obj = get_object_or_404(User, username=username)
     profile, created = Profile.objects.get_or_create(user=user_obj)
     posts = Post.objects.filter(author=user_obj).order_by('-created_at')
-    
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    
     return render(request, 'profile.html', {
         'profile_user': user_obj,
         'profile': profile,
         'posts': posts,
-        'unread_count': unread_count,
     })
 
 
 @login_required
 def edit_profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
-
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
-
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_obj = profile_form.save(commit=False)
@@ -220,13 +198,9 @@ def edit_profile(request):
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileForm(instance=profile)
-
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-
     return render(request, 'edit_profile.html', {
         'user_form': user_form,
         'profile_form': profile_form,
-        'unread_count': unread_count,
     })
 
 
@@ -308,15 +282,13 @@ def user_request(request):
         )
         return redirect('user_request')
     my_requests = UserRequest.objects.filter(user=request.user).order_by('-created_at')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'user_request.html', {'my_requests': my_requests, 'unread_count': unread_count})
+    return render(request, 'user_request.html', {'my_requests': my_requests})
 
 
 @login_required
 def files_view(request):
     posts = Post.objects.filter(author=request.user, image__isnull=False).exclude(image='').order_by('-created_at')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'files.html', {'posts': posts, 'unread_count': unread_count})
+    return render(request, 'files.html', {'posts': posts})
 
 
 @login_required
@@ -326,15 +298,13 @@ def settings_view(request):
         request.session['theme'] = request.POST.get('theme', 'light')
         request.session.modified = True
         return redirect('home')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'settings.html', {'unread_count': unread_count})
+    return render(request, 'settings.html')
 
 
 @login_required
 def diary_view(request):
     entries = DiaryEntry.objects.filter(user=request.user).order_by('-created_at')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'diary.html', {'entries': entries, 'unread_count': unread_count})
+    return render(request, 'diary.html', {'entries': entries})
 
 
 @login_required
@@ -351,8 +321,7 @@ def diary_create(request):
                 mood=mood
             )
         return redirect('diary')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'diary_form.html', {'action': 'New', 'unread_count': unread_count})
+    return render(request, 'diary_form.html', {'action': 'New'})
 
 
 @login_required
@@ -364,8 +333,7 @@ def diary_edit(request, pk):
         entry.mood = request.POST.get('mood', '')
         entry.save()
         return redirect('diary')
-    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
-    return render(request, 'diary_form.html', {'action': 'Edit', 'entry': entry, 'unread_count': unread_count})
+    return render(request, 'diary_form.html', {'action': 'Edit', 'entry': entry})
 
 
 @login_required
@@ -422,3 +390,149 @@ def admin_handle_request(request, request_id):
                 message=f'Your request ({req.get_request_type_display()}) has been rejected. {admin_note}'
             )
     return redirect('admin_page')
+
+
+@login_required
+def pds_view(request):
+    pds, created = PDS.objects.get_or_create(user=request.user)
+    education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
+    for edu in pds.education.all():
+        education[edu.level] = edu
+    work_list = pds.work_experience.all().order_by('-date_from')
+    skills = pds.skills.all()
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'save_personal':
+            pds.surname = request.POST.get('surname', '')
+            pds.first_name = request.POST.get('first_name', '')
+            pds.middle_name = request.POST.get('middle_name', '')
+            pds.name_extension = request.POST.get('name_extension', '')
+            pds.date_of_birth = request.POST.get('date_of_birth') or None
+            pds.place_of_birth = request.POST.get('place_of_birth', '')
+            pds.sex = request.POST.get('sex', '')
+            pds.civil_status = request.POST.get('civil_status', '')
+            pds.height = request.POST.get('height', '')
+            pds.weight = request.POST.get('weight', '')
+            pds.blood_type = request.POST.get('blood_type', '')
+            pds.citizenship = request.POST.get('citizenship', '')
+            pds.save()
+
+        elif action == 'save_contact':
+            pds.res_house_no = request.POST.get('res_house_no', '')
+            pds.res_street = request.POST.get('res_street', '')
+            pds.res_subdivision = request.POST.get('res_subdivision', '')
+            pds.res_barangay = request.POST.get('res_barangay', '')
+            pds.res_city = request.POST.get('res_city', '')
+            pds.res_province = request.POST.get('res_province', '')
+            pds.res_zip = request.POST.get('res_zip', '')
+            pds.perm_house_no = request.POST.get('perm_house_no', '')
+            pds.perm_street = request.POST.get('perm_street', '')
+            pds.perm_subdivision = request.POST.get('perm_subdivision', '')
+            pds.perm_barangay = request.POST.get('perm_barangay', '')
+            pds.perm_city = request.POST.get('perm_city', '')
+            pds.perm_province = request.POST.get('perm_province', '')
+            pds.perm_zip = request.POST.get('perm_zip', '')
+            pds.telephone = request.POST.get('telephone', '')
+            pds.mobile = request.POST.get('mobile', '')
+            pds.email = request.POST.get('email', '')
+            pds.save()
+
+        elif action == 'save_education':
+            for level in ['elementary', 'secondary', 'college', 'vocational']:
+                school = request.POST.get(f'{level}_school', '')
+                course = request.POST.get(f'{level}_course', '')
+                year = request.POST.get(f'{level}_year', '')
+                edu, _ = Education.objects.get_or_create(pds=pds, level=level)
+                edu.school = school
+                edu.course = course
+                edu.year_graduated = year
+                edu.save()
+
+        elif action == 'add_work':
+            company = request.POST.get('company', '')
+            position = request.POST.get('position', '')
+            date_from = request.POST.get('date_from') or None
+            date_to = request.POST.get('date_to') or None
+            is_current = request.POST.get('is_current') == 'on'
+            if company or position:
+                WorkExperience.objects.create(
+                    pds=pds,
+                    company=company,
+                    position=position,
+                    date_from=date_from,
+                    date_to=date_to,
+                    is_current=is_current
+                )
+
+        elif action == 'delete_work':
+            work_id = request.POST.get('work_id')
+            WorkExperience.objects.filter(id=work_id, pds=pds).delete()
+
+        elif action == 'add_skill':
+            skill_name = request.POST.get('skill_name', '').strip()
+            if skill_name:
+                Skill.objects.create(pds=pds, name=skill_name)
+
+        elif action == 'delete_skill':
+            skill_id = request.POST.get('skill_id')
+            Skill.objects.filter(id=skill_id, pds=pds).delete()
+
+        elif action == 'save_emergency':
+            pds.emergency_name = request.POST.get('emergency_name', '')
+            pds.emergency_relationship = request.POST.get('emergency_relationship', '')
+            pds.emergency_address = request.POST.get('emergency_address', '')
+            pds.emergency_phone = request.POST.get('emergency_phone', '')
+            pds.save()
+
+        return redirect('pds')
+
+    return render(request, 'pds.html', {
+        'pds': pds,
+        'education': education,
+        'work_list': work_list,
+        'skills': skills,
+    })
+
+
+def admin_pds_list(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    sort = request.POST.get('sort', 'username') if request.method == 'POST' else request.GET.get('sort', 'username')
+    search = request.GET.get('search', '')
+    pds_list = PDS.objects.select_related('user').all()
+    if search:
+        pds_list = pds_list.filter(
+            models.Q(user__username__icontains=search) |
+            models.Q(surname__icontains=search) |
+            models.Q(first_name__icontains=search)
+        )
+    if sort == 'surname':
+        pds_list = pds_list.order_by('surname')
+    elif sort == 'first_name':
+        pds_list = pds_list.order_by('first_name')
+    elif sort == 'updated':
+        pds_list = pds_list.order_by('-updated_at')
+    else:
+        pds_list = pds_list.order_by('user__username')
+    return render(request, 'admin_pds.html', {'pds_list': pds_list, 'sort': sort, 'search': search})
+
+
+def admin_pds_detail(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('admin_login')
+    u = get_object_or_404(User, id=user_id)
+    pds = get_object_or_404(PDS, user=u)
+    education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
+    for edu in pds.education.all():
+        education[edu.level] = edu
+    work_list = pds.work_experience.all().order_by('-date_from')
+    skills = pds.skills.all()
+    return render(request, 'admin_pds_detail.html', {
+        'u': u,
+        'pds': pds,
+        'education': education,
+        'work_list': work_list,
+        'skills': skills,
+    })
