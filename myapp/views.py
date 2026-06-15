@@ -8,6 +8,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
 from .models import Post, Profile, DiaryEntry, PostImage, Notification, PDS, Education, WorkExperience, Skill
 from django.contrib.auth import logout as auth_logout
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.models import User
+from .models import PDS
+
+def pds_required(user):
+    try:
+        pds = user.pds
+        return bool(pds.surname and pds.first_name)
+    except:
+        return False
 
 
 def register(request):
@@ -520,16 +530,22 @@ def admin_pds_list(request):
     return render(request, 'admin_pds.html', {'pds_list': pds_list, 'sort': sort, 'search': search})
 
 
+
+
 def admin_pds_detail(request, user_id):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
+    
     u = get_object_or_404(User, id=user_id)
     pds, created = PDS.objects.get_or_create(user=u)
+    
     education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
     for edu in pds.education.all():
         education[edu.level] = edu
+        
     work_list = pds.work_experience.all().order_by('-date_from')
     skills = pds.skills.all()
+    
     return render(request, 'admin_pds_detail.html', {
         'u': u,
         'pds': pds,

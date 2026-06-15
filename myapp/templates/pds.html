@@ -216,7 +216,13 @@
 
 <div class="pds-container">
 
-    <h1 style="color:#001f52; margin-bottom:24px;">📋 My Personal Data Sheet</h1>
+    <h1 style="color:#001f52; margin-bottom:8px;"> My Personal Data Sheet</h1>
+
+{% if not pds.surname or not pds.first_name %}
+<div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px 18px; margin-bottom:24px; color:#856404; font-size:14px;">
+    ⚠️ <strong>Please complete your PDS first</strong> — fill in at least your <strong>Surname</strong> and <strong>First Name</strong> to access other features.
+</div>
+{% endif %}
 
     <!-- I. PERSONAL INFORMATION -->
     <div class="pds-section">
