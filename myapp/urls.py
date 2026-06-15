@@ -19,6 +19,7 @@ urlpatterns = [
     path('diary/<int:pk>/delete/', views.diary_delete, name='diary-delete'),
     path('notifications/', views.notifications_view, name='notifications'),
     path('notifications/mark-read/', views.mark_notifications_read, name='mark_notifications_read'),
+    path('pds/', views.pds_view, name='pds'),
 
     # Admin URLs
     path('rowdev-admin/', views.admin_login, name='admin_login'),
@@ -30,6 +31,8 @@ urlpatterns = [
     path('rowdev-admin/toggle/<int:user_id>/', views.admin_toggle_user, name='admin_toggle_user'),
     path('rowdev-admin/post/delete/<int:post_id>/', views.admin_delete_post, name='admin_delete_post'),
     path('rowdev-admin/logout/', views.admin_logout, name='admin_logout'),
+    path('rowdev-admin/pds/', views.admin_pds_list, name='admin_pds_list'),
+    path('rowdev-admin/pds/<int:user_id>/', views.admin_pds_detail, name='admin_pds_detail'),
     path('settings/request/', views.user_request, name='user_request'),
     path('rowdev-admin/request/<int:request_id>/', views.admin_handle_request, name='admin_handle_request'),
 ]

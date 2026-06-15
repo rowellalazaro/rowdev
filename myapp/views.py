@@ -499,14 +499,15 @@ def pds_view(request):
 def admin_pds_list(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
-    sort = request.POST.get('sort', 'username') if request.method == 'POST' else request.GET.get('sort', 'username')
+    from django.db.models import Q
+    sort = request.GET.get('sort', 'username')
     search = request.GET.get('search', '')
     pds_list = PDS.objects.select_related('user').all()
     if search:
         pds_list = pds_list.filter(
-            models.Q(user__username__icontains=search) |
-            models.Q(surname__icontains=search) |
-            models.Q(first_name__icontains=search)
+            Q(user__username__icontains=search) |
+            Q(surname__icontains=search) |
+            Q(first_name__icontains=search)
         )
     if sort == 'surname':
         pds_list = pds_list.order_by('surname')
