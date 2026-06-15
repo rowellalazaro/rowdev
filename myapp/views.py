@@ -524,7 +524,7 @@ def admin_pds_detail(request, user_id):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
     u = get_object_or_404(User, id=user_id)
-    pds = get_object_or_404(PDS, user=u)
+    pds, created = PDS.objects.get_or_create(user=u)
     education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
     for edu in pds.education.all():
         education[edu.level] = edu
