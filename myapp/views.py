@@ -172,7 +172,7 @@ def notifications_view(request):
 def mark_notifications_read(request):
     if request.method == 'POST':
         Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-    return redirect('notifications')
+    return redirect('notifications_view')
 
 
 @login_required
