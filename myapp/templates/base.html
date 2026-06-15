@@ -11,23 +11,63 @@
             color: #1e3a5f;
         }
 
-        body.dark { background: #1a2a3a !important; color: #d0e8f5 !important; }
-        body.dark .navbar { background: #0f1f2e !important; border-bottom: 1px solid #0a1520 !important; }
-        body.dark .card { background: #1e3448 !important; color: #ffffff !important; border: 1px solid #0f1f2e !important; }
-        body.dark .card p, body.dark .card span, body.dark .card a,
-        body.dark .card h1, body.dark .card h2, body.dark .card h3,
-        body.dark .card h4, body.dark .card h5, body.dark .card small { color: #ffffff !important; }
-        body.dark .settings-box { background: #1e3448 !important; color: #d0e8f5 !important; }
-        body.dark .settings-box h2 { color: #7ec8e3 !important; }
-        body.dark .settings-section { border-bottom-color: #0f1f2e !important; }
-        body.dark .settings-section h4 { color: #7ec8e3 !important; }
-        body.dark .save-btn { background: #1e3a52 !important; color: #7ec8e3 !important; }
-        body.dark input[type="text"], body.dark input[type="password"],
-        body.dark input[type="email"], body.dark textarea {
-            background: #1a2a3a !important; color: #d0e8f5 !important; border: 1px solid #0f1f2e !important;
+        /* ── PINAGANDANG DARK MODE OVERRIDES ── */
+        body.dark { 
+            background: #121824 !important; /* Mas modernong madilim na background */
+            color: #e2e8f0 !important; 
         }
-        body.dark .container { color: #d0e8f5 !important; }
+        
+        /* Pwersahin ang lahat ng teksto na mag-adapt sa dark mode kahit may inline style */
+        body.dark p, body.dark span, body.dark a,
+        body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, 
+        body.dark small, body.dark strong, body.dark li, body.dark label { 
+            color: #f1f5f9 !important; 
+        }
 
+        body.dark .navbar { 
+            background: #1e293b !important; 
+            border-bottom: 1px solid #334155 !important; 
+        }
+        
+        /* Cards at Box containers sa Dark Mode */
+        body.dark .card { 
+            background: #1e293b !important; 
+            color: #ffffff !important; 
+            border: 1px solid #334155 !important; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important;
+        }
+        
+        body.dark .settings-box { background: #1e293b !important; color: #e2e8f0 !important; }
+        body.dark .settings-box h2 { color: #38bdf8 !important; }
+        body.dark .settings-section { border-bottom-color: #334155 !important; }
+        body.dark .settings-section h4 { color: #38bdf8 !important; }
+        body.dark .save-btn { background: #38bdf8 !important; color: #0f172a !important; }
+        
+        /* Forms / Inputs sa Dark Mode */
+        body.dark input[type="text"], body.dark input[type="password"],
+        body.dark input[type="email"], body.dark textarea, body.dark select {
+            background: #0f172a !important; 
+            color: #f8fafc !important; 
+            border: 1px solid #475569 !important;
+        }
+        
+        body.dark .container { color: #e2e8f0 !important; }
+
+        /* Side Menu sa Dark Mode */
+        body.dark .side-menu { background: #1e293b !important; }
+        body.dark .side-menu-links a:hover { background: #38bdf8 !important; color: #0f172a !important; }
+        body.dark .side-menu-links a.active { background: #38bdf8 !important; color: #0f172a !important; }
+        body.dark .side-menu-user-info { border-bottom-color: #334155 !important; }
+        body.dark .display-email { color: #94a3b8 !important; }
+
+        /* About Modal sa Dark Mode */
+        body.dark .about-modal-box { background: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important; }
+        body.dark .about-title, body.dark .about-section-title { color: #38bdf8 !important; }
+        body.dark .about-text, body.dark .about-subtext { color: #cbd5e1 !important; }
+        body.dark .about-meta { color: #94a3b8 !important; }
+        body.dark .about-modal-close { color: #ffffff !important; }
+
+        /* ── LIGHT MODE / STANDARD STYLES ── */
         .navbar {
             display: flex;
             align-items: center;
@@ -51,7 +91,7 @@
             flex-shrink: 0;
         }
 
-        .hamburger:hover { background: #7ec8e3(129, 205, 255); }
+        .hamburger:hover { background: rgba(129, 205, 255, 0.2); }
 
         .hamburger span {
             display: block;
@@ -120,7 +160,6 @@
 
         .side-menu.open { left: 0; }
 
-        /* Close button */
         .side-menu-close-row {
             display: flex;
             justify-content: flex-end;
@@ -140,7 +179,6 @@
 
         .side-menu-close:hover { background: rgba(255,255,255,0.1); }
 
-        /* User info */
         .side-menu-user-info {
             padding: 16px 20px 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -172,7 +210,6 @@
             margin-top: 3px;
         }
 
-        /* Nav links */
         .side-menu-links {
             flex: 1;
             padding: 12px 0;
@@ -197,19 +234,19 @@
             border-radius: 0;
         }
 
-      .side-menu-links a:hover {
-    background: rgba(255,255,255,0.92);
-    color: #0f1f3d;
-    border-radius: 0 30px 30px 0;
-    width: calc(100% - 16px);
-}
+        .side-menu-links a:hover {
+            background: rgba(255,255,255,0.92);
+            color: #0f1f3d;
+            border-radius: 0 30px 30px 0;
+            width: calc(100% - 16px);
+        }
 
-.side-menu-links a.active {
-    background: white;
-    color: #0f1f3d;
-    border-radius: 0 30px 30px 0;
-    width: calc(100% - 16px);
-}
+        .side-menu-links a.active {
+            background: white;
+            color: #0f1f3d;
+            border-radius: 0 30px 30px 0;
+            width: calc(100% - 16px);
+        }
 
         .side-menu-divider {
             border: none;
@@ -217,7 +254,6 @@
             margin: 8px 16px;
         }
 
-        /* Bottom logout */
         .side-menu-bottom {
             padding: 12px 0;
             border-top: 1px solid rgba(255,255,255,0.1);
@@ -310,7 +346,7 @@
             font-weight: bold;
         }
 
-        /* About modal */
+        /* ── ABOUT MODAL STYLES ── */
         .about-modal {
             display: none;
             position: fixed;
@@ -342,6 +378,12 @@
             cursor: pointer;
             color: #666;
         }
+
+        .about-title { font-size: 22px; font-weight: bold; color: #003082; }
+        .about-section-title { color: #003082; font-size: 15px; margin: 0 0 6px 0; font-weight: bold; }
+        .about-text { color: #444; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+        .about-subtext { color: #555; font-size: 13px; line-height: 1.5; margin: 0; }
+        .about-meta { color: rgba(0, 48, 130, 0.63); font-size: 13px; margin: 4px 0; }
     </style>
 
     <script>
@@ -381,32 +423,31 @@
     </a>
 
     {% if user.is_authenticated %}
-<div class="nav-right" style="margin-left:auto; display:flex; align-items:center; gap:12px;">
-    <a href="/notifications/" style="position: relative; text-decoration: none;">
-    🔔 
-    {% if unread_count > 0 %}
-        <span style="
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background-color: #ff3b30;
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 50%;
-        ">
-            {{ unread_count }}
-        </span>
+    <div class="nav-right" style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+        <a href="/notifications/" style="position: relative; text-decoration: none;">
+            🔔 
+            {% if unread_count > 0 %}
+                <span style="
+                    position: absolute;
+                    top: -8px;
+                    right: -10px;
+                    background-color: #ff3b30;
+                    color: white;
+                    font-size: 11px;
+                    font-weight: bold;
+                    padding: 2px 6px;
+                    border-radius: 50%;
+                ">
+                    {{ unread_count }}
+                </span>
+            {% endif %}
+        </a>
+    </div>
     {% endif %}
-</a>
-</div>
-{% endif %}
 </div>
 
 {% if user.is_authenticated %}
 <div class="side-menu" id="side-menu">
-
     <div class="side-menu-close-row">
         <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
     </div>
@@ -436,32 +477,32 @@
     </div>
 </div>
 
-<!-- About Modal -->
 <div class="about-modal" id="about-modal">
-    <div class="about-modal-box" style="max-width: 550px; width: 90%;"> <button class="about-modal-close" onclick="closeAbout()">✕</button>
+    <div class="about-modal-box" style="max-width: 550px; width: 90%;"> 
+        <button class="about-modal-close" onclick="closeAbout()">✕</button>
         
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
             <img src="{% static 'images/logo.jpg' %}" style="height:50px; width:auto; border-radius:10px;">
-            <span style="font-size:22px; font-weight:bold; color:#003082;">Iramora</span>
+            <span class="about-title">Iramora</span>
         </div>
         
-        <p style="color:#444; font-size:14px; line-height:1.6; margin-bottom:20px;">
+        <p class="about-text">
             Iramora means a space for ideas, reflection, and expression shared through media and writing.
             It represents a digital environment where thoughts become stories, and stories connect people.
         </p>
 
         <div style="display: flex; gap: 20px; margin-bottom: 20px;">
             <div style="flex: 1;">
-                <h4 style="color:#003082; font-size:15px; margin: 0 0 6px 0; font-weight: bold;">Vision</h4>
-                <p style="color:#555; font-size:13px; line-height:1.5; margin: 0;">
+                <h4 class="about-section-title">Vision</h4>
+                <p class="about-subtext">
                     To become a leading digital platform where ideas, reflections, and stories inspire meaningful connections, 
                     empowering individuals to express themselves freely and engage with diverse perspectives worldwide
                 </p>
             </div>
             
             <div style="flex: 1;">
-                <h4 style="color:#003082; font-size:15px; margin: 0 0 6px 0; font-weight: bold;">Mission</h4>
-                <p style="color:#555; font-size:13px; line-height:1.5; margin: 0;">
+                <h4 class="about-section-title">Mission</h4>
+                <p class="about-subtext">
                     Iramora provides a welcoming space for people to share their thoughts, experiences, and creativity through writing and media. 
                     We aim to foster authentic self-expression, encourage thoughtful conversations, and build a connected community 
                     where every voice has the opportunity to be heard and valued.
@@ -469,8 +510,8 @@
             </div>
         </div>
         
-        <p style="color:#003082a1; font-size:13px; margin:4px 0;"><strong>Developer:</strong> Rowella L. Lazaro</p>
-        <p style="color:#003082a1; font-size:13px; margin:4px 0;"><strong>Version:</strong> 1.0.0</p>
+        <p class="about-meta"><strong>Developer:</strong> Rowella L. Lazaro</p>
+        <p class="about-meta"><strong>Version:</strong> 1.0.0</p>
     </div>
 </div>
 {% endif %}
