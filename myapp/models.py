@@ -14,6 +14,14 @@ class Post(models.Model):
         return self.title or "Status Update"
 
 
+class PostImage(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='extra_images')
+    image = models.ImageField(upload_to='post_images/')
+
+    def __str__(self):
+        return f"Image for {self.post}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)

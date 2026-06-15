@@ -71,6 +71,21 @@
 
     .post-btn:hover { background: #003082; }
 
+    .cancel-btn {
+        margin-top: 10px;
+        background: none;
+        color: #001f52;
+        border: 1px solid #001f52;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.2s;
+        margin-left: 8px;
+    }
+
+    .cancel-btn:hover { background: #f0f4ff; }
+
     .feed-heading {
         font-size: 24px;
         font-weight: bold;
@@ -88,13 +103,20 @@
         border-radius: 10px;
     }
 
-    #image-preview {
-        display: none;
-        max-width: 40%;
-        max-height: 150px;
+    #post-form-area { display: none; margin-top: 10px; }
+
+    .post-images-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .post-images-grid img {
+        width: 120px;
+        height: 120px;
         object-fit: cover;
         border-radius: 8px;
-        margin-top: 8px;
     }
 
     /* ── SIDEBAR WIDGETS ── */
@@ -113,7 +135,6 @@
         margin-bottom: 12px;
     }
 
-    /* TODO */
     .todo-input-row {
         display: flex;
         gap: 8px;
@@ -185,7 +206,6 @@
 
     .todo-item .todo-delete:hover { color: #820000; }
 
-    /* NOTES */
     .notes-textarea {
         width: 100%;
         height: 100px;
@@ -222,7 +242,6 @@
         display: none;
     }
 
-    /* CALENDAR */
     .calendar-header {
         display: flex;
         align-items: center;
@@ -294,6 +313,8 @@
     body.dark .status-textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .feed-heading { color: #7ec8e3 !important; }
     body.dark .status-title { color: #7ec8e3 !important; }
+    body.dark .cancel-btn { color: #d0e8f5 !important; border-color: #d0e8f5 !important; }
+    body.dark .cancel-btn:hover { background: #1a2a3a !important; }
 </style>
 
 <div class="home-layout">
@@ -302,17 +323,30 @@
     <div class="home-main">
         <div class="status-box">
             <div class="status-title">What's on your mind?</div>
-            <form method="post" action="{% url 'post-create' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <textarea name="content" class="status-textarea" placeholder="Write something..." required></textarea>
-                <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
-                    <label for="post-image" style="background:#99afc4; color:#003082; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:12px;">Add Photo</label>
-                    <input type="file" id="post-image" name="image" accept="image/*" style="display:none;" onchange="previewImage(this)">
-                    <span id="file-label" style="color:#001f52; font-size:12px;"></span>
-                </div>
-                <img id="image-preview" src="" alt="Preview">
-                <button type="submit" class="post-btn">Post</button>
-            </form>
+
+            <div id="post-trigger">
+                <textarea class="status-textarea" placeholder="Write something..." readonly
+                    onclick="openPostForm()" style="cursor:pointer;"></textarea>
+            </div>
+
+            <div id="post-form-area">
+                <form method="post" action="{% url 'home' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <textarea name="content" class="status-textarea" id="post-content"
+                        placeholder="Write something..." required style="height:100px;"></textarea>
+                    <div style="margin-top:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <label for="post-images" style="background:#99afc4; color:#003082; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:12px;">Add Photos</label>
+                        <input type="file" id="post-images" name="images" accept="image/*"
+                               multiple style="display:none;" onchange="previewImages(this)">
+                        <span id="file-label" style="color:#001f52; font-size:12px;"></span>
+                    </div>
+                    <div id="image-previews" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
+                    <div>
+                        <button type="submit" class="post-btn">Post</button>
+                        <button type="button" class="cancel-btn" onclick="cancelPost()">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="feed-heading">Recent Posts</div>
@@ -333,8 +367,16 @@
             <p style="font-size:15px; font-weight:bold; color:#003082; margin:0 0 4px 0;">{{ post.title }}</p>
             {% endif %}
             <p style="font-size:15px; color:#00235f; margin:0; white-space:pre-line;">{{ post.content }}</p>
-            {% if post.image %}
-            <img src="{{ post.image.url }}" alt="Post image" style="max-width:50%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:10px; display:block;">
+
+            {% if post.image or post.extra_images.exists %}
+            <div class="post-images-grid">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post image">
+                {% endif %}
+                {% for img in post.extra_images.all %}
+                <img src="{{ img.image.url }}" alt="Post image">
+                {% endfor %}
+            </div>
             {% endif %}
         </div>
         {% empty %}
@@ -345,7 +387,6 @@
     <!-- RIGHT SIDEBAR -->
     <div class="home-sidebar">
 
-        <!-- TO DO LIST -->
         <div class="widget">
             <div class="widget-title">To Do</div>
             <div class="todo-input-row">
@@ -355,7 +396,6 @@
             <ul class="todo-list" id="todo-list"></ul>
         </div>
 
-        <!-- NOTES -->
         <div class="widget">
             <div class="widget-title">Notes</div>
             <textarea class="notes-textarea" id="notes-area" placeholder="Jot something down..."></textarea>
@@ -363,7 +403,6 @@
             <div class="notes-saved" id="notes-saved">Saved!</div>
         </div>
 
-        <!-- CALENDAR -->
         <div class="widget">
             <div class="widget-title">Calendar</div>
             <div class="calendar-header">
@@ -378,17 +417,37 @@
 </div>
 
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('image-preview');
+    function openPostForm() {
+        document.getElementById('post-trigger').style.display = 'none';
+        document.getElementById('post-form-area').style.display = 'block';
+        document.getElementById('post-content').focus();
+    }
+
+    function cancelPost() {
+        document.getElementById('post-form-area').style.display = 'none';
+        document.getElementById('post-trigger').style.display = 'block';
+        document.getElementById('post-content').value = '';
+        document.getElementById('image-previews').innerHTML = '';
+        document.getElementById('file-label').textContent = '';
+        document.getElementById('post-images').value = '';
+    }
+
+    function previewImages(input) {
+        const container = document.getElementById('image-previews');
         const label = document.getElementById('file-label');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                label.textContent = input.files[0].name;
-            }
-            reader.readAsDataURL(input.files[0]);
+        container.innerHTML = '';
+        if (input.files && input.files.length > 0) {
+            label.textContent = input.files.length + ' photo(s) selected';
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.cssText = 'width:80px; height:80px; object-fit:cover; border-radius:6px;';
+                    container.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            });
         }
     }
 

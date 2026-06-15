@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
-from .models import Post, Profile, DiaryEntry
+from .models import Post, Profile, DiaryEntry, PostImage
 from django.contrib.auth import logout as auth_logout
 
 
@@ -33,14 +33,15 @@ def home(request):
 
     if request.method == 'POST':
         content = request.POST.get('content')
-        image = request.FILES.get('image')
+        images = request.FILES.getlist('images')
         if content:
-            Post.objects.create(
+            post = Post.objects.create(
                 content=content,
-                image=image,
                 author=request.user,
                 title='Status Update'
             )
+            for img in images:
+                PostImage.objects.create(post=post, image=img)
         return redirect('home')
 
     posts = Post.objects.filter(author__is_active=True).order_by('-created_at')
@@ -177,7 +178,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         if not form.cleaned_data.get('title'):
             form.instance.title = "Status Update"
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        images = self.request.FILES.getlist('images')
+        for img in images:
+            PostImage.objects.create(post=self.object, image=img)
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
