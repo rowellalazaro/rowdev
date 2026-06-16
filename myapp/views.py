@@ -422,6 +422,7 @@ def pds_view(request):
             pds.first_name = request.POST.get('first_name', '')
             pds.middle_name = request.POST.get('middle_name', '')
             pds.name_extension = request.POST.get('name_extension', '')
+            pds.Age = request.POST.get('Age', '')
             pds.date_of_birth = request.POST.get('date_of_birth') or None
             pds.place_of_birth = request.POST.get('place_of_birth', '')
             pds.sex = request.POST.get('sex', '')
