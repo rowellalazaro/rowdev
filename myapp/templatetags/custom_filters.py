@@ -1,18 +1,15 @@
-from csv import reader
-
-from mysite.myapp.models import PDS
-
-# myapp/templatetags/custom_filters.py
-
 from django import template
 
 register = template.Library()
 
-@register.filter(name='split')
+@register.filter
 def split(value, arg):
-    """
-    Ginagamit para i-split ang string: {{ "a,b,c"|split:"," }}
-    """
     if value:
         return value.split(arg)
-    return value
+    return []
+
+@register.filter
+def get(dictionary, key):
+    if dictionary is None:
+        return None
+    return dictionary.get(key)
