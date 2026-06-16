@@ -405,6 +405,8 @@ def admin_handle_request(request, request_id):
 @login_required
 def pds_view(request):
     pds, created = PDS.objects.get_or_create(user=request.user)
+    
+   
     education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
     for edu in pds.education.all():
         education[edu.level] = edu
@@ -414,6 +416,7 @@ def pds_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')
 
+        
         if action == 'save_personal':
             pds.surname = request.POST.get('surname', '')
             pds.first_name = request.POST.get('first_name', '')
@@ -427,9 +430,8 @@ def pds_view(request):
             pds.weight = request.POST.get('weight', '')
             pds.blood_type = request.POST.get('blood_type', '')
             pds.citizenship = request.POST.get('citizenship', '')
-            pds.save()
-
-        elif action == 'save_contact':
+            
+           
             pds.res_house_no = request.POST.get('res_house_no', '')
             pds.res_street = request.POST.get('res_street', '')
             pds.res_subdivision = request.POST.get('res_subdivision', '')
@@ -450,6 +452,7 @@ def pds_view(request):
             pds.save()
 
         elif action == 'save_education':
+           
             for level in ['elementary', 'secondary', 'college', 'vocational']:
                 school = request.POST.get(f'{level}_school', '')
                 course = request.POST.get(f'{level}_course', '')
@@ -460,35 +463,6 @@ def pds_view(request):
                 edu.year_graduated = year
                 edu.save()
 
-        elif action == 'add_work':
-            company = request.POST.get('company', '')
-            position = request.POST.get('position', '')
-            date_from = request.POST.get('date_from') or None
-            date_to = request.POST.get('date_to') or None
-            is_current = request.POST.get('is_current') == 'on'
-            if company or position:
-                WorkExperience.objects.create(
-                    pds=pds,
-                    company=company,
-                    position=position,
-                    date_from=date_from,
-                    date_to=date_to,
-                    is_current=is_current
-                )
-
-        elif action == 'delete_work':
-            work_id = request.POST.get('work_id')
-            WorkExperience.objects.filter(id=work_id, pds=pds).delete()
-
-        elif action == 'add_skill':
-            skill_name = request.POST.get('skill_name', '').strip()
-            if skill_name:
-                Skill.objects.create(pds=pds, name=skill_name)
-
-        elif action == 'delete_skill':
-            skill_id = request.POST.get('skill_id')
-            Skill.objects.filter(id=skill_id, pds=pds).delete()
-
         elif action == 'save_emergency':
             pds.emergency_name = request.POST.get('emergency_name', '')
             pds.emergency_relationship = request.POST.get('emergency_relationship', '')
@@ -496,7 +470,7 @@ def pds_view(request):
             pds.emergency_phone = request.POST.get('emergency_phone', '')
             pds.save()
 
-        return redirect('pds')
+        return redirect('pds') 
 
     return render(request, 'pds.html', {
         'pds': pds,

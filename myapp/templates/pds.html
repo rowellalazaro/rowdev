@@ -249,7 +249,7 @@
         <h2>I. Personal Information</h2>
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" name="action" value="save_personal_contact">
+            <input type="hidden" name="action" value="save_personal">
 
             <p class="subsection-title">Personal Details</p>
             <div class="pds-grid">
@@ -425,7 +425,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="pds-save-btn">💾 Save Personal & Contact Info</button>
+            <button type="submit" class="pds-save-btn">💾 Save Personal Info</button>
         </form>
     </div>
 
