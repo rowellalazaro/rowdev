@@ -445,15 +445,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for level in 'elementary,secondary,college,vocational'|split:',' %}
-                    <tr>
-                        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
-                        <td><input type="text" name="{{ level }}_school" value="{% if education|get:level %}{{ education|get:level.school }}{% endif %}" placeholder="N/A if not applicable"></td>
-                        <td><input type="text" name="{{ level }}_course" value="{% if education|get:level %}{{ education|get:level.course }}{% endif %}" placeholder="N/A if not applicable"></td>
-                        <td><input type="text" name="{{ level }}_year" value="{% if education|get:level %}{{ education|get:level.year_graduated }}{% endif %}" placeholder="N/A"></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+    {% for level in 'elementary,secondary,college,vocational'|split:',' %}
+    <tr>
+        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
+        
+        {% with edu=education|get:level %}
+        <td><input type="text" name="{{ level }}_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
+        <td><input type="text" name="{{ level }}_course" value="{{ edu.course|default:'' }}" placeholder="N/A if not applicable"></td>
+        <td><input type="text" name="{{ level }}_year" value="{{ edu.year_graduated|default:'' }}" placeholder="N/A"></td>
+        {% endwith %}
+        
+    </tr>
+    {% endfor %}
+</tbody>
             </table>
             <button type="submit" class="pds-save-btn">💾 Save Education</button>
         </form>
