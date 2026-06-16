@@ -51,6 +51,11 @@
         letter-spacing: 0.3px;
     }
 
+    .pds-field label .req {
+        color: #cc0000;
+        margin-left: 2px;
+    }
+
     .pds-field input,
     .pds-field select,
     .pds-field textarea {
@@ -200,6 +205,20 @@
         box-sizing: border-box;
     }
 
+    .section-divider {
+        border: none;
+        border-top: 2px solid #e0e6f0;
+        margin: 20px 0;
+    }
+
+    .subsection-title {
+        color: #001f52;
+        font-weight: bold;
+        font-size: 13px;
+        margin-bottom: 10px;
+        margin-top: 0;
+    }
+
     body.dark .pds-section { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .pds-section h2 { color: #7ec8e3 !important; border-bottom-color: #0f1f2e !important; }
     body.dark .pds-field label { color: #7ec8e3 !important; }
@@ -213,60 +232,62 @@
     body.dark .edu-table td { border-bottom-color: #0f1f2e !important; color: #d0e8f5 !important; }
     body.dark .edu-table td input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .add-row input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .subsection-title { color: #7ec8e3 !important; }
 </style>
 
 <div class="pds-container">
 
-    <h1 style="color:#001f52; margin-bottom:8px;"> My Personal Data Sheet</h1>
+    <h1 style="color:#001f52; margin-bottom:8px;">My Personal Data Sheet</h1>
 
-{% if not pds.surname or not pds.first_name %}
-<div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px 18px; margin-bottom:24px; color:#856404; font-size:14px;">
-    ⚠️ <strong>Please complete your PDS first</strong> — fill in at least your <strong>Surname</strong> and <strong>First Name</strong> to access other features.
-</div>
-{% endif %}
+    {% if not pds.surname or not pds.first_name %}
+    <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px 18px; margin-bottom:24px; color:#856404; font-size:14px;">
+        ⚠️ <strong>Please complete your PDS first</strong>
+    {% endif %}
 
-    <!-- I. PERSONAL INFORMATION -->
+    <!-- I. PERSONAL INFORMATION  -->
     <div class="pds-section">
         <h2>I. Personal Information</h2>
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" name="action" value="save_personal">
+            <input type="hidden" name="action" value="save_personal_contact">
+
+            <p class="subsection-title">Personal Details</p>
             <div class="pds-grid">
                 <div class="pds-field">
-                    <label>Surname</label>
-                    <input type="text" name="surname" value="{{ pds.surname }}">
+                    <label>Surname <span class="req">*</span></label>
+                    <input type="text" name="surname" value="{{ pds.surname }}" required placeholder="e.g. Dela Cruz">
                 </div>
                 <div class="pds-field">
-                    <label>First Name</label>
-                    <input type="text" name="first_name" value="{{ pds.first_name }}">
+                    <label>First Name <span class="req">*</span></label>
+                    <input type="text" name="first_name" value="{{ pds.first_name }}" required placeholder="e.g. Juan">
                 </div>
                 <div class="pds-field">
                     <label>Middle Name</label>
-                    <input type="text" name="middle_name" value="{{ pds.middle_name }}">
+                    <input type="text" name="middle_name" value="{{ pds.middle_name }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Name Extension (Jr, Sr)</label>
-                    <input type="text" name="name_extension" value="{{ pds.name_extension }}">
+                    <input type="text" name="name_extension" value="{{ pds.name_extension }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
-                    <label>Date of Birth</label>
-                    <input type="date" name="date_of_birth" value="{{ pds.date_of_birth|date:'Y-m-d' }}">
+                    <label>Date of Birth <span class="req">*</span></label>
+                    <input type="date" name="date_of_birth" value="{{ pds.date_of_birth|date:'Y-m-d' }}" required>
                 </div>
                 <div class="pds-field">
-                    <label>Place of Birth</label>
-                    <input type="text" name="place_of_birth" value="{{ pds.place_of_birth }}">
+                    <label>Place of Birth <span class="req">*</span></label>
+                    <input type="text" name="place_of_birth" value="{{ pds.place_of_birth }}" required placeholder="e.g. Manila">
                 </div>
                 <div class="pds-field">
-                    <label>Sex at Birth</label>
-                    <select name="sex">
+                    <label>Sex<span class="req">*</span></label>
+                    <select name="sex" required>
                         <option value="">-- Select --</option>
                         <option value="male" {% if pds.sex == 'male' %}selected{% endif %}>Male</option>
                         <option value="female" {% if pds.sex == 'female' %}selected{% endif %}>Female</option>
                     </select>
                 </div>
                 <div class="pds-field">
-                    <label>Civil Status</label>
-                    <select name="civil_status">
+                    <label>Civil Status <span class="req">*</span></label>
+                    <select name="civil_status" required>
                         <option value="">-- Select --</option>
                         <option value="single" {% if pds.civil_status == 'single' %}selected{% endif %}>Single</option>
                         <option value="married" {% if pds.civil_status == 'married' %}selected{% endif %}>Married</option>
@@ -277,131 +298,140 @@
                 </div>
                 <div class="pds-field">
                     <label>Height (m)</label>
-                    <input type="text" name="height" value="{{ pds.height }}" placeholder="e.g. 1.65">
+                    <input type="text" name="height" value="{{ pds.height }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Weight (kg)</label>
-                    <input type="text" name="weight" value="{{ pds.weight }}" placeholder="e.g. 60">
+                    <input type="text" name="weight" value="{{ pds.weight }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Blood Type</label>
                     <select name="blood_type">
                         <option value="">-- Select --</option>
-                        {% for bt in 'A+,A-,B+,B-,O+,O-,AB+,AB-'|split:',' %}
-                        <option value="{{ bt }}" {% if pds.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
-                        {% endfor %}
+                        <option value="N/A" {% if pds.blood_type == 'N/A' %}selected{% endif %}>N/A</option>
+                        <option value="A+" {% if pds.blood_type == 'A+' %}selected{% endif %}>A+</option>
+                        <option value="A-" {% if pds.blood_type == 'A-' %}selected{% endif %}>A-</option>
+                        <option value="B+" {% if pds.blood_type == 'B+' %}selected{% endif %}>B+</option>
+                        <option value="B-" {% if pds.blood_type == 'B-' %}selected{% endif %}>B-</option>
+                        <option value="O+" {% if pds.blood_type == 'O+' %}selected{% endif %}>O+</option>
+                        <option value="O-" {% if pds.blood_type == 'O-' %}selected{% endif %}>O-</option>
+                        <option value="AB+" {% if pds.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                        <option value="AB-" {% if pds.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
                     </select>
                 </div>
                 <div class="pds-field">
-                    <label>Citizenship</label>
-                    <select name="citizenship">
+                    <label>Citizenship <span class="req">*</span></label>
+                    <select name="citizenship" required>
                         <option value="">-- Select --</option>
                         <option value="filipino" {% if pds.citizenship == 'filipino' %}selected{% endif %}>Filipino</option>
                         <option value="dual" {% if pds.citizenship == 'dual' %}selected{% endif %}>Dual Citizenship</option>
                     </select>
                 </div>
             </div>
-            <button type="submit" class="pds-save-btn">💾 Save Personal Info</button>
-        </form>
-    </div>
 
-    <!-- II. CONTACT INFORMATION -->
-    <div class="pds-section">
-        <h2>II. Contact Information</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_contact">
+            <hr class="section-divider">
 
-            <p style="color:#001f52; font-weight:bold; font-size:13px; margin-bottom:10px;">Residential Address</p>
+            <p class="subsection-title">Residential Address <span class="req">*</span></p>
             <div class="pds-grid three">
                 <div class="pds-field">
                     <label>House/Block/Lot No.</label>
-                    <input type="text" name="res_house_no" value="{{ pds.res_house_no }}">
+                    <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
-                    <label>Street</label>
-                    <input type="text" name="res_street" value="{{ pds.res_street }}">
+                    <label>Street <span class="req">*</span></label>
+                    <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
                 </div>
                 <div class="pds-field">
                     <label>Subdivision/Village</label>
-                    <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}">
+                    <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
-                    <label>Barangay</label>
-                    <input type="text" name="res_barangay" value="{{ pds.res_barangay }}">
+                    <label>Barangay <span class="req">*</span></label>
+                    <input type="text" name="res_barangay" value="{{ pds.res_barangay }}" required placeholder="e.g. Brgy. 1">
                 </div>
                 <div class="pds-field">
-                    <label>City/Municipality</label>
-                    <input type="text" name="res_city" value="{{ pds.res_city }}">
+                    <label>City/Municipality <span class="req">*</span></label>
+                    <input type="text" name="res_city" value="{{ pds.res_city }}" required placeholder="e.g. Manila">
                 </div>
                 <div class="pds-field">
-                    <label>Province</label>
-                    <input type="text" name="res_province" value="{{ pds.res_province }}">
+                    <label>Province <span class="req">*</span></label>
+                    <input type="text" name="res_province" value="{{ pds.res_province }}" required placeholder="e.g. Metro Manila">
                 </div>
             </div>
-            <div class="pds-grid" style="margin-top:8px; grid-template-columns: 120px 1fr;">
+            <div style="margin-top:10px; max-width:150px;">
                 <div class="pds-field">
                     <label>ZIP Code</label>
-                    <input type="text" name="res_zip" value="{{ pds.res_zip }}">
+                    <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 1000">
                 </div>
             </div>
 
-            <p style="color:#001f52; font-weight:bold; font-size:13px; margin:16px 0 10px 0;">Permanent Address</p>
+            <hr class="section-divider">
+
+            <p class="subsection-title">Permanent Address</p>
+            <div style="margin-bottom:10px;">
+                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
+                    Same as Residential Address
+                </label>
+            </div>
             <div class="pds-grid three">
                 <div class="pds-field">
                     <label>House/Block/Lot No.</label>
-                    <input type="text" name="perm_house_no" value="{{ pds.perm_house_no }}">
+                    <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Street</label>
-                    <input type="text" name="perm_street" value="{{ pds.perm_street }}">
+                    <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Subdivision/Village</label>
-                    <input type="text" name="perm_subdivision" value="{{ pds.perm_subdivision }}">
+                    <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Barangay</label>
-                    <input type="text" name="perm_barangay" value="{{ pds.perm_barangay }}">
+                    <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>City/Municipality</label>
-                    <input type="text" name="perm_city" value="{{ pds.perm_city }}">
+                    <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Province</label>
-                    <input type="text" name="perm_province" value="{{ pds.perm_province }}">
+                    <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}" placeholder="N/A if not applicable">
                 </div>
             </div>
-            <div class="pds-grid" style="margin-top:8px; grid-template-columns: 120px 1fr;">
+            <div style="margin-top:10px; max-width:150px;">
                 <div class="pds-field">
                     <label>ZIP Code</label>
-                    <input type="text" name="perm_zip" value="{{ pds.perm_zip }}">
+                    <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 1000">
                 </div>
             </div>
 
-            <p style="color:#001f52; font-weight:bold; font-size:13px; margin:16px 0 10px 0;">Contact Numbers</p>
+            <hr class="section-divider">
+
+            <p class="subsection-title">Contact Numbers</p>
             <div class="pds-grid three">
                 <div class="pds-field">
                     <label>Telephone No.</label>
-                    <input type="text" name="telephone" value="{{ pds.telephone }}">
+                    <input type="text" name="telephone" value="{{ pds.telephone }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
-                    <label>Mobile No.</label>
-                    <input type="text" name="mobile" value="{{ pds.mobile }}">
+                    <label>Mobile No. <span class="req">*</span></label>
+                    <input type="text" name="mobile" value="{{ pds.mobile }}" required placeholder="e.g. 09XX-XXX-XXXX">
                 </div>
                 <div class="pds-field">
-                    <label>Email Address</label>
-                    <input type="email" name="email" value="{{ pds.email }}">
+                    <label>Email Address <span class="req">*</span></label>
+                    <input type="email" name="email" value="{{ pds.email }}" required placeholder="e.g. juan@email.com">
                 </div>
             </div>
-            <button type="submit" class="pds-save-btn">💾 Save Contact Info</button>
+
+            <button type="submit" class="pds-save-btn">💾 Save Personal & Contact Info</button>
         </form>
     </div>
 
-    <!-- III. EDUCATION -->
+    <!-- II. EDUCATION -->
     <div class="pds-section">
-        <h2>III. Educational Background</h2>
+        <h2>II. Educational Background</h2>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="save_education">
@@ -418,9 +448,9 @@
                     {% for level in 'elementary,secondary,college,vocational'|split:',' %}
                     <tr>
                         <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
-                        <td><input type="text" name="{{ level }}_school" value="{% if education|get:level %}{{ education|get:level.school }}{% endif %}"></td>
-                        <td><input type="text" name="{{ level }}_course" value="{% if education|get:level %}{{ education|get:level.course }}{% endif %}"></td>
-                        <td><input type="text" name="{{ level }}_year" value="{% if education|get:level %}{{ education|get:level.year_graduated }}{% endif %}" placeholder="e.g. 2020"></td>
+                        <td><input type="text" name="{{ level }}_school" value="{% if education|get:level %}{{ education|get:level.school }}{% endif %}" placeholder="N/A if not applicable"></td>
+                        <td><input type="text" name="{{ level }}_course" value="{% if education|get:level %}{{ education|get:level.course }}{% endif %}" placeholder="N/A if not applicable"></td>
+                        <td><input type="text" name="{{ level }}_year" value="{% if education|get:level %}{{ education|get:level.year_graduated }}{% endif %}" placeholder="N/A"></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -429,9 +459,9 @@
         </form>
     </div>
 
-    <!-- IV. WORK EXPERIENCE -->
+    <!-- III. WORK EXPERIENCE -->
     <div class="pds-section">
-        <h2>IV. Work Experience</h2>
+        <h2>III. Work Experience</h2>
 
         {% for work in work_list %}
         <div class="work-card">
@@ -452,7 +482,7 @@
             </form>
         </div>
         {% empty %}
-        <p style="color:#888; font-size:13px;">No work experience added yet.</p>
+        <p style="color:#888; font-size:13px;">No work experience added yet. Enter N/A if not applicable.</p>
         {% endfor %}
 
         <form method="post" style="margin-top:16px;">
@@ -461,11 +491,11 @@
             <div class="pds-grid">
                 <div class="pds-field">
                     <label>Company / Employer</label>
-                    <input type="text" name="company" placeholder="Company name">
+                    <input type="text" name="company" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Position / Title</label>
-                    <input type="text" name="position" placeholder="Job title">
+                    <input type="text" name="position" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
                     <label>Date From</label>
@@ -485,9 +515,9 @@
         </form>
     </div>
 
-    <!-- V. SKILLS / ELIGIBILITY -->
+    <!-- IV. SKILLS / ELIGIBILITY -->
     <div class="pds-section">
-        <h2>V. Skills / Eligibility</h2>
+        <h2>IV. Skills / Eligibility</h2>
 
         <div style="margin-bottom:12px;">
             {% for skill in skills %}
@@ -501,7 +531,7 @@
                 </form>
             </span>
             {% empty %}
-            <p style="color:#888; font-size:13px;">No skills added yet.</p>
+            <p style="color:#888; font-size:13px;">No skills added yet. Enter N/A if not applicable.</p>
             {% endfor %}
         </div>
 
@@ -509,40 +539,54 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="add_skill">
             <div class="add-row">
-                <input type="text" name="skill_name" placeholder="e.g. Python, Leadership, CSE Passer...">
+                <input type="text" name="skill_name" placeholder="e.g. Python, Leadership, CSE Passer, N/A...">
                 <button type="submit" class="add-btn">+ Add Skill</button>
             </div>
         </form>
     </div>
 
-    <!-- VI. EMERGENCY CONTACT -->
+    <!-- V. EMERGENCY CONTACT -->
     <div class="pds-section">
-        <h2>VI. Emergency Contact</h2>
+        <h2>V. Emergency Contact</h2>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="save_emergency">
             <div class="pds-grid">
                 <div class="pds-field">
-                    <label>Full Name</label>
-                    <input type="text" name="emergency_name" value="{{ pds.emergency_name }}">
+                    <label>Full Name <span class="req">*</span></label>
+                    <input type="text" name="emergency_name" value="{{ pds.emergency_name }}" required placeholder="e.g. Maria Dela Cruz">
                 </div>
                 <div class="pds-field">
-                    <label>Relationship</label>
-                    <input type="text" name="emergency_relationship" value="{{ pds.emergency_relationship }}">
+                    <label>Relationship <span class="req">*</span></label>
+                    <input type="text" name="emergency_relationship" value="{{ pds.emergency_relationship }}" required placeholder="e.g. Mother, Spouse">
                 </div>
                 <div class="pds-field">
-                    <label>Phone Number</label>
-                    <input type="text" name="emergency_phone" value="{{ pds.emergency_phone }}">
+                    <label>Phone Number <span class="req">*</span></label>
+                    <input type="text" name="emergency_phone" value="{{ pds.emergency_phone }}" required placeholder="e.g. 09XX-XXX-XXXX">
                 </div>
             </div>
             <div class="pds-field" style="margin-top:14px;">
-                <label>Address</label>
-                <textarea name="emergency_address" rows="2">{{ pds.emergency_address }}</textarea>
+                <label>Address <span class="req">*</span></label>
+                <textarea name="emergency_address" rows="2" required placeholder="e.g. 123 Rizal St., Brgy. 1, Manila">{{ pds.emergency_address }}</textarea>
             </div>
             <button type="submit" class="pds-save-btn">💾 Save Emergency Contact</button>
         </form>
     </div>
 
 </div>
+
+<script>
+    function copyResAddress(checkbox) {
+        if (checkbox.checked) {
+            document.getElementById('perm_house_no').value = document.querySelector('[name="res_house_no"]').value;
+            document.getElementById('perm_street').value = document.querySelector('[name="res_street"]').value;
+            document.getElementById('perm_subdivision').value = document.querySelector('[name="res_subdivision"]').value;
+            document.getElementById('perm_barangay').value = document.querySelector('[name="res_barangay"]').value;
+            document.getElementById('perm_city').value = document.querySelector('[name="res_city"]').value;
+            document.getElementById('perm_province').value = document.querySelector('[name="res_province"]').value;
+            document.getElementById('perm_zip').value = document.querySelector('[name="res_zip"]').value;
+        }
+    }
+</script>
 
 {% endblock %}
