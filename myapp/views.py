@@ -192,27 +192,20 @@ def profile_view(request, username):
 def edit_profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if profile_form.is_valid():
             profile_obj = profile_form.save(commit=False)
             if not request.FILES.get('profile_pic'):
                 profile_obj.profile_pic = profile.profile_pic
             profile_obj.save()
             return redirect('profile', username=request.user.username)
         else:
-            print("--- Form Validation Failed ---")
-            print("User Form Errors:", user_form.errors)
             print("Profile Form Errors:", profile_form.errors)
     else:
-        user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileForm(instance=profile)
     return render(request, 'edit_profile.html', {
-        'user_form': user_form,
         'profile_form': profile_form,
     })
-
 
 class PostListView(ListView):
     model = Post

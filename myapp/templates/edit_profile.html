@@ -136,67 +136,69 @@
     <h1>Edit Profile</h1>
 
     <form method="post" action="" enctype="multipart/form-data">
-        {% csrf_token %}
+    {% csrf_token %}
 
-        {% if profile_form.errors or user_form.errors %}
-            <div style="background: #ffe6e6; border: 1px solid #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
-                <p style="color: #820000; margin: 0; font-weight: bold; font-size: 14px;">Please correct the errors below:</p>
-                {{ profile_form.non_field_errors }}
-                {{ user_form.non_field_errors }}
-            </div>
-        {% endif %}
+    {% if profile_form.errors %}
+    <div style="background: #ffe6e6; border: 1px solid #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+        <p style="color: #820000; margin: 0; font-weight: bold; font-size: 14px;">Please correct the errors below:</p>
+        {{ profile_form.non_field_errors }}
+    </div>
+{% endif %}
 
-        {% if request.user.profile.profile_pic %}
-            <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
-        {% else %}
-            <div class="pic-placeholder-box" style="
-                width: 70px; height: 70px; border-radius: 50%;
-                background: #001f52; display: flex; align-items: center;
-                justify-content: center; font-size: 26px; color: white;
-                margin-bottom: 8px; border: 2px solid #001f52;
-            " id="pic-placeholder">{{ request.user.username|first|upper }}</div>
-        {% endif %}
+    {% if request.user.profile.profile_pic %}
+        <img src="{{ request.user.profile.profile_pic.url }}" class="profile-pic-preview" id="pic-preview">
+    {% else %}
+        <div class="pic-placeholder-box" style="
+            width: 70px; height: 70px; border-radius: 50%;
+            background: #001f52; display: flex; align-items: center;
+            justify-content: center; font-size: 26px; color: white;
+            margin-bottom: 8px; border: 2px solid #001f52;
+        " id="pic-placeholder">{{ request.user.username|first|upper }}</div>
+    {% endif %}
 
-        <label>Profile Picture</label>
-        <label for="id_profile_pic" class="photo-upload-label" style="
-            display: inline-block;
-            background: #99afc4;
-            color: #003082;
-            padding: 6px 12px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 10px;
-            margin-top: 4px;
-        ">Change Photo</label>
-        <input type="file" name="profile_pic" id="id_profile_pic" accept="image/*" style="display: none;"
-               onchange="previewPic(this)">
+    <label>Profile Picture</label>
+    <label for="id_profile_pic" class="photo-upload-label" style="
+        display: inline-block;
+        background: #99afc4;
+        color: #003082;
+        padding: 6px 12px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 10px;
+        margin-top: 4px;
+    ">Change Photo</label>
+    <input type="file" name="profile_pic" id="id_profile_pic" accept="image/*" style="display: none;"
+           onchange="previewPic(this)">
 
-        <label>Bio</label>
-        {{ profile_form.bio }}
-        {{ profile_form.bio.errors }}
+    <label>Bio</label>
+    {{ profile_form.bio }}
+    {{ profile_form.bio.errors }}
 
-        <label>Location</label>
-        {{ profile_form.location }}
-        {{ profile_form.location.errors }}
+    <label>Location</label>
+    {{ profile_form.location }}
+    {{ profile_form.location.errors }}
 
-        <label>Birthday</label>
-        {{ profile_form.birthday }}
-        {{ profile_form.birthday.errors }}
+    <label>Birthday</label>
+    {{ profile_form.birthday }}
+    {{ profile_form.birthday.errors }}
 
-        <button type="submit" class="btn-save">Save Changes</button>
+    <label>Email</label>
+    <input type="email" name="email" value="{{ request.user.email }}" placeholder="Your email">
 
-        <a href="{% url 'profile' request.user.username %}" class="cancel-link" style="
-            display: block;
-            text-align: center;
-            margin-top: 12px;
-            color: #001f52;
-            font-size: 13px;
-            font-weight: bold;
-            text-decoration: underline;
-        ">Cancel</a>
-    </form>
+    <button type="submit" class="btn-save">Save Changes</button>
+
+    <a href="{% url 'profile' request.user.username %}" class="cancel-link" style="
+        display: block;
+        text-align: center;
+        margin-top: 12px;
+        color: #001f52;
+        font-size: 13px;
+        font-weight: bold;
+        text-decoration: underline;
+    ">Cancel</a>
+</form>
 </div>
 
 <script>

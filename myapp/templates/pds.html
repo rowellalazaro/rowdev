@@ -218,6 +218,47 @@
         margin-bottom: 10px;
         margin-top: 0;
     }
+    .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #c0cfe0;
+    border-radius: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 999;
+    list-style: none;
+    padding: 0;
+    margin: 2px 0 0 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.autocomplete-list li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #001f52;
+}
+
+.autocomplete-list li:hover {
+    background: #e8f0ff;
+}
+
+body.dark .autocomplete-list {
+    background: #1e3448 !important;
+    border-color: #0f1f2e !important;
+}
+
+body.dark .autocomplete-list li {
+    color: #d0e8f5 !important;
+}
+
+body.dark .autocomplete-list li:hover {
+    background: #1a2a3a !important;
+}
 
     body.dark .pds-section { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .pds-section h2 { color: #7ec8e3 !important; border-bottom-color: #0f1f2e !important; }
@@ -301,7 +342,7 @@
                     </select>
                 </div>
                 <div class="pds-field">
-                    <label>Height (m)</label>
+                    <label>Height (cm)</label>
                     <input type="text" name="height" value="{{ pds.height }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
@@ -335,81 +376,149 @@
 
             <hr class="section-divider">
 
-            <p class="subsection-title">Residential Address <span class="req">*</span></p>
-            <div class="pds-grid three">
-                <div class="pds-field">
-                    <label>House/Block/Lot No.</label>
-                    <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Street <span class="req">*</span></label>
-                    <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
-                </div>
-                <div class="pds-field">
-                    <label>Subdivision/Village</label>
-                    <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Barangay <span class="req">*</span></label>
-                    <input type="text" name="res_barangay" value="{{ pds.res_barangay }}" required placeholder="e.g. Brgy. 1">
-                </div>
-                <div class="pds-field">
-                    <label>City/Municipality <span class="req">*</span></label>
-                    <input type="text" name="res_city" value="{{ pds.res_city }}" required placeholder="e.g. Manila">
-                </div>
-                <div class="pds-field">
-                    <label>Province <span class="req">*</span></label>
-                    <input type="text" name="res_province" value="{{ pds.res_province }}" required placeholder="e.g. Metro Manila">
-                </div>
-            </div>
-            <div style="margin-top:10px; max-width:150px;">
-                <div class="pds-field">
-                    <label>ZIP Code</label>
-                    <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 1000">
-                </div>
-            </div>
+<p class="subsection-title">Residential Address <span class="req">*</span></p>
+<div style="background:#f0f7ff; border:1px solid #c0cfe0; border-radius:10px; padding:16px; margin-bottom:16px;">
+    <div class="pds-grid three">
+        <div class="pds-field">
+            <label>House/Block/Lot No.</label>
+            <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
+        </div>
+        <div class="pds-field">
+            <label>Street <span class="req">*</span></label>
+            <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
+        </div>
+        <div class="pds-field">
+            <label>Subdivision/Village</label>
+            <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
+        </div>
+        <div class="pds-field">
+            <label>Barangay <span class="req">*</span></label>
+            <input type="text" name="res_barangay" value="{{ pds.res_barangay }}" required placeholder="e.g. Brgy. 1">
+        </div>
+        <div class="pds-field">
+            <label>City/Municipality <span class="req">*</span></label>
+            <input type="text" name="res_city" value="{{ pds.res_city }}" required placeholder="e.g. Manila">
+        </div>
+        <div class="pds-field">
+            <label>Province <span class="req">*</span></label>
+            <input type="text" name="res_province" value="{{ pds.res_province }}" required placeholder="e.g. Metro Manila">
+        </div>
+    </div>
+    <div style="margin-top:10px; max-width:150px;">
+        <div class="pds-field">
+            <label>ZIP Code</label>
+            <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 1000">
+        </div>
+    </div>
+</div>
 
-            <hr class="section-divider">
+<hr class="section-divider">
 
-            <p class="subsection-title">Permanent Address</p>
-            <div style="margin-bottom:10px;">
-                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
-                    Same as Residential Address
-                </label>
-            </div>
-            <div class="pds-grid three">
-                <div class="pds-field">
-                    <label>House/Block/Lot No.</label>
-                    <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Street</label>
-                    <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Subdivision/Village</label>
-                    <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Barangay</label>
-                    <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>City/Municipality</label>
-                    <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Province</label>
-                    <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}" placeholder="N/A if not applicable">
-                </div>
-            </div>
-            <div style="margin-top:10px; max-width:150px;">
-                <div class="pds-field">
-                    <label>ZIP Code</label>
-                    <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 1000">
-                </div>
-            </div>
+<p class="subsection-title">Residential Address <span class="req">*</span></p>
+<div style="background:#f0f7ff; border:1px solid #c0cfe0; border-radius:10px; padding:16px; margin-bottom:16px;">
+    <div class="pds-grid three">
+        <div class="pds-field">
+            <label>House/Block/Lot No.</label>
+            <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
+        </div>
+        <div class="pds-field">
+            <label>Street <span class="req">*</span></label>
+            <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
+        </div>
+        <div class="pds-field">
+            <label>Subdivision/Village</label>
+            <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
+        </div>
+    </div>
+    <div class="pds-grid three" style="margin-top:10px;">
+        <div class="pds-field" style="position:relative;">
+            <label>Province <span class="req">*</span></label>
+            <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
+                   required placeholder="e.g. Bulacan" autocomplete="off"
+                   oninput="fetchProvinces(this.value, 'res_province_list')"
+                   onchange="clearCityBarangay('res')">
+            <ul id="res_province_list" class="autocomplete-list"></ul>
+        </div>
+        <div class="pds-field" style="position:relative;">
+            <label>City/Municipality <span class="req">*</span></label>
+            <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
+                   required placeholder="e.g. Malolos" autocomplete="off"
+                   oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
+                   onchange="clearBarangay('res')">
+            <ul id="res_city_list" class="autocomplete-list"></ul>
+        </div>
+        <div class="pds-field" style="position:relative;">
+            <label>Barangay <span class="req">*</span></label>
+            <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
+                   required placeholder="e.g. Brgy. Santol" autocomplete="off"
+                   oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
+            <ul id="res_barangay_list" class="autocomplete-list"></ul>
+        </div>
+    </div>
+    <div style="margin-top:10px; max-width:150px;">
+        <div class="pds-field">
+            <label>ZIP Code</label>
+            <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<p class="subsection-title">Permanent Address</p>
+<div style="background:#f7fff0; border:1px solid #b8d4c0; border-radius:10px; padding:16px; margin-bottom:16px;">
+    <div style="margin-bottom:10px;">
+        <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
+            Same as Residential Address
+        </label>
+    </div>
+    <div class="pds-grid three">
+        <div class="pds-field">
+            <label>House/Block/Lot No.</label>
+            <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
+        </div>
+        <div class="pds-field">
+            <label>Street</label>
+            <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
+        </div>
+        <div class="pds-field">
+            <label>Subdivision/Village</label>
+            <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
+        </div>
+    </div>
+    <div class="pds-grid three" style="margin-top:10px;">
+        <div class="pds-field" style="position:relative;">
+            <label>Province</label>
+            <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
+                   placeholder="e.g. Bulacan" autocomplete="off"
+                   oninput="fetchProvinces(this.value, 'perm_province_list')"
+                   onchange="clearCityBarangay('perm')">
+            <ul id="perm_province_list" class="autocomplete-list"></ul>
+        </div>
+        <div class="pds-field" style="position:relative;">
+            <label>City/Municipality</label>
+            <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
+                   placeholder="e.g. Malolos" autocomplete="off"
+                   oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
+                   onchange="clearBarangay('perm')">
+            <ul id="perm_city_list" class="autocomplete-list"></ul>
+        </div>
+        <div class="pds-field" style="position:relative;">
+            <label>Barangay</label>
+            <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
+                   placeholder="e.g. Brgy. Santol" autocomplete="off"
+                   oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
+            <ul id="perm_barangay_list" class="autocomplete-list"></ul>
+        </div>
+    </div>
+    <div style="margin-top:10px; max-width:150px;">
+        <div class="pds-field">
+            <label>ZIP Code</label>
+            <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
+        </div>
+    </div>
+</div>
 
             <hr class="section-divider">
 
@@ -429,7 +538,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="pds-save-btn">💾 Save Personal Info</button>
+            <button type="submit" class="pds-save-btn">💾 Save </button>
         </form>
     </div>
 
@@ -463,7 +572,7 @@
     {% endfor %}
 </tbody>
             </table>
-            <button type="submit" class="pds-save-btn">💾 Save Education</button>
+            <button type="submit" class="pds-save-btn">💾 Save </button>
         </form>
     </div>
 
@@ -577,13 +686,146 @@
                 <label>Address <span class="req">*</span></label>
                 <textarea name="emergency_address" rows="2" required placeholder="e.g. 123 Rizal St., Brgy. 1, Manila">{{ pds.emergency_address }}</textarea>
             </div>
-            <button type="submit" class="pds-save-btn">💾 Save Emergency Contact</button>
+            <button type="submit" class="pds-save-btn">💾 Save </button>
         </form>
     </div>
 
 </div>
 
 <script>
+    // ── ADDRESS AUTOCOMPLETE ──
+    let provinceData = [];
+    let cityData = {};
+    let barangayData = {};
+
+    async function fetchProvinces(query, listId) {
+        const list = document.getElementById(listId);
+        if (query.length < 2) { list.style.display = 'none'; return; }
+
+        if (provinceData.length === 0) {
+            try {
+                const res = await fetch('https://psgc.gitlab.io/api/provinces/');
+                provinceData = await res.json();
+            } catch(e) {
+                list.style.display = 'none';
+                return;
+            }
+        }
+
+        const filtered = provinceData.filter(p =>
+            p.name.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 8);
+
+        showList(list, filtered.map(p => p.name), (val) => {
+            document.getElementById(listId.replace('_list', '')).value = val;
+            list.style.display = 'none';
+        });
+    }
+
+    async function fetchCities(query, listId, provinceInputId) {
+        const list = document.getElementById(listId);
+        if (query.length < 2) { list.style.display = 'none'; return; }
+
+        const provinceName = document.getElementById(provinceInputId).value;
+
+        try {
+            if (provinceData.length === 0) {
+                const res = await fetch('https://psgc.gitlab.io/api/provinces/');
+                provinceData = await res.json();
+            }
+            const province = provinceData.find(p =>
+                p.name.toLowerCase() === provinceName.toLowerCase()
+            );
+
+            let cities = [];
+            if (province) {
+                const cacheKey = province.code;
+                if (!cityData[cacheKey]) {
+                    const res = await fetch(`https://psgc.gitlab.io/api/provinces/${province.code}/cities-municipalities/`);
+                    cityData[cacheKey] = await res.json();
+                }
+                cities = cityData[cacheKey];
+            } else {
+                const res = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
+                cities = await res.json();
+            }
+
+            const filtered = cities.filter(c =>
+                c.name.toLowerCase().includes(query.toLowerCase())
+            ).slice(0, 8);
+
+            showList(list, filtered.map(c => c.name), (val) => {
+                document.getElementById(listId.replace('_list', '')).value = val;
+                list.style.display = 'none';
+            });
+        } catch(e) {
+            list.style.display = 'none';
+        }
+    }
+
+    async function fetchBarangays(query, listId, cityInputId) {
+        const list = document.getElementById(listId);
+        if (query.length < 2) { list.style.display = 'none'; return; }
+
+        const cityName = document.getElementById(cityInputId).value;
+
+        try {
+            const allCitiesRes = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
+            const allCities = await allCitiesRes.json();
+            const city = allCities.find(c =>
+                c.name.toLowerCase() === cityName.toLowerCase()
+            );
+
+            let barangays = [];
+            if (city) {
+                const cacheKey = city.code;
+                if (!barangayData[cacheKey]) {
+                    const res = await fetch(`https://psgc.gitlab.io/api/cities-municipalities/${city.code}/barangays/`);
+                    barangayData[cacheKey] = await res.json();
+                }
+                barangays = barangayData[cacheKey];
+            }
+
+            const filtered = barangays.filter(b =>
+                b.name.toLowerCase().includes(query.toLowerCase())
+            ).slice(0, 8);
+
+            showList(list, filtered.map(b => b.name), (val) => {
+                document.getElementById(listId.replace('_list', '')).value = val;
+                list.style.display = 'none';
+            });
+        } catch(e) {
+            list.style.display = 'none';
+        }
+    }
+
+    function showList(listEl, items, onSelect) {
+        listEl.innerHTML = '';
+        if (items.length === 0) { listEl.style.display = 'none'; return; }
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            li.onclick = () => onSelect(item);
+            listEl.appendChild(li);
+        });
+        listEl.style.display = 'block';
+    }
+
+    function clearCityBarangay(prefix) {
+        document.getElementById(prefix + '_city').value = '';
+        document.getElementById(prefix + '_barangay').value = '';
+    }
+
+    function clearBarangay(prefix) {
+        document.getElementById(prefix + '_barangay').value = '';
+    }
+
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.autocomplete-list').forEach(list => {
+            list.style.display = 'none';
+        });
+    });
+
     function copyResAddress(checkbox) {
         if (checkbox.checked) {
             document.getElementById('perm_house_no').value = document.querySelector('[name="res_house_no"]').value;
