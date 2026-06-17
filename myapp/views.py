@@ -398,25 +398,24 @@ def admin_handle_request(request, request_id):
 
 @login_required
 def add_work(request):
-    # ← ADDED: max 3 work experience entries
+    # ← FIXED: filter/create via pds (model has no 'user' field), and
+    # only use fields that actually exist on WorkExperience.
     if request.method == 'POST':
-        if WorkExperience.objects.filter(user=request.user).count() >= 3:
-            return redirect('pds')
         pds, _ = PDS.objects.get_or_create(user=request.user)
+        if pds.work_experience.count() >= 3:
+            return redirect('pds')
         position = request.POST.get('position', '')
         company = request.POST.get('company', '')
         date_from = request.POST.get('date_from') or None
         date_to = request.POST.get('date_to') or None
-        salary = request.POST.get('salary', '')
-        status = request.POST.get('status', '')
+        is_current = request.POST.get('is_current') == 'on'
         WorkExperience.objects.create(
             pds=pds,
             position=position,
             company=company,
             date_from=date_from,
-            date_to=date_to,
-            salary=salary,
-            status=status,
+            date_to=None if is_current else date_to,
+            is_current=is_current,
         )
     return redirect('pds')
 
@@ -434,8 +433,9 @@ def delete_work(request, pk):
 def add_skill(request):
     if request.method == 'POST':
         skill_name = request.POST.get('skill_name', '').strip()
-        # ← ADDED: save skill_category
-        skill_category = request.POST.get('skill_category_hidden', 'Other')
+        # ← FIXED: the form field is named "skill_category" (the id
+        # "skill_category_hidden" is just the DOM id, not the POST key)
+        skill_category = request.POST.get('skill_category', 'Other')
         if skill_name:
             pds, _ = PDS.objects.get_or_create(user=request.user)
             Skill.objects.create(pds=pds, name=skill_name, category=skill_category)
@@ -467,7 +467,10 @@ def pds_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        if action == 'save_personal':
+        # ── FIX: the main PDS form (personal info + address + education)
+        # submits action="save_all", but this branch didn't exist before,
+        # so nothing was ever saved and the page reloaded with blank/old data.
+        if action in ('save_all', 'save_personal'):
             pds.surname = request.POST.get('surname', '')
             pds.first_name = request.POST.get('first_name', '')
             pds.middle_name = request.POST.get('middle_name', '')
@@ -500,7 +503,7 @@ def pds_view(request):
             pds.email = request.POST.get('email', '')
             pds.save()
 
-        elif action == 'save_education':
+        if action in ('save_all', 'save_education'):
             # ← UPDATED: now also saves edu_status per level
             for level in ['elementary', 'secondary', 'college', 'vocational']:
                 school = request.POST.get(f'{level}_school', '')
@@ -513,6 +516,30 @@ def pds_view(request):
                 edu.year_graduated = year
                 edu.edu_status = status  # ← ADDED
                 edu.save()
+
+        elif action == 'add_work':
+            if pds.work_experience.count() < 3:
+                is_current = request.POST.get('is_current') == 'on'
+                WorkExperience.objects.create(
+                    pds=pds,
+                    company=request.POST.get('company', ''),
+                    position=request.POST.get('position', ''),
+                    date_from=request.POST.get('date_from') or None,
+                    date_to=None if is_current else (request.POST.get('date_to') or None),
+                    is_current=is_current,
+                )
+
+        elif action == 'delete_work':
+            WorkExperience.objects.filter(pds=pds, id=request.POST.get('work_id')).delete()
+
+        elif action == 'add_skill':
+            skill_name = request.POST.get('skill_name', '').strip()
+            skill_category = request.POST.get('skill_category', 'Other')
+            if skill_name:
+                Skill.objects.create(pds=pds, name=skill_name, category=skill_category)
+
+        elif action == 'delete_skill':
+            Skill.objects.filter(pds=pds, id=request.POST.get('skill_id')).delete()
 
         return redirect('pds')
 
