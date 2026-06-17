@@ -474,125 +474,125 @@
         </form>
     </div>
 
-    <!-- II. RESIDENTIAL ADDRESS -->
-    <div class="pds-section">
-        <h2>II. Residential Address</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_personal">
-            <div class="res-address-box">
-                <div class="pds-grid three">
-                    <div class="pds-field">
-                        <label>House/Block/Lot No.</label>
-                        <input type="text" name="res_house_no" id="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
-                    </div>
-                    <div class="pds-field">
-                        <label>Street <span class="req">*</span></label>
-                        <input type="text" name="res_street" id="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
-                    </div>
-                    <div class="pds-field">
-                        <label>Subdivision/Village</label>
-                        <input type="text" name="res_subdivision" id="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
-                    </div>
-                </div>
-                <div class="pds-grid three" style="margin-top:10px;">
-                    <div class="pds-field" style="position:relative;">
-                        <label>Province <span class="req">*</span></label>
-                        <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
-                               required placeholder="e.g. Bulacan" autocomplete="off"
-                               oninput="fetchProvinces(this.value, 'res_province_list')"
-                               onchange="clearCityBarangay('res')">
-                        <ul id="res_province_list" class="autocomplete-list"></ul>
-                    </div>
-                    <div class="pds-field" style="position:relative;">
-                        <label>City/Municipality <span class="req">*</span></label>
-                        <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
-                               required placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
-                               onchange="clearBarangay('res')">
-                        <ul id="res_city_list" class="autocomplete-list"></ul>
-                    </div>
-                    <div class="pds-field" style="position:relative;">
-                        <label>Barangay <span class="req">*</span></label>
-                        <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
-                               required placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
-                        <ul id="res_barangay_list" class="autocomplete-list"></ul>
-                    </div>
-                </div>
-                <div style="margin-top:10px; max-width:150px;">
-                    <div class="pds-field">
-                        <label>ZIP Code</label>
-                        <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
-                    </div>
-                </div>
-            </div>
-            <button type="submit" class="pds-save-btn">💾 Save</button>
-        </form>
-    </div>
+    <!-- II & III. RESIDENTIAL & PERMANENT ADDRESS -->
+<div class="pds-section">
+    <h2>II. Address</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_personal">
 
-    <!-- III. PERMANENT ADDRESS -->
-    <div class="pds-section">
-        <h2>III. Permanent Address</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_personal">
-            <div class="perm-address-box">
-                <div style="margin-bottom:10px;">
-                    <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                        <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
-                        Same as Residential Address
-                    </label>
+        <!-- RESIDENTIAL -->
+        <h3 style="font-size:14px; font-weight:700; color:#001f52; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Residential Address</h3>
+        <div class="res-address-box">
+            <div class="pds-grid three">
+                <div class="pds-field">
+                    <label>House/Block/Lot No.</label>
+                    <input type="text" name="res_house_no" id="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
                 </div>
-                <div class="pds-grid three">
-                    <div class="pds-field">
-                        <label>House/Block/Lot No.</label>
-                        <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
-                    </div>
-                    <div class="pds-field">
-                        <label>Street</label>
-                        <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
-                    </div>
-                    <div class="pds-field">
-                        <label>Subdivision/Village</label>
-                        <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
-                    </div>
+                <div class="pds-field">
+                    <label>Street <span class="req">*</span></label>
+                    <input type="text" name="res_street" id="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
                 </div>
-                <div class="pds-grid three" style="margin-top:10px;">
-                    <div class="pds-field" style="position:relative;">
-                        <label>Province</label>
-                        <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
-                               placeholder="e.g. Bulacan" autocomplete="off"
-                               oninput="fetchProvinces(this.value, 'perm_province_list')"
-                               onchange="clearCityBarangay('perm')">
-                        <ul id="perm_province_list" class="autocomplete-list"></ul>
-                    </div>
-                    <div class="pds-field" style="position:relative;">
-                        <label>City/Municipality</label>
-                        <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
-                               placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
-                               onchange="clearBarangay('perm')">
-                        <ul id="perm_city_list" class="autocomplete-list"></ul>
-                    </div>
-                    <div class="pds-field" style="position:relative;">
-                        <label>Barangay</label>
-                        <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
-                               placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
-                        <ul id="perm_barangay_list" class="autocomplete-list"></ul>
-                    </div>
-                </div>
-                <div style="margin-top:10px; max-width:150px;">
-                    <div class="pds-field">
-                        <label>ZIP Code</label>
-                        <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
-                    </div>
+                <div class="pds-field">
+                    <label>Subdivision/Village</label>
+                    <input type="text" name="res_subdivision" id="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
                 </div>
             </div>
-            <button type="submit" class="pds-save-btn">💾 Save</button>
-        </form>
-    </div>
+            <div class="pds-grid three" style="margin-top:10px;">
+                <div class="pds-field" style="position:relative;">
+                    <label>Province <span class="req">*</span></label>
+                    <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
+                           required placeholder="e.g. Bulacan" autocomplete="off"
+                           oninput="fetchProvinces(this.value, 'res_province_list')"
+                           onchange="clearCityBarangay('res')">
+                    <ul id="res_province_list" class="autocomplete-list"></ul>
+                </div>
+                <div class="pds-field" style="position:relative;">
+                    <label>City/Municipality <span class="req">*</span></label>
+                    <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
+                           required placeholder="e.g. Malolos" autocomplete="off"
+                           oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
+                           onchange="clearBarangay('res')">
+                    <ul id="res_city_list" class="autocomplete-list"></ul>
+                </div>
+                <div class="pds-field" style="position:relative;">
+                    <label>Barangay <span class="req">*</span></label>
+                    <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
+                           required placeholder="e.g. Brgy. Santol" autocomplete="off"
+                           oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
+                    <ul id="res_barangay_list" class="autocomplete-list"></ul>
+                </div>
+            </div>
+            <div style="margin-top:10px; max-width:150px;">
+                <div class="pds-field">
+                    <label>ZIP Code</label>
+                    <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
+                </div>
+            </div>
+        </div>
+
+        <!-- DIVIDER -->
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid #dce3f0;">
+
+        <!-- PERMANENT -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h3 style="font-size:14px; font-weight:700; color:#001f52; text-transform:uppercase; letter-spacing:0.5px; margin:0;">Permanent Address</h3>
+            <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
+                Same as Residential Address
+            </label>
+        </div>
+        <div class="perm-address-box">
+            <div class="pds-grid three">
+                <div class="pds-field">
+                    <label>House/Block/Lot No.</label>
+                    <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
+                </div>
+                <div class="pds-field">
+                    <label>Street</label>
+                    <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
+                </div>
+                <div class="pds-field">
+                    <label>Subdivision/Village</label>
+                    <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
+                </div>
+            </div>
+            <div class="pds-grid three" style="margin-top:10px;">
+                <div class="pds-field" style="position:relative;">
+                    <label>Province</label>
+                    <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
+                           placeholder="e.g. Bulacan" autocomplete="off"
+                           oninput="fetchProvinces(this.value, 'perm_province_list')"
+                           onchange="clearCityBarangay('perm')">
+                    <ul id="perm_province_list" class="autocomplete-list"></ul>
+                </div>
+                <div class="pds-field" style="position:relative;">
+                    <label>City/Municipality</label>
+                    <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
+                           placeholder="e.g. Malolos" autocomplete="off"
+                           oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
+                           onchange="clearBarangay('perm')">
+                    <ul id="perm_city_list" class="autocomplete-list"></ul>
+                </div>
+                <div class="pds-field" style="position:relative;">
+                    <label>Barangay</label>
+                    <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
+                           placeholder="e.g. Brgy. Santol" autocomplete="off"
+                           oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
+                    <ul id="perm_barangay_list" class="autocomplete-list"></ul>
+                </div>
+            </div>
+            <div style="margin-top:10px; max-width:150px;">
+                <div class="pds-field">
+                    <label>ZIP Code</label>
+                    <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="pds-save-btn">💾 Save</button>
+    </form>
+</div>
 
     <!-- IV. EDUCATIONAL BACKGROUND -->
     <div class="pds-section">
@@ -784,12 +784,12 @@
         <!-- category filter tabs -->
         <div class="skill-category-tabs">
             <button type="button" class="skill-cat-btn active" onclick="filterSkillCat('all', this)">All</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical', this)">💻 Technical</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Soft Skills', this)">🤝 Soft Skills</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Language', this)">🌐 Language</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Eligibility', this)">📜 Eligibility</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Office', this)">🏢 Office Tools</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Other', this)">➕ Other</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical', this)">Technical</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Soft Skills', this)">Soft Skills</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Language', this)">Language</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Eligibility', this)">Eligibility</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Office', this)">Office Tools</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Other', this)">Other</button>
         </div>
 
         <form method="post">
@@ -819,36 +819,6 @@
             </div>
         </form>
     </div>
-
-    <!-- VII. EMERGENCY CONTACT -->
-    <div class="pds-section">
-        <h2>VII. Emergency Contact</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_emergency">
-            <div class="pds-grid">
-                <div class="pds-field">
-                    <label>Full Name <span class="req">*</span></label>
-                    <input type="text" name="emergency_name" value="{{ pds.emergency_name }}" required placeholder="e.g. Maria Dela Cruz">
-                </div>
-                <div class="pds-field">
-                    <label>Relationship <span class="req">*</span></label>
-                    <input type="text" name="emergency_relationship" value="{{ pds.emergency_relationship }}" required placeholder="e.g. Mother, Spouse">
-                </div>
-                <div class="pds-field">
-                    <label>Phone Number <span class="req">*</span></label>
-                    <input type="text" name="emergency_phone" value="{{ pds.emergency_phone }}" required placeholder="e.g. 09XX-XXX-XXXX">
-                </div>
-            </div>
-            <div class="pds-field" style="margin-top:14px;">
-                <label>Address <span class="req">*</span></label>
-                <textarea name="emergency_address" rows="2" required placeholder="e.g. 123 Rizal St., Brgy. 1, Manila">{{ pds.emergency_address }}</textarea>
-            </div>
-            <button type="submit" class="pds-save-btn">💾 Save</button>
-        </form>
-    </div>
-
-</div>
 
 <script>
     // ── ADDRESS AUTOCOMPLETE ──
