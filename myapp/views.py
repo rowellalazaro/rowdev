@@ -196,17 +196,14 @@ def edit_profile(request):
         if profile_form.is_valid():
             profile_obj = profile_form.save(commit=False)
             if not request.FILES.get('profile_pic'):
-                profile_obj.profile_pic = profile.profile_pic
+                profile_obj.profile_pic = profile.profile_pic  # retain old pic
             profile_obj.save()
             return redirect('profile', username=request.user.username)
         else:
             print("Profile Form Errors:", profile_form.errors)
     else:
         profile_form = ProfileForm(instance=profile)
-    return render(request, 'edit_profile.html', {
-        'profile_form': profile_form,
-    })
-
+    return render(request, 'edit_profile.html', {'profile_form': profile_form})
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'

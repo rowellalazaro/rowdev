@@ -130,6 +130,7 @@ class PDS(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     middle_name = models.CharField(max_length=100, blank=True)
     name_extension = models.CharField(max_length=20, blank=True)
+    age = models.CharField(max_length=5, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, blank=True)
@@ -139,7 +140,7 @@ class PDS(models.Model):
     blood_type = models.CharField(max_length=5, blank=True)
     citizenship = models.CharField(max_length=20, choices=CITIZENSHIP_CHOICES, blank=True)
 
-    # Contact Info
+    # Residential Address
     res_house_no = models.CharField(max_length=100, blank=True)
     res_street = models.CharField(max_length=100, blank=True)
     res_subdivision = models.CharField(max_length=100, blank=True)
@@ -147,6 +148,8 @@ class PDS(models.Model):
     res_city = models.CharField(max_length=100, blank=True)
     res_province = models.CharField(max_length=100, blank=True)
     res_zip = models.CharField(max_length=10, blank=True)
+
+    # Permanent Address
     perm_house_no = models.CharField(max_length=100, blank=True)
     perm_street = models.CharField(max_length=100, blank=True)
     perm_subdivision = models.CharField(max_length=100, blank=True)
@@ -154,15 +157,10 @@ class PDS(models.Model):
     perm_city = models.CharField(max_length=100, blank=True)
     perm_province = models.CharField(max_length=100, blank=True)
     perm_zip = models.CharField(max_length=10, blank=True)
+
     telephone = models.CharField(max_length=30, blank=True)
     mobile = models.CharField(max_length=30, blank=True)
     email = models.CharField(max_length=100, blank=True)
-
-    # Emergency Contact
-    emergency_name = models.CharField(max_length=200, blank=True)
-    emergency_relationship = models.CharField(max_length=100, blank=True)
-    emergency_address = models.TextField(blank=True)
-    emergency_phone = models.CharField(max_length=30, blank=True)
 
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -177,10 +175,16 @@ class Education(models.Model):
         ('vocational', 'Vocational'),
         ('college', 'College'),
     ]
+    EDU_STATUS_CHOICES = [
+        ('graduated', 'Graduated'),
+        ('undergraduate', 'Undergraduate'),
+        ('ongoing', 'Ongoing'),
+    ]
     pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='education')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
     school = models.CharField(max_length=200, blank=True)
     course = models.CharField(max_length=200, blank=True)
+    edu_status = models.CharField(max_length=20, choices=EDU_STATUS_CHOICES, blank=True)
     year_graduated = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
@@ -200,8 +204,17 @@ class WorkExperience(models.Model):
 
 
 class Skill(models.Model):
+    SKILL_CATEGORIES = [
+        ('technical', 'Technical'),
+        ('soft', 'Soft Skills'),
+        ('language', 'Language'),
+        ('tools', 'Tools & Software'),
+        ('professional', 'Professional'),
+        ('other', 'Other'),
+    ]
     pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=200)
+    category = models.CharField(max_length=20, choices=SKILL_CATEGORIES, default='other')
 
     def __str__(self):
         return self.name

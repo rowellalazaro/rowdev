@@ -32,6 +32,10 @@ class ProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 3}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['profile_pic'].required = False  # ← ADD THIS
+
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
