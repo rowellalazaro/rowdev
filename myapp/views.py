@@ -11,6 +11,8 @@ from django.contrib.auth import logout as auth_logout
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from .models import PDS
+from datetime import datetime  # ← ADDED
+
 
 def pds_required(user):
     try:
@@ -204,6 +206,8 @@ def edit_profile(request):
     else:
         profile_form = ProfileForm(instance=profile)
     return render(request, 'edit_profile.html', {'profile_form': profile_form})
+
+
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'
@@ -393,20 +397,76 @@ def admin_handle_request(request, request_id):
 
 
 @login_required
+def add_work(request):
+    # ← ADDED: max 3 work experience entries
+    if request.method == 'POST':
+        if WorkExperience.objects.filter(user=request.user).count() >= 3:
+            return redirect('pds')
+        pds, _ = PDS.objects.get_or_create(user=request.user)
+        position = request.POST.get('position', '')
+        company = request.POST.get('company', '')
+        date_from = request.POST.get('date_from') or None
+        date_to = request.POST.get('date_to') or None
+        salary = request.POST.get('salary', '')
+        status = request.POST.get('status', '')
+        WorkExperience.objects.create(
+            pds=pds,
+            position=position,
+            company=company,
+            date_from=date_from,
+            date_to=date_to,
+            salary=salary,
+            status=status,
+        )
+    return redirect('pds')
+
+
+@login_required
+def delete_work(request, pk):
+    pds = get_object_or_404(PDS, user=request.user)
+    work = get_object_or_404(WorkExperience, pk=pk, pds=pds)
+    if request.method == 'POST':
+        work.delete()
+    return redirect('pds')
+
+
+@login_required
+def add_skill(request):
+    if request.method == 'POST':
+        skill_name = request.POST.get('skill_name', '').strip()
+        # ← ADDED: save skill_category
+        skill_category = request.POST.get('skill_category_hidden', 'Other')
+        if skill_name:
+            pds, _ = PDS.objects.get_or_create(user=request.user)
+            Skill.objects.create(pds=pds, name=skill_name, category=skill_category)
+    return redirect('pds')
+
+
+@login_required
+def delete_skill(request, pk):
+    pds = get_object_or_404(PDS, user=request.user)
+    skill = get_object_or_404(Skill, pk=pk, pds=pds)
+    if request.method == 'POST':
+        skill.delete()
+    return redirect('pds')
+
+
+@login_required
 def pds_view(request):
     pds, created = PDS.objects.get_or_create(user=request.user)
-    
-   
+
     education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
     for edu in pds.education.all():
         education[edu.level] = edu
     work_list = pds.work_experience.all().order_by('-date_from')
     skills = pds.skills.all()
 
+    # ← ADDED: year choices for education dropdowns
+    year_choices = list(range(datetime.now().year, 1979, -1))
+
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        
         if action == 'save_personal':
             pds.surname = request.POST.get('surname', '')
             pds.first_name = request.POST.get('first_name', '')
@@ -421,8 +481,6 @@ def pds_view(request):
             pds.weight = request.POST.get('weight', '')
             pds.blood_type = request.POST.get('blood_type', '')
             pds.citizenship = request.POST.get('citizenship', '')
-            
-           
             pds.res_house_no = request.POST.get('res_house_no', '')
             pds.res_street = request.POST.get('res_street', '')
             pds.res_subdivision = request.POST.get('res_subdivision', '')
@@ -443,15 +501,17 @@ def pds_view(request):
             pds.save()
 
         elif action == 'save_education':
-           
+            # ← UPDATED: now also saves edu_status per level
             for level in ['elementary', 'secondary', 'college', 'vocational']:
                 school = request.POST.get(f'{level}_school', '')
                 course = request.POST.get(f'{level}_course', '')
                 year = request.POST.get(f'{level}_year', '')
+                status = request.POST.get(f'{level}_status', '')  # ← ADDED
                 edu, _ = Education.objects.get_or_create(pds=pds, level=level)
                 edu.school = school
                 edu.course = course
                 edu.year_graduated = year
+                edu.edu_status = status  # ← ADDED
                 edu.save()
 
         elif action == 'save_emergency':
@@ -461,13 +521,14 @@ def pds_view(request):
             pds.emergency_phone = request.POST.get('emergency_phone', '')
             pds.save()
 
-        return redirect('pds') 
+        return redirect('pds')
 
     return render(request, 'pds.html', {
         'pds': pds,
         'education': education,
         'work_list': work_list,
         'skills': skills,
+        'year_choices': year_choices,  # ← ADDED
     })
 
 
@@ -495,22 +556,20 @@ def admin_pds_list(request):
     return render(request, 'admin_pds.html', {'pds_list': pds_list, 'sort': sort, 'search': search})
 
 
-
-
 def admin_pds_detail(request, user_id):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('admin_login')
-    
+
     u = get_object_or_404(User, id=user_id)
     pds, created = PDS.objects.get_or_create(user=u)
-    
+
     education = {level: None for level in ['elementary', 'secondary', 'college', 'vocational']}
     for edu in pds.education.all():
         education[edu.level] = edu
-        
+
     work_list = pds.work_experience.all().order_by('-date_from')
     skills = pds.skills.all()
-    
+
     return render(request, 'admin_pds_detail.html', {
         'u': u,
         'pds': pds,

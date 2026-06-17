@@ -192,9 +192,11 @@
         padding: 8px 10px;
         border-bottom: 1px solid #e0e6f0;
         color: #001f52;
+        vertical-align: top;
     }
 
-    .edu-table td input {
+    .edu-table td input,
+    .edu-table td select {
         width: 100%;
         padding: 6px 8px;
         border: 1px solid #c0cfe0;
@@ -218,48 +220,117 @@
         margin-bottom: 10px;
         margin-top: 0;
     }
+
+    .res-address-box {
+        background: #f0f7ff;
+        border: 1px solid #c0cfe0;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .perm-address-box {
+        background: #f7fff0;
+        border: 1px solid #b8d4c0;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
     .autocomplete-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #c0cfe0;
-    border-radius: 6px;
-    max-height: 180px;
-    overflow-y: auto;
-    z-index: 999;
-    list-style: none;
-    padding: 0;
-    margin: 2px 0 0 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    display: none;
-}
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #c0cfe0;
+        border-radius: 6px;
+        max-height: 180px;
+        overflow-y: auto;
+        z-index: 999;
+        list-style: none;
+        padding: 0;
+        margin: 2px 0 0 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        display: none;
+    }
 
-.autocomplete-list li {
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    color: #001f52;
-}
+    .autocomplete-list li {
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #001f52;
+    }
 
-.autocomplete-list li:hover {
-    background: #e8f0ff;
-}
+    .autocomplete-list li:hover { background: #e8f0ff; }
 
-body.dark .autocomplete-list {
-    background: #1e3448 !important;
-    border-color: #0f1f2e !important;
-}
+    /* skill search */
+    .skill-search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 180px;
+    }
 
-body.dark .autocomplete-list li {
-    color: #d0e8f5 !important;
-}
+    .skill-category-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
 
-body.dark .autocomplete-list li:hover {
-    background: #1a2a3a !important;
-}
+    .skill-cat-btn {
+        padding: 5px 12px;
+        border-radius: 20px;
+        border: 1.5px solid #c0cfe0;
+        background: #f8faff;
+        color: #001f52;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
 
+    .skill-cat-btn.active {
+        background: #001f52;
+        color: white;
+        border-color: #001f52;
+    }
+
+    .skill-count-badge {
+        display: inline-block;
+        background: #57a3c1;
+        color: white;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 6px;
+    }
+
+    .skill-count-badge.done { background: #28a745; }
+
+    .skill-req-note {
+        font-size: 12px;
+        color: #cc0000;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .skill-req-note.satisfied { color: #28a745; }
+
+    .work-limit-note {
+        font-size: 12px;
+        color: #557;
+        margin-bottom: 12px;
+        background: #f0f4ff;
+        border-radius: 6px;
+        padding: 8px 12px;
+        border-left: 3px solid #57a3c1;
+    }
+
+    body.dark .autocomplete-list { background: #1e3448 !important; border-color: #0f1f2e !important; }
+    body.dark .autocomplete-list li { color: #d0e8f5 !important; }
+    body.dark .autocomplete-list li:hover { background: #1a2a3a !important; }
     body.dark .pds-section { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .pds-section h2 { color: #7ec8e3 !important; border-bottom-color: #0f1f2e !important; }
     body.dark .pds-field label { color: #7ec8e3 !important; }
@@ -271,9 +342,15 @@ body.dark .autocomplete-list li:hover {
     body.dark .skill-tag { background: #1a2a3a !important; color: #d0e8f5 !important; }
     body.dark .edu-table th { background: #1a2a3a !important; color: #7ec8e3 !important; }
     body.dark .edu-table td { border-bottom-color: #0f1f2e !important; color: #d0e8f5 !important; }
-    body.dark .edu-table td input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .edu-table td input,
+    body.dark .edu-table td select { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .add-row input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .subsection-title { color: #7ec8e3 !important; }
+    body.dark .res-address-box { background: #1a2a3a !important; border-color: #0f1f2e !important; }
+    body.dark .perm-address-box { background: #1a2e1a !important; border-color: #0f2e0f !important; }
+    body.dark .skill-cat-btn { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .skill-cat-btn.active { background: #57a3c1 !important; color: white !important; }
+    body.dark .work-limit-note { background: #1a2a3a !important; color: #d0e8f5 !important; }
 </style>
 
 <div class="pds-container">
@@ -283,9 +360,10 @@ body.dark .autocomplete-list li:hover {
     {% if not pds.surname or not pds.first_name %}
     <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px 18px; margin-bottom:24px; color:#856404; font-size:14px;">
         ⚠️ <strong>Please complete your PDS first</strong>
+    </div>
     {% endif %}
 
-    <!-- I. PERSONAL INFORMATION  -->
+    <!-- I. PERSONAL INFORMATION -->
     <div class="pds-section">
         <h2>I. Personal Information</h2>
         <form method="post">
@@ -311,8 +389,8 @@ body.dark .autocomplete-list li:hover {
                     <input type="text" name="name_extension" value="{{ pds.name_extension }}" placeholder="N/A if not applicable">
                 </div>
                 <div class="pds-field">
-                    <label>Age<span class="req">*</span></label>
-                    <input type="age" name="age" value="{{ pds.age}}" required>
+                    <label>Age <span class="req">*</span></label>
+                    <input type="text" name="age" value="{{ pds.age }}" required>
                 </div>
                 <div class="pds-field">
                     <label>Date of Birth <span class="req">*</span></label>
@@ -323,7 +401,7 @@ body.dark .autocomplete-list li:hover {
                     <input type="text" name="place_of_birth" value="{{ pds.place_of_birth }}" required placeholder="e.g. Manila">
                 </div>
                 <div class="pds-field">
-                    <label>Sex<span class="req">*</span></label>
+                    <label>Sex <span class="req">*</span></label>
                     <select name="sex" required>
                         <option value="">-- Select --</option>
                         <option value="male" {% if pds.sex == 'male' %}selected{% endif %}>Male</option>
@@ -376,152 +454,6 @@ body.dark .autocomplete-list li:hover {
 
             <hr class="section-divider">
 
-<p class="subsection-title">Residential Address <span class="req">*</span></p>
-<div style="background:#f0f7ff; border:1px solid #c0cfe0; border-radius:10px; padding:16px; margin-bottom:16px;">
-    <div class="pds-grid three">
-        <div class="pds-field">
-            <label>House/Block/Lot No.</label>
-            <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
-        </div>
-        <div class="pds-field">
-            <label>Street <span class="req">*</span></label>
-            <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
-        </div>
-        <div class="pds-field">
-            <label>Subdivision/Village</label>
-            <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
-        </div>
-        <div class="pds-field">
-            <label>Barangay <span class="req">*</span></label>
-            <input type="text" name="res_barangay" value="{{ pds.res_barangay }}" required placeholder="e.g. Brgy. 1">
-        </div>
-        <div class="pds-field">
-            <label>City/Municipality <span class="req">*</span></label>
-            <input type="text" name="res_city" value="{{ pds.res_city }}" required placeholder="e.g. Manila">
-        </div>
-        <div class="pds-field">
-            <label>Province <span class="req">*</span></label>
-            <input type="text" name="res_province" value="{{ pds.res_province }}" required placeholder="e.g. Metro Manila">
-        </div>
-    </div>
-    <div style="margin-top:10px; max-width:150px;">
-        <div class="pds-field">
-            <label>ZIP Code</label>
-            <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 1000">
-        </div>
-    </div>
-</div>
-
-<hr class="section-divider">
-
-<p class="subsection-title">Residential Address <span class="req">*</span></p>
-<div style="background:#f0f7ff; border:1px solid #c0cfe0; border-radius:10px; padding:16px; margin-bottom:16px;">
-    <div class="pds-grid three">
-        <div class="pds-field">
-            <label>House/Block/Lot No.</label>
-            <input type="text" name="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
-        </div>
-        <div class="pds-field">
-            <label>Street <span class="req">*</span></label>
-            <input type="text" name="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
-        </div>
-        <div class="pds-field">
-            <label>Subdivision/Village</label>
-            <input type="text" name="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
-        </div>
-    </div>
-    <div class="pds-grid three" style="margin-top:10px;">
-        <div class="pds-field" style="position:relative;">
-            <label>Province <span class="req">*</span></label>
-            <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
-                   required placeholder="e.g. Bulacan" autocomplete="off"
-                   oninput="fetchProvinces(this.value, 'res_province_list')"
-                   onchange="clearCityBarangay('res')">
-            <ul id="res_province_list" class="autocomplete-list"></ul>
-        </div>
-        <div class="pds-field" style="position:relative;">
-            <label>City/Municipality <span class="req">*</span></label>
-            <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
-                   required placeholder="e.g. Malolos" autocomplete="off"
-                   oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
-                   onchange="clearBarangay('res')">
-            <ul id="res_city_list" class="autocomplete-list"></ul>
-        </div>
-        <div class="pds-field" style="position:relative;">
-            <label>Barangay <span class="req">*</span></label>
-            <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
-                   required placeholder="e.g. Brgy. Santol" autocomplete="off"
-                   oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
-            <ul id="res_barangay_list" class="autocomplete-list"></ul>
-        </div>
-    </div>
-    <div style="margin-top:10px; max-width:150px;">
-        <div class="pds-field">
-            <label>ZIP Code</label>
-            <input type="text" name="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
-        </div>
-    </div>
-</div>
-
-<hr class="section-divider">
-
-<p class="subsection-title">Permanent Address</p>
-<div style="background:#f7fff0; border:1px solid #b8d4c0; border-radius:10px; padding:16px; margin-bottom:16px;">
-    <div style="margin-bottom:10px;">
-        <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
-            <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
-            Same as Residential Address
-        </label>
-    </div>
-    <div class="pds-grid three">
-        <div class="pds-field">
-            <label>House/Block/Lot No.</label>
-            <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
-        </div>
-        <div class="pds-field">
-            <label>Street</label>
-            <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
-        </div>
-        <div class="pds-field">
-            <label>Subdivision/Village</label>
-            <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
-        </div>
-    </div>
-    <div class="pds-grid three" style="margin-top:10px;">
-        <div class="pds-field" style="position:relative;">
-            <label>Province</label>
-            <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
-                   placeholder="e.g. Bulacan" autocomplete="off"
-                   oninput="fetchProvinces(this.value, 'perm_province_list')"
-                   onchange="clearCityBarangay('perm')">
-            <ul id="perm_province_list" class="autocomplete-list"></ul>
-        </div>
-        <div class="pds-field" style="position:relative;">
-            <label>City/Municipality</label>
-            <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
-                   placeholder="e.g. Malolos" autocomplete="off"
-                   oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
-                   onchange="clearBarangay('perm')">
-            <ul id="perm_city_list" class="autocomplete-list"></ul>
-        </div>
-        <div class="pds-field" style="position:relative;">
-            <label>Barangay</label>
-            <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
-                   placeholder="e.g. Brgy. Santol" autocomplete="off"
-                   oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
-            <ul id="perm_barangay_list" class="autocomplete-list"></ul>
-        </div>
-    </div>
-    <div style="margin-top:10px; max-width:150px;">
-        <div class="pds-field">
-            <label>ZIP Code</label>
-            <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
-        </div>
-    </div>
-</div>
-
-            <hr class="section-divider">
-
             <p class="subsection-title">Contact Numbers</p>
             <div class="pds-grid three">
                 <div class="pds-field">
@@ -538,47 +470,226 @@ body.dark .autocomplete-list li:hover {
                 </div>
             </div>
 
-            <button type="submit" class="pds-save-btn">💾 Save </button>
+            <button type="submit" class="pds-save-btn">💾 Save</button>
         </form>
     </div>
 
-    <!-- II. EDUCATION -->
+    <!-- II. RESIDENTIAL ADDRESS -->
     <div class="pds-section">
-        <h2>II. Educational Background</h2>
+        <h2>II. Residential Address</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_personal">
+            <div class="res-address-box">
+                <div class="pds-grid three">
+                    <div class="pds-field">
+                        <label>House/Block/Lot No.</label>
+                        <input type="text" name="res_house_no" id="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Street <span class="req">*</span></label>
+                        <input type="text" name="res_street" id="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
+                    </div>
+                    <div class="pds-field">
+                        <label>Subdivision/Village</label>
+                        <input type="text" name="res_subdivision" id="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
+                    </div>
+                </div>
+                <div class="pds-grid three" style="margin-top:10px;">
+                    <div class="pds-field" style="position:relative;">
+                        <label>Province <span class="req">*</span></label>
+                        <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
+                               required placeholder="e.g. Bulacan" autocomplete="off"
+                               oninput="fetchProvinces(this.value, 'res_province_list')"
+                               onchange="clearCityBarangay('res')">
+                        <ul id="res_province_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>City/Municipality <span class="req">*</span></label>
+                        <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
+                               required placeholder="e.g. Malolos" autocomplete="off"
+                               oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
+                               onchange="clearBarangay('res')">
+                        <ul id="res_city_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>Barangay <span class="req">*</span></label>
+                        <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
+                               required placeholder="e.g. Brgy. Santol" autocomplete="off"
+                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
+                        <ul id="res_barangay_list" class="autocomplete-list"></ul>
+                    </div>
+                </div>
+                <div style="margin-top:10px; max-width:150px;">
+                    <div class="pds-field">
+                        <label>ZIP Code</label>
+                        <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="pds-save-btn">💾 Save</button>
+        </form>
+    </div>
+
+    <!-- III. PERMANENT ADDRESS -->
+    <div class="pds-section">
+        <h2>III. Permanent Address</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_personal">
+            <div class="perm-address-box">
+                <div style="margin-bottom:10px;">
+                    <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                        <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
+                        Same as Residential Address
+                    </label>
+                </div>
+                <div class="pds-grid three">
+                    <div class="pds-field">
+                        <label>House/Block/Lot No.</label>
+                        <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Street</label>
+                        <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Subdivision/Village</label>
+                        <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
+                    </div>
+                </div>
+                <div class="pds-grid three" style="margin-top:10px;">
+                    <div class="pds-field" style="position:relative;">
+                        <label>Province</label>
+                        <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
+                               placeholder="e.g. Bulacan" autocomplete="off"
+                               oninput="fetchProvinces(this.value, 'perm_province_list')"
+                               onchange="clearCityBarangay('perm')">
+                        <ul id="perm_province_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>City/Municipality</label>
+                        <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
+                               placeholder="e.g. Malolos" autocomplete="off"
+                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
+                               onchange="clearBarangay('perm')">
+                        <ul id="perm_city_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>Barangay</label>
+                        <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
+                               placeholder="e.g. Brgy. Santol" autocomplete="off"
+                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
+                        <ul id="perm_barangay_list" class="autocomplete-list"></ul>
+                    </div>
+                </div>
+                <div style="margin-top:10px; max-width:150px;">
+                    <div class="pds-field">
+                        <label>ZIP Code</label>
+                        <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="pds-save-btn">💾 Save</button>
+        </form>
+    </div>
+
+    <!-- IV. EDUCATIONAL BACKGROUND -->
+    <div class="pds-section">
+        <h2>IV. Educational Background</h2>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="save_education">
             <table class="edu-table">
                 <thead>
                     <tr>
-                        <th style="width:120px;">Level</th>
+                        <th style="width:100px;">Level</th>
                         <th>School</th>
                         <th>Course/Strand</th>
-                        <th style="width:100px;">Year Graduated</th>
+                        <th style="width:110px;">Status</th>
+                        <th style="width:90px;">Year</th>
                     </tr>
                 </thead>
                 <tbody>
-    {% for level in 'elementary,secondary,college,vocational'|split:',' %}
-    <tr>
-        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
-        
-        {% with edu=education|get:level %}
-        <td><input type="text" name="{{ level }}_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
-        <td><input type="text" name="{{ level }}_course" value="{{ edu.course|default:'' }}" placeholder="N/A if not applicable"></td>
-        <td><input type="text" name="{{ level }}_year" value="{{ edu.year_graduated|default:'' }}" placeholder="N/A"></td>
-        {% endwith %}
-        
-    </tr>
-    {% endfor %}
-</tbody>
+                    {% for level in 'elementary,secondary,vocational'|split:',' %}
+                    <tr>
+                        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
+                        {% with edu=education|get:level %}
+                        <td><input type="text" name="{{ level }}_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
+                        <td><input type="text" name="{{ level }}_course" value="{{ edu.course|default:'' }}" placeholder="N/A if not applicable"></td>
+                        <td>
+                            <select name="{{ level }}_status">
+                                <option value="">--</option>
+                                <option value="graduated" {% if edu.edu_status == 'graduated' %}selected{% endif %}>Graduated</option>
+                                <option value="undergraduate" {% if edu.edu_status == 'undergraduate' %}selected{% endif %}>Undergraduate</option>
+                                <option value="ongoing" {% if edu.edu_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                                <option value="na" {% if edu.edu_status == 'na' %}selected{% endif %}>N/A</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="{{ level }}_year">
+                                <option value="">--</option>
+                                <option value="N/A" {% if edu.year_graduated == 'N/A' %}selected{% endif %}>N/A</option>
+                                {% for y in year_choices %}
+                                <option value="{{ y }}" {% if edu.year_graduated == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                                <option value="Present" {% if edu.year_graduated == 'Present' %}selected{% endif %}>Present</option>
+                            </select>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                    {% endfor %}
+
+                    <!-- COLLEGE ROW — expanded -->
+                    <tr style="background:#f0f7ff;">
+                        <td style="font-weight:bold;">College</td>
+                        {% with edu=education|get:'college' %}
+                        <td><input type="text" name="college_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
+                        <td>
+                            <input type="text" name="college_course" id="college_course_input"
+                                   value="{{ edu.course|default:'' }}"
+                                   placeholder="Search course..."
+                                   autocomplete="off"
+                                   oninput="filterCourses(this.value)"
+                                   onfocus="showCourseList()"
+                                   style="position:relative;">
+                            <ul id="college_course_list" class="autocomplete-list"></ul>
+                        </td>
+                        <td>
+                            <select name="college_status" id="college_status">
+                                <option value="">--</option>
+                                <option value="graduated" {% if edu.edu_status == 'graduated' %}selected{% endif %}>Graduated</option>
+                                <option value="undergraduate" {% if edu.edu_status == 'undergraduate' %}selected{% endif %}>Undergraduate</option>
+                                <option value="ongoing" {% if edu.edu_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                                <option value="na" {% if edu.edu_status == 'na' %}selected{% endif %}>N/A</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="college_year">
+                                <option value="">--</option>
+                                <option value="N/A" {% if edu.year_graduated == 'N/A' %}selected{% endif %}>N/A</option>
+                                {% for y in year_choices %}
+                                <option value="{{ y }}" {% if edu.year_graduated == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                                <option value="Present" {% if edu.year_graduated == 'Present' %}selected{% endif %}>Present</option>
+                            </select>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                </tbody>
             </table>
-            <button type="submit" class="pds-save-btn">💾 Save </button>
+            <button type="submit" class="pds-save-btn">💾 Save</button>
         </form>
     </div>
 
-    <!-- III. WORK EXPERIENCE -->
+    <!-- V. WORK EXPERIENCE -->
     <div class="pds-section">
-        <h2>III. Work Experience</h2>
+        <h2>V. Work Experience <span style="font-size:12px; font-weight:normal; color:#888;">(Optional — max 3)</span></h2>
+
+        <div class="work-limit-note">
+            💼 You can add up to <strong>3</strong> work experiences. This section is <strong>not required</strong>.
+            Currently added: <strong>{{ work_list|length }}/3</strong>
+        </div>
 
         {% for work in work_list %}
         <div class="work-card">
@@ -599,9 +710,10 @@ body.dark .autocomplete-list li:hover {
             </form>
         </div>
         {% empty %}
-        <p style="color:#888; font-size:13px;">No work experience added yet. Enter N/A if not applicable.</p>
+        <p style="color:#888; font-size:13px;">No work experience added yet.</p>
         {% endfor %}
 
+        {% if work_list|length < 3 %}
         <form method="post" style="margin-top:16px;">
             {% csrf_token %}
             <input type="hidden" name="action" value="add_work">
@@ -623,23 +735,40 @@ body.dark .autocomplete-list li:hover {
                     <input type="date" name="date_to">
                 </div>
             </div>
-            <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+            <div style="margin-top:10px;">
                 <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px;">
                     <input type="checkbox" name="is_current"> Currently working here
                 </label>
             </div>
             <button type="submit" class="pds-save-btn" style="background:#57a3c1;">+ Add Work Experience</button>
         </form>
+        {% else %}
+        <p style="color:#57a3c1; font-size:13px; margin-top:10px; font-weight:bold;">✅ Maximum of 3 work experiences reached.</p>
+        {% endif %}
     </div>
 
-    <!-- IV. SKILLS / ELIGIBILITY -->
+    <!-- VI. SKILLS / ELIGIBILITY -->
     <div class="pds-section">
-        <h2>IV. Skills / Eligibility</h2>
+        <h2>VI. Skills / Eligibility
+            <span class="skill-count-badge {% if skills|length >= 5 %}done{% endif %}">
+                {{ skills|length }}/5
+            </span>
+        </h2>
 
+        {% if skills|length < 5 %}
+        <p class="skill-req-note">⚠️ Please add at least 5 skills. ({{ skills|length }}/5 added)</p>
+        {% else %}
+        <p class="skill-req-note satisfied">✅ Minimum skills requirement met! ({{ skills|length }} skills added)</p>
+        {% endif %}
+
+        <!-- existing skill tags -->
         <div style="margin-bottom:12px;">
             {% for skill in skills %}
             <span class="skill-tag">
                 {{ skill.name }}
+                {% if skill.category %}
+                <span style="font-size:10px; opacity:0.7;">({{ skill.category }})</span>
+                {% endif %}
                 <form method="post" style="display:inline; margin:0;">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="delete_skill">
@@ -648,23 +777,52 @@ body.dark .autocomplete-list li:hover {
                 </form>
             </span>
             {% empty %}
-            <p style="color:#888; font-size:13px;">No skills added yet. Enter N/A if not applicable.</p>
+            <p style="color:#888; font-size:13px;">No skills added yet. Add at least 5 skills.</p>
             {% endfor %}
+        </div>
+
+        <!-- category filter tabs -->
+        <div class="skill-category-tabs">
+            <button type="button" class="skill-cat-btn active" onclick="filterSkillCat('all', this)">All</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical', this)">💻 Technical</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Soft Skills', this)">🤝 Soft Skills</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Language', this)">🌐 Language</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Eligibility', this)">📜 Eligibility</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Office', this)">🏢 Office Tools</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Other', this)">➕ Other</button>
         </div>
 
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="add_skill">
+            <input type="hidden" name="skill_category" id="skill_category_hidden" value="Other">
             <div class="add-row">
-                <input type="text" name="skill_name" placeholder="e.g. Python, Leadership, CSE Passer, N/A...">
-                <button type="submit" class="add-btn">+ Add Skill</button>
+                <div class="skill-search-wrap">
+                    <input type="text" name="skill_name" id="skill_search_input"
+                           placeholder="Search or type a skill..."
+                           autocomplete="off"
+                           oninput="filterSkillSuggestions(this.value)"
+                           onfocus="showSkillSuggestions()">
+                    <ul id="skill_suggestions_list" class="autocomplete-list"></ul>
+                </div>
+                <div class="pds-field" style="min-width:130px; margin-top:0;">
+                    <select name="skill_category_select" id="skill_category_select" onchange="document.getElementById('skill_category_hidden').value=this.value">
+                        <option value="Technical">💻 Technical</option>
+                        <option value="Soft Skills">🤝 Soft Skills</option>
+                        <option value="Language">🌐 Language</option>
+                        <option value="Eligibility">📜 Eligibility</option>
+                        <option value="Office">🏢 Office Tools</option>
+                        <option value="Other" selected>➕ Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="add-btn">+ Add</button>
             </div>
         </form>
     </div>
 
-    <!-- V. EMERGENCY CONTACT -->
+    <!-- VII. EMERGENCY CONTACT -->
     <div class="pds-section">
-        <h2>V. Emergency Contact</h2>
+        <h2>VII. Emergency Contact</h2>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="save_emergency">
@@ -686,7 +844,7 @@ body.dark .autocomplete-list li:hover {
                 <label>Address <span class="req">*</span></label>
                 <textarea name="emergency_address" rows="2" required placeholder="e.g. 123 Rizal St., Brgy. 1, Manila">{{ pds.emergency_address }}</textarea>
             </div>
-            <button type="submit" class="pds-save-btn">💾 Save </button>
+            <button type="submit" class="pds-save-btn">💾 Save</button>
         </form>
     </div>
 
@@ -700,22 +858,16 @@ body.dark .autocomplete-list li:hover {
 
     async function fetchProvinces(query, listId) {
         const list = document.getElementById(listId);
-        if (query.length < 2) { list.style.display = 'none'; return; }
-
+        if (query.length < 1) { list.style.display = 'none'; return; }
         if (provinceData.length === 0) {
             try {
                 const res = await fetch('https://psgc.gitlab.io/api/provinces/');
                 provinceData = await res.json();
-            } catch(e) {
-                list.style.display = 'none';
-                return;
-            }
+            } catch(e) { list.style.display = 'none'; return; }
         }
-
         const filtered = provinceData.filter(p =>
             p.name.toLowerCase().includes(query.toLowerCase())
         ).slice(0, 8);
-
         showList(list, filtered.map(p => p.name), (val) => {
             document.getElementById(listId.replace('_list', '')).value = val;
             list.style.display = 'none';
@@ -724,19 +876,14 @@ body.dark .autocomplete-list li:hover {
 
     async function fetchCities(query, listId, provinceInputId) {
         const list = document.getElementById(listId);
-        if (query.length < 2) { list.style.display = 'none'; return; }
-
+        if (query.length < 1) { list.style.display = 'none'; return; }
         const provinceName = document.getElementById(provinceInputId).value;
-
         try {
             if (provinceData.length === 0) {
                 const res = await fetch('https://psgc.gitlab.io/api/provinces/');
                 provinceData = await res.json();
             }
-            const province = provinceData.find(p =>
-                p.name.toLowerCase() === provinceName.toLowerCase()
-            );
-
+            const province = provinceData.find(p => p.name.toLowerCase() === provinceName.toLowerCase());
             let cities = [];
             if (province) {
                 const cacheKey = province.code;
@@ -749,33 +896,24 @@ body.dark .autocomplete-list li:hover {
                 const res = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
                 cities = await res.json();
             }
-
             const filtered = cities.filter(c =>
                 c.name.toLowerCase().includes(query.toLowerCase())
             ).slice(0, 8);
-
             showList(list, filtered.map(c => c.name), (val) => {
                 document.getElementById(listId.replace('_list', '')).value = val;
                 list.style.display = 'none';
             });
-        } catch(e) {
-            list.style.display = 'none';
-        }
+        } catch(e) { list.style.display = 'none'; }
     }
 
     async function fetchBarangays(query, listId, cityInputId) {
         const list = document.getElementById(listId);
-        if (query.length < 2) { list.style.display = 'none'; return; }
-
+        if (query.length < 1) { list.style.display = 'none'; return; }
         const cityName = document.getElementById(cityInputId).value;
-
         try {
             const allCitiesRes = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
             const allCities = await allCitiesRes.json();
-            const city = allCities.find(c =>
-                c.name.toLowerCase() === cityName.toLowerCase()
-            );
-
+            const city = allCities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
             let barangays = [];
             if (city) {
                 const cacheKey = city.code;
@@ -785,18 +923,14 @@ body.dark .autocomplete-list li:hover {
                 }
                 barangays = barangayData[cacheKey];
             }
-
             const filtered = barangays.filter(b =>
                 b.name.toLowerCase().includes(query.toLowerCase())
             ).slice(0, 8);
-
             showList(list, filtered.map(b => b.name), (val) => {
                 document.getElementById(listId.replace('_list', '')).value = val;
                 list.style.display = 'none';
             });
-        } catch(e) {
-            list.style.display = 'none';
-        }
+        } catch(e) { list.style.display = 'none'; }
     }
 
     function showList(listEl, items, onSelect) {
@@ -828,14 +962,108 @@ body.dark .autocomplete-list li:hover {
 
     function copyResAddress(checkbox) {
         if (checkbox.checked) {
-            document.getElementById('perm_house_no').value = document.querySelector('[name="res_house_no"]').value;
-            document.getElementById('perm_street').value = document.querySelector('[name="res_street"]').value;
-            document.getElementById('perm_subdivision').value = document.querySelector('[name="res_subdivision"]').value;
-            document.getElementById('perm_barangay').value = document.querySelector('[name="res_barangay"]').value;
-            document.getElementById('perm_city').value = document.querySelector('[name="res_city"]').value;
-            document.getElementById('perm_province').value = document.querySelector('[name="res_province"]').value;
-            document.getElementById('perm_zip').value = document.querySelector('[name="res_zip"]').value;
+            document.getElementById('perm_house_no').value    = document.getElementById('res_house_no').value;
+            document.getElementById('perm_street').value      = document.getElementById('res_street').value;
+            document.getElementById('perm_subdivision').value = document.getElementById('res_subdivision').value;
+            document.getElementById('perm_barangay').value    = document.getElementById('res_barangay').value;
+            document.getElementById('perm_city').value        = document.getElementById('res_city').value;
+            document.getElementById('perm_province').value    = document.getElementById('res_province').value;
+            document.getElementById('perm_zip').value         = document.getElementById('res_zip').value;
         }
+    }
+
+    // ── COLLEGE COURSE AUTOCOMPLETE ──
+    const allCourses = {
+        'Engineering': ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
+        'IT & Computing': ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],
+        'Business': ['BS Business Administration','BS Accountancy','BS Management Accounting','BS Marketing Management','BS Financial Management','BS Human Resource Management','BS Entrepreneurship','BS Office Administration'],
+        'Education': ['Bachelor of Elementary Education','Bachelor of Secondary Education','Bachelor of Physical Education','Bachelor of Early Childhood Education','BS Special Education'],
+        'Health': ['BS Nursing','BS Medical Technology','BS Pharmacy','BS Physical Therapy','BS Occupational Therapy','BS Nutrition and Dietetics','BS Midwifery','Doctor of Medicine','BS Dentistry','BS Radiologic Technology'],
+        'Arts & Humanities': ['AB Communication','AB Journalism','AB English','AB Filipino','AB Political Science','AB Psychology','AB Philosophy','AB Sociology','AB History','Fine Arts','BS Architecture'],
+        'Science': ['BS Biology','BS Chemistry','BS Physics','BS Environmental Science','BS Geology','BS Statistics','BS Mathematics','BS Forestry','BS Agriculture'],
+        'Law & Governance': ['Bachelor of Laws (LLB)','BS Criminology','BS Public Administration','BS Political Science'],
+        'Hospitality': ['BS Tourism Management','BS Hotel and Restaurant Management','BS Culinary Arts'],
+        'Social Work': ['BS Social Work','BS Community Development'],
+    };
+
+    let activeCourseCategory = 'all';
+
+    function getAllCourses() {
+        return Object.values(allCourses).flat();
+    }
+
+    function getCoursesByCategory(cat) {
+        return cat === 'all' ? getAllCourses() : (allCourses[cat] || []);
+    }
+
+    function filterCourses(query) {
+        const list = document.getElementById('college_course_list');
+        const pool = activeCourseCategory === 'all' ? getAllCourses() : getCoursesByCategory(activeCourseCategory);
+        if (query.length < 1) { list.style.display = 'none'; return; }
+        const filtered = pool.filter(c => c.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
+        showList(list, filtered, (val) => {
+            document.getElementById('college_course_input').value = val;
+            list.style.display = 'none';
+        });
+    }
+
+    function showCourseList() {
+        const query = document.getElementById('college_course_input').value;
+        if (query.length >= 1) filterCourses(query);
+    }
+
+    // ── SKILLS AUTOCOMPLETE ──
+    const skillsByCategory = {
+        'Technical': ['Python','Java','JavaScript','PHP','C++','C#','HTML/CSS','React','Django','Laravel','SQL','MySQL','PostgreSQL','MongoDB','Git','Docker','Linux','Networking','Data Analysis','Machine Learning','AI','Cloud Computing','AWS','Azure','Mobile Development','Android','iOS'],
+        'Soft Skills': ['Communication','Leadership','Teamwork','Problem Solving','Critical Thinking','Time Management','Adaptability','Creativity','Work Ethic','Attention to Detail','Decision Making','Conflict Resolution','Public Speaking','Negotiation','Emotional Intelligence'],
+        'Language': ['English (Fluent)','Filipino (Fluent)','Spanish','Japanese','Korean','Mandarin Chinese','Arabic','French','German','Ilocano','Cebuano','Hiligaynon','Waray'],
+        'Eligibility': ['Civil Service Eligible (Professional)','Civil Service Eligible (Sub-Professional)','Board Exam Passer','Bar Exam Passer','PRC Licensed','CSE Passer','NAPOLCOM Eligible','RA 1080'],
+        'Office': ['Microsoft Word','Microsoft Excel','Microsoft PowerPoint','Microsoft Outlook','Google Docs','Google Sheets','Google Slides','Canva','Adobe Photoshop','Adobe Illustrator','Zoom','MS Teams','Slack'],
+        'Other': ['Driving','First Aid','Cooking','Photography','Video Editing','Graphic Design','Accounting','Bookkeeping','Research','Training & Facilitation','Event Management','Customer Service','Sales'],
+    };
+
+    let activeSkillCat = 'all';
+
+    function getAllSkills() {
+        return Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })));
+    }
+
+    function filterSkillCat(cat, btn) {
+        activeSkillCat = cat;
+        document.querySelectorAll('.skill-cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (cat !== 'all') {
+            document.getElementById('skill_category_select').value = cat;
+            document.getElementById('skill_category_hidden').value = cat;
+        }
+        const query = document.getElementById('skill_search_input').value;
+        if (query.length >= 1) filterSkillSuggestions(query);
+    }
+
+    function filterSkillSuggestions(query) {
+        const list = document.getElementById('skill_suggestions_list');
+        const pool = activeSkillCat === 'all' ? getAllSkills() : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
+        if (query.length < 1) { list.style.display = 'none'; return; }
+        const filtered = pool.filter(s => s.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
+        list.innerHTML = '';
+        if (filtered.length === 0) { list.style.display = 'none'; return; }
+        filtered.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `${item.name} <span style="font-size:11px; color:#888;">(${item.cat})</span>`;
+            li.onclick = () => {
+                document.getElementById('skill_search_input').value = item.name;
+                document.getElementById('skill_category_select').value = item.cat;
+                document.getElementById('skill_category_hidden').value = item.cat;
+                list.style.display = 'none';
+            };
+            list.appendChild(li);
+        });
+        list.style.display = 'block';
+    }
+
+    function showSkillSuggestions() {
+        const query = document.getElementById('skill_search_input').value;
+        if (query.length >= 1) filterSkillSuggestions(query);
     }
 </script>
 
