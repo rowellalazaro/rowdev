@@ -466,41 +466,8 @@ def pds_view(request):
 
     if request.method == 'POST':
         action = request.POST.get('action')
-
-        if action == 'save_personal':
-            pds.surname = request.POST.get('surname', '')
-            pds.first_name = request.POST.get('first_name', '')
-            pds.middle_name = request.POST.get('middle_name', '')
-            pds.name_extension = request.POST.get('name_extension', '')
-            pds.age = request.POST.get('age', '')
-            pds.date_of_birth = request.POST.get('date_of_birth') or None
-            pds.place_of_birth = request.POST.get('place_of_birth', '')
-            pds.sex = request.POST.get('sex', '')
-            pds.civil_status = request.POST.get('civil_status', '')
-            pds.height = request.POST.get('height', '')
-            pds.weight = request.POST.get('weight', '')
-            pds.blood_type = request.POST.get('blood_type', '')
-            pds.citizenship = request.POST.get('citizenship', '')
-            pds.res_house_no = request.POST.get('res_house_no', '')
-            pds.res_street = request.POST.get('res_street', '')
-            pds.res_subdivision = request.POST.get('res_subdivision', '')
-            pds.res_barangay = request.POST.get('res_barangay', '')
-            pds.res_city = request.POST.get('res_city', '')
-            pds.res_province = request.POST.get('res_province', '')
-            pds.res_zip = request.POST.get('res_zip', '')
-            pds.perm_house_no = request.POST.get('perm_house_no', '')
-            pds.perm_street = request.POST.get('perm_street', '')
-            pds.perm_subdivision = request.POST.get('perm_subdivision', '')
-            pds.perm_barangay = request.POST.get('perm_barangay', '')
-            pds.perm_city = request.POST.get('perm_city', '')
-            pds.perm_province = request.POST.get('perm_province', '')
-            pds.perm_zip = request.POST.get('perm_zip', '')
-            pds.telephone = request.POST.get('telephone', '')
-            pds.mobile = request.POST.get('mobile', '')
-            pds.email = request.POST.get('email', '')
-            pds.save()
-
-        elif action == 'save_all':
+        
+        if action == 'save_all':
     # Personal info
             pds.surname = request.POST.get('surname', '')
             pds.first_name = request.POST.get('first_name', '')
