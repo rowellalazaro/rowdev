@@ -517,6 +517,10 @@ def pds_view(request):
                 edu.edu_status = status  # ← ADDED
                 edu.save()
 
+        # ── FIX: these forms in pds.html have no action="" attribute, so
+        # they post back to this same view (not the separate add_work /
+        # delete_work / add_skill / delete_skill views). Without these
+        # branches the buttons silently did nothing.
         elif action == 'add_work':
             if pds.work_experience.count() < 3:
                 is_current = request.POST.get('is_current') == 'on'
@@ -558,21 +562,47 @@ def admin_pds_list(request):
     from django.db.models import Q
     sort = request.GET.get('sort', 'username')
     search = request.GET.get('search', '')
-    pds_list = PDS.objects.select_related('user').all()
+    pds_qs = PDS.objects.select_related('user').all()
     if search:
-        pds_list = pds_list.filter(
+        pds_qs = pds_qs.filter(
             Q(user__username__icontains=search) |
             Q(surname__icontains=search) |
             Q(first_name__icontains=search)
         )
-    if sort == 'surname':
-        pds_list = pds_list.order_by('surname')
-    elif sort == 'first_name':
-        pds_list = pds_list.order_by('first_name')
-    elif sort == 'updated':
-        pds_list = pds_list.order_by('-updated_at')
-    else:
-        pds_list = pds_list.order_by('user__username')
+
+    # ← Sorting is done in Python (not the DB) because 'age' is a CharField,
+    # so a plain .order_by('age') would sort it as text ("10" before "9").
+    pds_list = list(pds_qs)
+
+    def text_key(value):
+        return (value or '').strip().lower()
+
+    def age_key(p):
+        try:
+            return (0, int(p.age))
+        except (TypeError, ValueError):
+            return (1, 0)  # blank/non-numeric ages sort last
+
+    def birthday_key(p):
+        return (p.date_of_birth is None, p.date_of_birth)
+
+    sort_map = {
+        'first_name': lambda p: text_key(p.first_name),
+        'last_name': lambda p: text_key(p.surname),
+        'surname': lambda p: text_key(p.surname),  # kept for backward compatibility
+        'age': age_key,
+        'birthday': birthday_key,
+        'province': lambda p: text_key(p.res_province),
+        'municipality': lambda p: text_key(p.res_city),
+        'barangay': lambda p: text_key(p.res_barangay),
+        'sex': lambda p: text_key(p.sex),
+        'username': lambda p: text_key(p.user.username),
+        'updated': lambda p: p.updated_at,
+    }
+
+    key_func = sort_map.get(sort, sort_map['username'])
+    pds_list.sort(key=key_func, reverse=(sort == 'updated'))
+
     return render(request, 'admin_pds.html', {'pds_list': pds_list, 'sort': sort, 'search': search})
 
 

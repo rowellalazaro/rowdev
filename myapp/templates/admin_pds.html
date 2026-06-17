@@ -35,14 +35,20 @@
 <div class="container">
     <div class="admin-box">
         <h2>All User PDS</h2>
-        <p style="color:#003082;">Total: <strong>{{ pds_list.count }}</strong></p>
+        <p style="color:#003082;">Total: <strong>{{ pds_list|length }}</strong></p>
 
         <form method="get" class="controls">
             <input type="text" name="search" value="{{ search }}" placeholder="🔍 Search by name or username...">
             <select name="sort">
                 <option value="username" {% if sort == 'username' %}selected{% endif %}>Sort: Username</option>
-                <option value="surname" {% if sort == 'surname' %}selected{% endif %}>Sort: Surname</option>
                 <option value="first_name" {% if sort == 'first_name' %}selected{% endif %}>Sort: First Name</option>
+                <option value="surname" {% if sort == 'surname' %}selected{% endif %}>Sort: Last Name</option>
+                <option value="age" {% if sort == 'age' %}selected{% endif %}>Sort: Age</option>
+                <option value="birthday" {% if sort == 'birthday' %}selected{% endif %}>Sort: Birthday</option>
+                <option value="sex" {% if sort == 'sex' %}selected{% endif %}>Sort: Sex</option>
+                <option value="province" {% if sort == 'province' %}selected{% endif %}>Sort: Province</option>
+                <option value="municipality" {% if sort == 'municipality' %}selected{% endif %}>Sort: Municipality</option>
+                <option value="barangay" {% if sort == 'barangay' %}selected{% endif %}>Sort: Barangay</option>
                 <option value="updated" {% if sort == 'updated' %}selected{% endif %}>Sort: Last Updated</option>
             </select>
             <button type="submit">Apply</button>
@@ -54,9 +60,6 @@
                     <th>#</th>
                     <th>Username</th>
                     <th>Full Name</th>
-                    <th>Civil Status</th>
-                    <th>Mobile</th>
-                    <th>Email</th>
                     <th>Last Updated</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -68,9 +71,6 @@
                     <td>{{ forloop.counter }}</td>
                     <td><strong>@{{ pds.user.username }}</strong></td>
                     <td>{{ pds.surname }} {{ pds.first_name }} {{ pds.middle_name }}</td>
-                    <td>{{ pds.get_civil_status_display|default:"-" }}</td>
-                    <td>{{ pds.mobile|default:"-" }}</td>
-                    <td>{{ pds.email|default:"-" }}</td>
                     <td>{{ pds.updated_at|date:"M d, Y" }}</td>
                     <td>
                         {% if pds.surname and pds.first_name and pds.mobile %}
@@ -84,7 +84,7 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="9" style="text-align:center; color:#888;">No PDS records found.</td></tr>
+                <tr><td colspan="6" style="text-align:center; color:#888;">No PDS records found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
