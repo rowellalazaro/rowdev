@@ -205,42 +205,6 @@
 
     .todo-item .todo-delete:hover { color: #820000; }
 
-    .notes-textarea {
-        width: 100%;
-        height: 100px;
-        padding: 9px;
-        border: 1px solid #001f52;
-        border-radius: 6px;
-        font-size: 13px;
-        resize: none;
-        font-family: Arial;
-        box-sizing: border-box;
-        outline: none;
-        color: #001f52;
-        background: white;
-    }
-
-    .notes-textarea:focus { border-color: #003082; }
-
-    .notes-save-btn {
-        margin-top: 8px;
-        background: #001f52;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 6px 14px;
-        font-size: 13px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .notes-saved {
-        font-size: 11px;
-        color: #4caf50;
-        margin-top: 4px;
-        display: none;
-    }
-
     .calendar-header {
         display: flex;
         align-items: center;
@@ -302,7 +266,6 @@
     body.dark .widget-title { color: #7ec8e3 !important; }
     body.dark .todo-item { color: #d0e8f5 !important; border-bottom-color: #0f1f2e !important; }
     body.dark .todo-input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
-    body.dark .notes-textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .calendar-day { color: #d0e8f5 !important; }
     body.dark .calendar-day.other-month { color: #333 !important; }
     body.dark .calendar-month { color: #7ec8e3 !important; }
@@ -390,12 +353,6 @@
                 <button class="todo-add-btn" onclick="addTodo()">+</button>
             </div>
             <ul class="todo-list" id="todo-list"></ul>
-        </div>
-
-        <div class="widget">
-            <div class="widget-title">Notes</div>
-            <textarea class="notes-textarea" id="notes-area" placeholder="Jot something down..."></textarea>
-            <div class="notes-saved" id="notes-saved">Saved!</div>
         </div>
 
         <div class="widget">
@@ -488,22 +445,6 @@
     }
 
     renderTodos();
-
-    const notesArea = document.getElementById('notes-area');
-    if (notesArea) {
-        notesArea.value = localStorage.getItem('iramora_notes') || '';
-        notesArea.addEventListener('input', function() {
-            localStorage.setItem('iramora_notes', notesArea.value);
-            const saved = document.getElementById('notes-saved');
-            if (saved) {
-                saved.style.display = 'block';
-                if (window.notesTimeout) clearTimeout(window.notesTimeout);
-                window.notesTimeout = setTimeout(() => {
-                    saved.style.display = 'none';
-                }, 1500);
-            }
-        });
-    }
 
     let calDate = new Date();
 
