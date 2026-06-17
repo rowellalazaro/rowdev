@@ -500,26 +500,52 @@ def pds_view(request):
             pds.email = request.POST.get('email', '')
             pds.save()
 
-        elif action == 'save_education':
-            # ← UPDATED: now also saves edu_status per level
-            for level in ['elementary', 'secondary', 'college', 'vocational']:
-                school = request.POST.get(f'{level}_school', '')
-                course = request.POST.get(f'{level}_course', '')
-                year = request.POST.get(f'{level}_year', '')
-                status = request.POST.get(f'{level}_status', '')  # ← ADDED
-                edu, _ = Education.objects.get_or_create(pds=pds, level=level)
-                edu.school = school
-                edu.course = course
-                edu.year_graduated = year
-                edu.edu_status = status  # ← ADDED
-                edu.save()
-
-        elif action == 'save_emergency':
-            pds.emergency_name = request.POST.get('emergency_name', '')
-            pds.emergency_relationship = request.POST.get('emergency_relationship', '')
-            pds.emergency_address = request.POST.get('emergency_address', '')
-            pds.emergency_phone = request.POST.get('emergency_phone', '')
-            pds.save()
+        elif action == 'save_all':
+    # Personal info
+            pds.surname = request.POST.get('surname', '')
+            pds.first_name = request.POST.get('first_name', '')
+            pds.middle_name = request.POST.get('middle_name', '')
+    pds.name_extension = request.POST.get('name_extension', '')
+    pds.age = request.POST.get('age', '')
+    pds.date_of_birth = request.POST.get('date_of_birth') or None
+    pds.place_of_birth = request.POST.get('place_of_birth', '')
+    pds.sex = request.POST.get('sex', '')
+    pds.civil_status = request.POST.get('civil_status', '')
+    pds.height = request.POST.get('height', '')
+    pds.weight = request.POST.get('weight', '')
+    pds.blood_type = request.POST.get('blood_type', '')
+    pds.citizenship = request.POST.get('citizenship', '')
+    pds.telephone = request.POST.get('telephone', '')
+    pds.mobile = request.POST.get('mobile', '')
+    pds.email = request.POST.get('email', '')
+    # Address
+    pds.res_house_no = request.POST.get('res_house_no', '')
+    pds.res_street = request.POST.get('res_street', '')
+    pds.res_subdivision = request.POST.get('res_subdivision', '')
+    pds.res_barangay = request.POST.get('res_barangay', '')
+    pds.res_city = request.POST.get('res_city', '')
+    pds.res_province = request.POST.get('res_province', '')
+    pds.res_zip = request.POST.get('res_zip', '')
+    pds.perm_house_no = request.POST.get('perm_house_no', '')
+    pds.perm_street = request.POST.get('perm_street', '')
+    pds.perm_subdivision = request.POST.get('perm_subdivision', '')
+    pds.perm_barangay = request.POST.get('perm_barangay', '')
+    pds.perm_city = request.POST.get('perm_city', '')
+    pds.perm_province = request.POST.get('perm_province', '')
+    pds.perm_zip = request.POST.get('perm_zip', '')
+    pds.save()
+    # Education
+    for level in ['elementary', 'secondary', 'college', 'vocational']:
+        school = request.POST.get(f'{level}_school', '')
+        course = request.POST.get(f'{level}_course', '')
+        year = request.POST.get(f'{level}_year', '')
+        status = request.POST.get(f'{level}_status', '')
+        edu, _ = Education.objects.get_or_create(pds=pds, level=level)
+        edu.school = school
+        edu.course = course
+        edu.year_graduated = year
+        edu.edu_status = status
+        edu.save()
 
         return redirect('pds')
 

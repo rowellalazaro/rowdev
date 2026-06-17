@@ -264,7 +264,6 @@
 
     .autocomplete-list li:hover { background: #e8f0ff; }
 
-    /* skill search */
     .skill-search-wrap {
         position: relative;
         flex: 1;
@@ -363,12 +362,16 @@
     </div>
     {% endif %}
 
-    <!-- I. PERSONAL INFORMATION -->
-    <div class="pds-section">
-        <h2>I. Personal Information</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_personal">
+    <!-- ═══════════════════════════════════════════════════
+         SINGLE FORM: Personal Info + Address + Education
+         ═══════════════════════════════════════════════════ -->
+    <form method="post" id="main-pds-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_all">
+
+        <!-- I. PERSONAL INFORMATION -->
+        <div class="pds-section">
+            <h2>I. Personal Information</h2>
 
             <p class="subsection-title">Personal Details</p>
             <div class="pds-grid">
@@ -469,137 +472,124 @@
                     <input type="email" name="email" value="{{ pds.email }}" required placeholder="e.g. juan@email.com">
                 </div>
             </div>
+        </div>
 
-            <button type="submit" class="pds-save-btn">💾 Save</button>
-        </form>
-    </div>
+        <!-- II & III. ADDRESS -->
+        <div class="pds-section">
+            <h2>II. Address</h2>
 
-    <!-- II & III. RESIDENTIAL & PERMANENT ADDRESS -->
-<div class="pds-section">
-    <h2>II. Address</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_personal">
-
-        <!-- RESIDENTIAL -->
-        <h3 style="font-size:14px; font-weight:700; color:#001f52; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Residential Address</h3>
-        <div class="res-address-box">
-            <div class="pds-grid three">
-                <div class="pds-field">
-                    <label>House/Block/Lot No.</label>
-                    <input type="text" name="res_house_no" id="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
+            <!-- RESIDENTIAL -->
+            <h3 style="font-size:14px; font-weight:700; color:#001f52; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Residential Address</h3>
+            <div class="res-address-box">
+                <div class="pds-grid three">
+                    <div class="pds-field">
+                        <label>House/Block/Lot No.</label>
+                        <input type="text" name="res_house_no" id="res_house_no" value="{{ pds.res_house_no }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Street <span class="req">*</span></label>
+                        <input type="text" name="res_street" id="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
+                    </div>
+                    <div class="pds-field">
+                        <label>Subdivision/Village</label>
+                        <input type="text" name="res_subdivision" id="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
+                    </div>
                 </div>
-                <div class="pds-field">
-                    <label>Street <span class="req">*</span></label>
-                    <input type="text" name="res_street" id="res_street" value="{{ pds.res_street }}" required placeholder="e.g. Rizal St.">
+                <div class="pds-grid three" style="margin-top:10px;">
+                    <div class="pds-field" style="position:relative;">
+                        <label>Province <span class="req">*</span></label>
+                        <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
+                               required placeholder="e.g. Bulacan" autocomplete="off"
+                               oninput="fetchProvinces(this.value, 'res_province_list')"
+                               onchange="clearCityBarangay('res')">
+                        <ul id="res_province_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>City/Municipality <span class="req">*</span></label>
+                        <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
+                               required placeholder="e.g. Malolos" autocomplete="off"
+                               oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
+                               onchange="clearBarangay('res')">
+                        <ul id="res_city_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>Barangay <span class="req">*</span></label>
+                        <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
+                               required placeholder="e.g. Brgy. Santol" autocomplete="off"
+                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
+                        <ul id="res_barangay_list" class="autocomplete-list"></ul>
+                    </div>
                 </div>
-                <div class="pds-field">
-                    <label>Subdivision/Village</label>
-                    <input type="text" name="res_subdivision" id="res_subdivision" value="{{ pds.res_subdivision }}" placeholder="N/A if not applicable">
+                <div style="margin-top:10px; max-width:150px;">
+                    <div class="pds-field">
+                        <label>ZIP Code</label>
+                        <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
+                    </div>
                 </div>
             </div>
-            <div class="pds-grid three" style="margin-top:10px;">
-                <div class="pds-field" style="position:relative;">
-                    <label>Province <span class="req">*</span></label>
-                    <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
-                           required placeholder="e.g. Bulacan" autocomplete="off"
-                           oninput="fetchProvinces(this.value, 'res_province_list')"
-                           onchange="clearCityBarangay('res')">
-                    <ul id="res_province_list" class="autocomplete-list"></ul>
-                </div>
-                <div class="pds-field" style="position:relative;">
-                    <label>City/Municipality <span class="req">*</span></label>
-                    <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
-                           required placeholder="e.g. Malolos" autocomplete="off"
-                           oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
-                           onchange="clearBarangay('res')">
-                    <ul id="res_city_list" class="autocomplete-list"></ul>
-                </div>
-                <div class="pds-field" style="position:relative;">
-                    <label>Barangay <span class="req">*</span></label>
-                    <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
-                           required placeholder="e.g. Brgy. Santol" autocomplete="off"
-                           oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
-                    <ul id="res_barangay_list" class="autocomplete-list"></ul>
-                </div>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid #dce3f0;">
+
+            <!-- PERMANENT -->
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                <h3 style="font-size:14px; font-weight:700; color:#001f52; text-transform:uppercase; letter-spacing:0.5px; margin:0;">Permanent Address</h3>
+                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
+                    Same as Residential Address
+                </label>
             </div>
-            <div style="margin-top:10px; max-width:150px;">
-                <div class="pds-field">
-                    <label>ZIP Code</label>
-                    <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
+            <div class="perm-address-box">
+                <div class="pds-grid three">
+                    <div class="pds-field">
+                        <label>House/Block/Lot No.</label>
+                        <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Street</label>
+                        <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="pds-field">
+                        <label>Subdivision/Village</label>
+                        <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
+                    </div>
+                </div>
+                <div class="pds-grid three" style="margin-top:10px;">
+                    <div class="pds-field" style="position:relative;">
+                        <label>Province</label>
+                        <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
+                               placeholder="e.g. Bulacan" autocomplete="off"
+                               oninput="fetchProvinces(this.value, 'perm_province_list')"
+                               onchange="clearCityBarangay('perm')">
+                        <ul id="perm_province_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>City/Municipality</label>
+                        <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
+                               placeholder="e.g. Malolos" autocomplete="off"
+                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
+                               onchange="clearBarangay('perm')">
+                        <ul id="perm_city_list" class="autocomplete-list"></ul>
+                    </div>
+                    <div class="pds-field" style="position:relative;">
+                        <label>Barangay</label>
+                        <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
+                               placeholder="e.g. Brgy. Santol" autocomplete="off"
+                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
+                        <ul id="perm_barangay_list" class="autocomplete-list"></ul>
+                    </div>
+                </div>
+                <div style="margin-top:10px; max-width:150px;">
+                    <div class="pds-field">
+                        <label>ZIP Code</label>
+                        <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- DIVIDER -->
-        <hr style="margin: 24px 0; border: none; border-top: 1px solid #dce3f0;">
-
-        <!-- PERMANENT -->
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h3 style="font-size:14px; font-weight:700; color:#001f52; text-transform:uppercase; letter-spacing:0.5px; margin:0;">Permanent Address</h3>
-            <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
-                Same as Residential Address
-            </label>
-        </div>
-        <div class="perm-address-box">
-            <div class="pds-grid three">
-                <div class="pds-field">
-                    <label>House/Block/Lot No.</label>
-                    <input type="text" name="perm_house_no" id="perm_house_no" value="{{ pds.perm_house_no }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Street</label>
-                    <input type="text" name="perm_street" id="perm_street" value="{{ pds.perm_street }}" placeholder="N/A if not applicable">
-                </div>
-                <div class="pds-field">
-                    <label>Subdivision/Village</label>
-                    <input type="text" name="perm_subdivision" id="perm_subdivision" value="{{ pds.perm_subdivision }}" placeholder="N/A if not applicable">
-                </div>
-            </div>
-            <div class="pds-grid three" style="margin-top:10px;">
-                <div class="pds-field" style="position:relative;">
-                    <label>Province</label>
-                    <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
-                           placeholder="e.g. Bulacan" autocomplete="off"
-                           oninput="fetchProvinces(this.value, 'perm_province_list')"
-                           onchange="clearCityBarangay('perm')">
-                    <ul id="perm_province_list" class="autocomplete-list"></ul>
-                </div>
-                <div class="pds-field" style="position:relative;">
-                    <label>City/Municipality</label>
-                    <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
-                           placeholder="e.g. Malolos" autocomplete="off"
-                           oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
-                           onchange="clearBarangay('perm')">
-                    <ul id="perm_city_list" class="autocomplete-list"></ul>
-                </div>
-                <div class="pds-field" style="position:relative;">
-                    <label>Barangay</label>
-                    <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
-                           placeholder="e.g. Brgy. Santol" autocomplete="off"
-                           oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
-                    <ul id="perm_barangay_list" class="autocomplete-list"></ul>
-                </div>
-            </div>
-            <div style="margin-top:10px; max-width:150px;">
-                <div class="pds-field">
-                    <label>ZIP Code</label>
-                    <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
-                </div>
-            </div>
-        </div>
-
-        <button type="submit" class="pds-save-btn">💾 Save</button>
-    </form>
-</div>
-
-    <!-- IV. EDUCATIONAL BACKGROUND -->
-    <div class="pds-section">
-        <h2>IV. Educational Background</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_education">
+        <!-- IV. EDUCATIONAL BACKGROUND -->
+        <div class="pds-section">
+            <h2>IV. Educational Background</h2>
             <table class="edu-table">
                 <thead>
                     <tr>
@@ -640,7 +630,7 @@
                     </tr>
                     {% endfor %}
 
-                    <!-- COLLEGE ROW — expanded -->
+                    <!-- COLLEGE ROW -->
                     <tr style="background:#f0f7ff;">
                         <td style="font-weight:bold;">College</td>
                         {% with edu=education|get:'college' %}
@@ -678,11 +668,19 @@
                     </tr>
                 </tbody>
             </table>
-            <button type="submit" class="pds-save-btn">💾 Save</button>
-        </form>
-    </div>
+        </div>
 
-    <!-- V. WORK EXPERIENCE -->
+        <!-- SINGLE SAVE BUTTON -->
+        <div style="text-align:center; margin-bottom:24px;">
+            <button type="submit" class="pds-save-btn" style="padding: 12px 48px; font-size:15px;">
+                💾 Save 
+            </button>
+        </div>
+
+    </form>
+    <!-- END MAIN FORM -->
+
+    <!-- V. WORK EXPERIENCE (separate — has its own add/delete logic) -->
     <div class="pds-section">
         <h2>V. Work Experience <span style="font-size:12px; font-weight:normal; color:#888;">(Optional — max 3)</span></h2>
 
@@ -747,7 +745,7 @@
         {% endif %}
     </div>
 
-    <!-- VI. SKILLS / ELIGIBILITY -->
+    <!-- VI. SKILLS / ELIGIBILITY (separate — has its own add/delete logic) -->
     <div class="pds-section">
         <h2>VI. Skills / Eligibility
             <span class="skill-count-badge {% if skills|length >= 5 %}done{% endif %}">
@@ -761,7 +759,6 @@
         <p class="skill-req-note satisfied">✅ Minimum skills requirement met! ({{ skills|length }} skills added)</p>
         {% endif %}
 
-        <!-- existing skill tags -->
         <div style="margin-bottom:12px;">
             {% for skill in skills %}
             <span class="skill-tag">
@@ -781,7 +778,6 @@
             {% endfor %}
         </div>
 
-        <!-- category filter tabs -->
         <div class="skill-category-tabs">
             <button type="button" class="skill-cat-btn active" onclick="filterSkillCat('all', this)">All</button>
             <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical', this)">Technical</button>
@@ -819,6 +815,8 @@
             </div>
         </form>
     </div>
+
+</div>
 
 <script>
     // ── ADDRESS AUTOCOMPLETE ──
@@ -962,13 +960,9 @@
         return Object.values(allCourses).flat();
     }
 
-    function getCoursesByCategory(cat) {
-        return cat === 'all' ? getAllCourses() : (allCourses[cat] || []);
-    }
-
     function filterCourses(query) {
         const list = document.getElementById('college_course_list');
-        const pool = activeCourseCategory === 'all' ? getAllCourses() : getCoursesByCategory(activeCourseCategory);
+        const pool = activeCourseCategory === 'all' ? getAllCourses() : (allCourses[activeCourseCategory] || []);
         if (query.length < 1) { list.style.display = 'none'; return; }
         const filtered = pool.filter(c => c.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
         showList(list, filtered, (val) => {
