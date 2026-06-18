@@ -134,77 +134,6 @@
         margin-bottom: 12px;
     }
 
-    .todo-input-row {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 10px;
-    }
-
-    .todo-input {
-        flex: 1;
-        padding: 7px 10px;
-        border: 1px solid #001f52;
-        border-radius: 6px;
-        font-size: 13px;
-        outline: none;
-        color: #001f52;
-        background: white;
-    }
-
-    .todo-input:focus { border-color: #003082; }
-
-    .todo-add-btn {
-        background: #001f52;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 7px 12px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .todo-list { list-style: none; padding: 0; margin: 0; }
-
-    .todo-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 7px 0;
-        border-bottom: 1px solid #e8eef5;
-        font-size: 13px;
-        color: #001f52;
-    }
-
-    .todo-item:last-child { border-bottom: none; }
-
-    .todo-item input[type="checkbox"] {
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-        margin: 0;
-        padding: 0;
-        flex-shrink: 0;
-    }
-
-    .todo-item.done span {
-        text-decoration: line-through;
-        color: #aaa;
-    }
-
-    .todo-item .todo-delete {
-        margin-left: auto;
-        background: none;
-        border: none;
-        color: #ccc;
-        cursor: pointer;
-        font-size: 16px;
-        padding: 0;
-        line-height: 1;
-    }
-
-    .todo-item .todo-delete:hover { color: #820000; }
-
     .calendar-header {
         display: flex;
         align-items: center;
@@ -264,8 +193,6 @@
 
     body.dark .widget { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .widget-title { color: #7ec8e3 !important; }
-    body.dark .todo-item { color: #d0e8f5 !important; border-bottom-color: #0f1f2e !important; }
-    body.dark .todo-input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .calendar-day { color: #d0e8f5 !important; }
     body.dark .calendar-day.other-month { color: #333 !important; }
     body.dark .calendar-month { color: #7ec8e3 !important; }
@@ -347,15 +274,6 @@
     <div class="home-sidebar">
 
         <div class="widget">
-            <div class="widget-title">To Do</div>
-            <div class="todo-input-row">
-                <input type="text" class="todo-input" id="todo-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter') addTodo()">
-                <button class="todo-add-btn" onclick="addTodo()">+</button>
-            </div>
-            <ul class="todo-list" id="todo-list"></ul>
-        </div>
-
-        <div class="widget">
             <div class="widget-title">Calendar</div>
             <div class="calendar-header">
                 <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
@@ -402,49 +320,6 @@
             });
         }
     }
-
-    let todos = JSON.parse(localStorage.getItem('iramora_todos') || '[]');
-
-    function saveTodos() { localStorage.setItem('iramora_todos', JSON.stringify(todos)); }
-
-    function renderTodos() {
-        const list = document.getElementById('todo-list');
-        list.innerHTML = '';
-        todos.forEach((todo, i) => {
-            const li = document.createElement('li');
-            li.className = 'todo-item' + (todo.done ? ' done' : '');
-            li.innerHTML = `
-                <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${i})">
-                <span>${todo.text}</span>
-                <button class="todo-delete" onclick="deleteTodo(${i})">×</button>
-            `;
-            list.appendChild(li);
-        });
-    }
-
-    function addTodo() {
-        const input = document.getElementById('todo-input');
-        const text = input.value.trim();
-        if (!text) return;
-        todos.push({ text, done: false });
-        saveTodos();
-        renderTodos();
-        input.value = '';
-    }
-
-    function toggleTodo(i) {
-        todos[i].done = !todos[i].done;
-        saveTodos();
-        renderTodos();
-    }
-
-    function deleteTodo(i) {
-        todos.splice(i, 1);
-        saveTodos();
-        renderTodos();
-    }
-
-    renderTodos();
 
     let calDate = new Date();
 

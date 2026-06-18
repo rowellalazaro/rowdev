@@ -67,6 +67,15 @@
         body.dark .about-meta { color: #94a3b8 !important; }
         body.dark .about-modal-close { color: #ffffff !important; }
 
+        /* To Do Modal sa Dark Mode */
+        body.dark .todo-modal-box { background: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important; }
+        body.dark .todo-modal-title { color: #38bdf8 !important; }
+        body.dark .todo-modal-close { color: #ffffff !important; }
+        body.dark .todo-input { background: #0f172a !important; color: #f8fafc !important; border-color: #475569 !important; }
+        body.dark .todo-item { color: #e2e8f0 !important; border-bottom-color: #334155 !important; }
+        body.dark .todo-empty { color: #64748b !important; }
+        body.dark .todo-badge { border-color: #1e293b !important; }
+
         /* ── LIGHT MODE / STANDARD STYLES ── */
         .navbar {
             display: flex;
@@ -182,6 +191,55 @@
         }
 
         body.dark .notif-badge { border-color: #1e293b; }
+
+        /* ── TO DO BUTTON (sits beside the notification bell) ── */
+        .todo-bell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            color: #ffffff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .todo-bell:hover { background: rgba(129, 205, 255, 0.2); }
+
+        .todo-bell svg {
+            width: 21px;
+            height: 21px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .todo-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            background-color: #ff3b30;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #0f1f3d;
+            line-height: 1;
+            box-sizing: border-box;
+        }
 
         .overlay {
             display: none;
@@ -433,6 +491,139 @@
         .about-text { color: #444; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
         .about-subtext { color: #555; font-size: 13px; line-height: 1.5; margin: 0; }
         .about-meta { color: rgba(0, 48, 130, 0.63); font-size: 13px; margin: 4px 0; }
+
+        /* ── TO DO MODAL STYLES (same pattern as the About modal) ── */
+        .todo-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 400;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .todo-modal.open { display: flex; }
+
+        .todo-modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 380px;
+            width: 90%;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .todo-modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .todo-modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #003082;
+            margin-bottom: 16px;
+        }
+
+        .todo-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 9px 10px;
+            border: 1px solid #001f52;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            color: #001f52;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .todo-input:focus { border-color: #003082; }
+
+        .todo-add-btn {
+            background: #001f52;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 9px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .todo-empty {
+            text-align: center;
+            color: #99afc4;
+            font-size: 13px;
+            font-style: italic;
+            padding: 14px 0;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e8eef5;
+            font-size: 14px;
+            color: #001f52;
+        }
+
+        .todo-item:last-child { border-bottom: none; }
+
+        .todo-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .todo-item span {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .todo-item.done span {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        .todo-item .todo-delete {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 17px;
+            padding: 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .todo-item .todo-delete:hover { color: #820000; }
     </style>
 
     <script>
@@ -473,6 +664,15 @@
 
     {% if user.is_authenticated %}
     <div class="nav-right">
+        <button type="button" class="todo-bell" onclick="showTodo()">
+            <svg viewBox="0 0 24 24">
+                <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                <path d="M8.5 13l1.8 1.8 3.2-3.4"></path>
+            </svg>
+            <span class="todo-badge" id="todo-badge" style="display:none;"></span>
+        </button>
+
         <a href="/notifications/" class="notif-bell">
             <svg viewBox="0 0 24 24">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -555,6 +755,21 @@
         <p class="about-meta"><strong>Version:</strong> 1.0.0</p>
     </div>
 </div>
+
+<div class="todo-modal" id="todo-modal">
+    <div class="todo-modal-box">
+        <button class="todo-modal-close" onclick="closeTodo()">✕</button>
+
+        <div class="todo-modal-title">To Do</div>
+
+        <div class="todo-input-row">
+            <input type="text" class="todo-input" id="todo-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter') addTodo()">
+            <button type="button" class="todo-add-btn" onclick="addTodo()">+</button>
+        </div>
+
+        <ul class="todo-list" id="todo-list"></ul>
+    </div>
+</div>
 {% endif %}
 
 <div class="container">
@@ -583,6 +798,78 @@
     function closeAbout() {
         document.getElementById('about-modal').classList.remove('open');
     }
+
+    /* ── TO DO (modal triggered by the navbar button beside notifications) ── */
+    let todos = JSON.parse(localStorage.getItem('iramora_todos') || '[]');
+
+    function saveTodos() { localStorage.setItem('iramora_todos', JSON.stringify(todos)); }
+
+    function renderTodos() {
+        const list = document.getElementById('todo-list');
+        if (!list) return;
+        list.innerHTML = '';
+        if (todos.length === 0) {
+            list.innerHTML = '<li class="todo-empty">No tasks yet</li>';
+        } else {
+            todos.forEach((todo, i) => {
+                const li = document.createElement('li');
+                li.className = 'todo-item' + (todo.done ? ' done' : '');
+                li.innerHTML = `
+                    <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${i})">
+                    <span>${todo.text}</span>
+                    <button class="todo-delete" onclick="deleteTodo(${i})">×</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+        updateTodoBadge();
+    }
+
+    function updateTodoBadge() {
+        const badge = document.getElementById('todo-badge');
+        if (!badge) return;
+        const pending = todos.filter(t => !t.done).length;
+        if (pending > 0) {
+            badge.textContent = pending;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function addTodo() {
+        const input = document.getElementById('todo-input');
+        const text = input.value.trim();
+        if (!text) return;
+        todos.push({ text, done: false });
+        saveTodos();
+        renderTodos();
+        input.value = '';
+        input.focus();
+    }
+
+    function toggleTodo(i) {
+        todos[i].done = !todos[i].done;
+        saveTodos();
+        renderTodos();
+    }
+
+    function deleteTodo(i) {
+        todos.splice(i, 1);
+        saveTodos();
+        renderTodos();
+    }
+
+    function showTodo() {
+        renderTodos();
+        document.getElementById('todo-modal').classList.add('open');
+    }
+
+    function closeTodo() {
+        document.getElementById('todo-modal').classList.remove('open');
+    }
+
+    updateTodoBadge();
 </script>
 
 </body>
