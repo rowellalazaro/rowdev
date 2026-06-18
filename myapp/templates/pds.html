@@ -906,6 +906,28 @@
         });
     }
 
+    // The psgc.cloud cities/municipalities/barangays data is double
+    // UTF-8 encoded for accented letters (e.g. "ñ" comes through as the
+    // two-character mojibake "Ã±"). This repairs it by re-decoding the
+    // string's char codes as UTF-8 bytes — but only when the telltale "Ã"
+    // is present, so correctly-encoded strings are left untouched.
+    function fixMojibake(str) {
+        if (!str || !str.includes('Ã')) return str;
+        try {
+            const bytes = Uint8Array.from(str, c => c.charCodeAt(0));
+            return new TextDecoder('utf-8').decode(bytes);
+        } catch (e) {
+            return str;
+        }
+    }
+
+    // A few zip_code values in the source API are simply wrong (verified
+    // against official sources). Corrected here as they're spotted, keyed
+    // by PSGC code.
+    const zipCodeCorrections = {
+        '0301417000': '3004', // Plaridel, Bulacan — API lists 3015 (which is actually Guiguinto's zip)
+    };
+
     
     async function loadAllCities() {
         if (window._psgcCitiesCache) return window._psgcCitiesCache;
@@ -926,7 +948,11 @@
             ]);
             const cities = await citiesRes.json();
             const munis  = await munisRes.json();
-            window._psgcCitiesCache = [...cities, ...munis];
+            window._psgcCitiesCache = [...cities, ...munis].map(c => ({
+                ...c,
+                name: fixMojibake(c.name),
+                zip_code: zipCodeCorrections[c.code] || c.zip_code,
+            }));
         } catch(e) {
             window._psgcCitiesCache = [];
         }
