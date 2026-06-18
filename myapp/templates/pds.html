@@ -830,35 +830,74 @@
 <script>
     
 
-    let provinceData = [];
+    let provinceDataCache = null;
+    let provinceDataLoading = false;
 
     // NCR (Metro Manila) is NOT divided into provinces in the PSGC — it's
     // split into 4 districts instead — so it never shows up from the
     // provinces API. These are added manually so residents of Manila,
     // Quezon City, Makati, etc. have something to pick for "Province".
     const ncrProvinceEntries = [
-        { name: 'Metro Manila (NCR)' },
-        { name: 'NCR - 1st District' },
-        { name: 'NCR - 2nd District' },
-        { name: 'NCR - 3rd District' },
-        { name: 'NCR - 4th District' },
+        { name: 'Metro Manila (NCR)', isNCR: true },
+        { name: 'NCR - 1st District', isNCR: true },
+        { name: 'NCR - 2nd District', isNCR: true },
+        { name: 'NCR - 3rd District', isNCR: true },
+        { name: 'NCR - 4th District', isNCR: true },
     ];
+
+    // A handful of highly-urbanized cities are administratively independent
+    // of any province in the PSGC, so their PSGC code doesn't nest under the
+    // province most people actually associate them with. Mapped here by
+    // PSGC code so they still show up once that province is chosen.
+    const independentCityProvinceOverrides = {
+        '0330100000': 'pampanga',          // City of Angeles
+        '0331400000': 'zambales',          // City of Olongapo
+        '0631000000': 'iloilo',            // City of Iloilo
+        '0630200000': 'negros occidental', // City of Bacolod
+        '0730600000': 'cebu',              // City of Cebu
+        '0731100000': 'cebu',              // City of Lapu-Lapu
+        '0731300000': 'cebu',              // City of Mandaue
+        '1130700000': 'davao del sur',     // City of Davao
+        '0931700000': 'zamboanga del sur', // City of Zamboanga
+        '1030500000': 'misamis oriental',  // City of Cagayan De Oro
+        '1030900000': 'lanao del norte',   // City of Iligan
+        '1230800000': 'south cotabato',    // City of General Santos
+        '1430300000': 'benguet',           // City of Baguio
+        '1630400000': 'agusan del norte',  // City of Butuan
+        '1731500000': 'palawan',           // City of Puerto Princesa
+        '0831600000': 'leyte',             // City of Tacloban
+    };
 
     window._psgcCitiesCache = null;
     window._psgcCitiesLoading = false;
 
-    
+    async function loadAllProvinces() {
+        if (provinceDataCache) return provinceDataCache;
+        if (provinceDataLoading) {
+            await new Promise(resolve => {
+                const interval = setInterval(() => {
+                    if (provinceDataCache) { clearInterval(interval); resolve(); }
+                }, 100);
+            });
+            return provinceDataCache;
+        }
+        provinceDataLoading = true;
+        try {
+            const res = await fetch('https://psgc.gitlab.io/api/provinces/');
+            const apiProvinces = await res.json();
+            provinceDataCache = [...apiProvinces, ...ncrProvinceEntries];
+        } catch(e) {
+            provinceDataCache = [...ncrProvinceEntries];
+        }
+        provinceDataLoading = false;
+        return provinceDataCache;
+    }
+
     async function fetchProvinces(query, listId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
-        if (provinceData.length === 0) {
-            try {
-                const res = await fetch('https://psgc.gitlab.io/api/provinces/');
-                const apiProvinces = await res.json();
-                provinceData = [...apiProvinces, ...ncrProvinceEntries];
-            } catch(e) { list.style.display = 'none'; return; }
-        }
-        const filtered = provinceData
+        const pool = await loadAllProvinces();
+        const filtered = pool
             .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
             .slice(0, 8);
         showList(list, filtered.map(p => p.name), (val) => {
@@ -898,6 +937,32 @@
    
     document.addEventListener('DOMContentLoaded', () => loadAllCities());
 
+    // Scope the city/municipality pool down to whatever province is
+    // currently typed into the given province field. Matches by PSGC code
+    // prefix (city codes nest under their province's code), with a small
+    // override list for independent cities like Cebu City or Davao City.
+    async function getCitiesScopedToProvince(pool, provinceInputId) {
+        const provinceName = provinceInputId ? (document.getElementById(provinceInputId).value || '').trim() : '';
+        if (!provinceName) return pool;
+
+        const provinces = await loadAllProvinces();
+        const matchedProvince = provinces.find(p => p.name.toLowerCase() === provinceName.toLowerCase());
+        if (!matchedProvince) return pool; // unrecognized/partial text — don't hide everything
+
+        if (matchedProvince.isNCR) {
+            return pool.filter(c => c.code && c.code.startsWith('13'));
+        }
+        if (matchedProvince.psgc10DigitCode) {
+            const prefix = matchedProvince.psgc10DigitCode.slice(0, 5);
+            const provinceKey = matchedProvince.name.toLowerCase();
+            return pool.filter(c =>
+                (c.code && c.code.slice(0, 5) === prefix) ||
+                independentCityProvinceOverrides[c.code] === provinceKey
+            );
+        }
+        return pool;
+    }
+
     
     async function fetchCities(query, listId, provinceInputId, zipInputId) {
         const list = document.getElementById(listId);
@@ -906,7 +971,9 @@
         const pool = await loadAllCities();
         if (!pool || pool.length === 0) { list.style.display = 'none'; return; }
 
-        const filtered = pool
+        const scoped = await getCitiesScopedToProvince(pool, provinceInputId);
+
+        const filtered = scoped
             .filter(c => c.name.toLowerCase().includes(query.toLowerCase()))
             .slice(0, 10);
 
