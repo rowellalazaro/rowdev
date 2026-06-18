@@ -215,6 +215,30 @@
 
         .fields-box input::placeholder { color: #aaa; }
 
+        .remember-group {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #555;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remember-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
         .btn-login {
             padding: 13px 35px;
             background-color: #1a2a4a;
@@ -300,14 +324,28 @@
             {% csrf_token %}
             <div class="fields-box">
                 {% for field in form %}
-                    <div class="form-group">
-                        {{ field }}
-                        {% if field.errors %}
-                            <ul class="error-text">
-                                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
+                    {% if field.name == 'remember' %}
+                        <div class="form-group remember-group">
+                            <label class="remember-label">
+                                {{ field }}
+                                <span>Remember Me</span>
+                            </label>
+                            {% if field.errors %}
+                                <ul class="error-text">
+                                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="form-group">
+                            {{ field }}
+                            {% if field.errors %}
+                                <ul class="error-text">
+                                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
             <button type="submit" class="btn-login">Sign In</button>
