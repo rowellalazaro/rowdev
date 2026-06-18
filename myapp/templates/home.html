@@ -15,14 +15,6 @@
         min-width: 0;
     }
 
-    .home-sidebar {
-        width: 280px;
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
     .status-box, .post-card {
         background: #ffffff;
         border: 2px solid #001f52;
@@ -119,84 +111,6 @@
         border-radius: 8px;
     }
 
-    .widget {
-        background: white;
-        border-radius: 10px;
-        padding: 16px;
-        border: 2px solid #001f52;
-        box-sizing: border-box;
-    }
-
-    .widget-title {
-        font-size: 14px;
-        font-weight: bold;
-        color: #001f52;
-        margin-bottom: 12px;
-    }
-
-    .calendar-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 8px;
-    }
-
-    .calendar-month {
-        font-size: 13px;
-        font-weight: bold;
-        color: #001f52;
-    }
-
-    .calendar-nav {
-        background: none;
-        border: none;
-        color: #001f52;
-        font-size: 16px;
-        cursor: pointer;
-        padding: 2px 6px;
-        border-radius: 4px;
-        transition: background 0.2s;
-    }
-
-    .calendar-nav:hover { background: #e8eef5; }
-
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 2px;
-        text-align: center;
-    }
-
-    .calendar-day-name {
-        font-size: 10px;
-        font-weight: bold;
-        color: #001f52;
-        padding: 3px 0;
-        opacity: 0.6;
-    }
-
-    .calendar-day {
-        font-size: 12px;
-        padding: 4px 2px;
-        border-radius: 50%;
-        cursor: default;
-        color: #001f52;
-    }
-
-    .calendar-day.today {
-        background: #001f52;
-        color: white;
-        font-weight: bold;
-    }
-
-    .calendar-day.other-month { color: #ccc; }
-
-    body.dark .widget { background: #1e3448 !important; border-color: #0f1f2e !important; }
-    body.dark .widget-title { color: #7ec8e3 !important; }
-    body.dark .calendar-day { color: #d0e8f5 !important; }
-    body.dark .calendar-day.other-month { color: #333 !important; }
-    body.dark .calendar-month { color: #7ec8e3 !important; }
-    body.dark .calendar-day-name { color: #7ec8e3 !important; }
     body.dark .status-box, body.dark .post-card { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .status-textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .feed-heading { color: #7ec8e3 !important; }
@@ -270,20 +184,6 @@
         <div class="no-posts">No posts yet. Be the first!</div>
         {% endfor %}
     </div>
-
-    <div class="home-sidebar">
-
-        <div class="widget">
-            <div class="widget-title">Calendar</div>
-            <div class="calendar-header">
-                <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
-                <span class="calendar-month" id="cal-month"></span>
-                <button class="calendar-nav" onclick="changeMonth(1)">›</button>
-            </div>
-            <div class="calendar-grid" id="cal-grid"></div>
-        </div>
-
-    </div>
 </div>
 
 <script>
@@ -320,49 +220,6 @@
             });
         }
     }
-
-    let calDate = new Date();
-
-    function renderCalendar() {
-        const today = new Date();
-        const year = calDate.getFullYear();
-        const month = calDate.getMonth();
-        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        document.getElementById('cal-month').textContent = monthNames[month] + ' ' + year;
-        const grid = document.getElementById('cal-grid');
-        grid.innerHTML = '';
-        ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
-            const div = document.createElement('div');
-            div.className = 'calendar-day-name';
-            div.textContent = d;
-            grid.appendChild(div);
-        });
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const prevDays = new Date(year, month, 0).getDate();
-        for (let i = firstDay - 1; i >= 0; i--) {
-            const div = document.createElement('div');
-            div.className = 'calendar-day other-month';
-            div.textContent = prevDays - i;
-            grid.appendChild(div);
-        }
-        for (let d = 1; d <= daysInMonth; d++) {
-            const div = document.createElement('div');
-            div.className = 'calendar-day';
-            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                div.classList.add('today');
-            }
-            div.textContent = d;
-            grid.appendChild(div);
-        }
-    }
-
-    function changeMonth(dir) {
-        calDate.setMonth(calDate.getMonth() + dir);
-        renderCalendar();
-    }
-
-    renderCalendar();
 </script>
 
 {% endblock %}
