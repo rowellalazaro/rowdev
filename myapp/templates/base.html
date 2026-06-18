@@ -926,10 +926,9 @@
         <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
     </div>
 
-    <div class="side-menu-user-info">
-        <div class="side-menu-avatar">{{ user.username|first|upper }}</div>
-        <div class="display-name">{{ user.username }}</div>
-        <div class="display-email">{{ user.email }}</div>
+    <div class="side-menu-user-info" style="display:flex; align-items:center; gap:12px;">
+    <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:44px; width:44px; border-radius:10px; object-fit:cover; flex-shrink:0;">
+    <span style="font-size:20px; font-weight:bold; color:#ffffff; letter-spacing:1px;">Iramora</span>
     </div>
 
     <div class="side-menu-links">
