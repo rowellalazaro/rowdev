@@ -85,6 +85,12 @@
         body.dark .calendar-day { color: #e2e8f0 !important; }
         body.dark .calendar-day.other-month { color: #334155 !important; }
         body.dark .calendar-nav:hover { background: #334155 !important; }
+        body.dark .calendar-day:hover { background: #334155 !important; }
+        body.dark .calendar-day.selected { outline-color: #38bdf8 !important; }
+        body.dark .reminder-panel { border-top-color: #334155 !important; }
+        body.dark .reminder-panel-title { color: #38bdf8 !important; }
+        body.dark .reminder-input { background: #0f172a !important; color: #f8fafc !important; border-color: #475569 !important; }
+        body.dark .reminder-delete-btn { color: #e2e8f0 !important; border-color: #475569 !important; }
 
         /* ── LIGHT MODE / STANDARD STYLES ── */
         .navbar {
@@ -747,12 +753,16 @@
         }
 
         .calendar-day {
+            position: relative;
             font-size: 13px;
             padding: 6px 2px;
             border-radius: 50%;
-            cursor: default;
+            cursor: pointer;
             color: #001f52;
+            transition: background 0.15s;
         }
+
+        .calendar-day:hover { background: #e8eef5; }
 
         .calendar-day.today {
             background: #001f52;
@@ -760,7 +770,87 @@
             font-weight: bold;
         }
 
-        .calendar-day.other-month { color: #ccc; }
+        .calendar-day.today:hover { background: #003082; }
+
+        .calendar-day.selected {
+            outline: 2px solid #001f52;
+            outline-offset: 1px;
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+            cursor: default;
+        }
+
+        .calendar-day.other-month:hover { background: none; }
+
+        .calendar-day.has-reminder::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ff3b30;
+        }
+
+        .reminder-panel {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e8eef5;
+        }
+
+        .reminder-panel-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #001f52;
+            margin-bottom: 8px;
+        }
+
+        .reminder-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 10px;
+            border: 1px solid #001f52;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #001f52;
+            background: white;
+            resize: none;
+            margin-bottom: 8px;
+            font-family: Arial;
+        }
+
+        .reminder-input:focus { outline: none; border-color: #003082; }
+
+        .reminder-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .reminder-save-btn {
+            background: #001f52;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .reminder-delete-btn {
+            background: none;
+            border: 1px solid #001f52;
+            color: #001f52;
+            border-radius: 6px;
+            padding: 7px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
     </style>
 
     <script>
@@ -819,14 +909,12 @@
             <span class="todo-badge" id="todo-badge" style="display:none;"></span>
         </button>
 
-        <a href="/notifications/" class="notif-bell">
+        <a href="/notifications/" class="notif-bell" id="notif-bell-link" data-unread-count="{{ unread_count|default:0 }}">
             <svg viewBox="0 0 24 24">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
-            {% if unread_count > 0 %}
-                <span class="notif-badge">{{ unread_count }}</span>
-            {% endif %}
+            <span class="notif-badge" id="notif-badge" style="display:none;"></span>
         </a>
     </div>
     {% endif %}
@@ -929,6 +1017,15 @@
             <button class="calendar-nav" onclick="changeMonth(1)">›</button>
         </div>
         <div class="calendar-grid" id="cal-grid"></div>
+
+        <div class="reminder-panel">
+            <div class="reminder-panel-title" id="reminder-date-label">Tap a date to add a reminder</div>
+            <textarea class="reminder-input" id="reminder-input" rows="2" placeholder="Add a reminder for this day..."></textarea>
+            <div class="reminder-actions">
+                <button type="button" class="reminder-save-btn" onclick="saveReminder()">Save</button>
+                <button type="button" class="reminder-delete-btn" id="reminder-delete-btn" onclick="deleteReminder()" style="display:none;">Delete</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -1034,6 +1131,33 @@
 
     /* ── CALENDAR (modal triggered by the navbar button) ── */
     let calDate = new Date();
+    let reminders = JSON.parse(localStorage.getItem('iramora_reminders') || '{}');
+    let selectedDateKey = null;
+
+    function saveReminders() { localStorage.setItem('iramora_reminders', JSON.stringify(reminders)); }
+
+    function dateKey(year, month, day) {
+        return year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    }
+
+    function updateNotifBadge() {
+        const link = document.getElementById('notif-bell-link');
+        const badge = document.getElementById('notif-badge');
+        if (!link || !badge) return;
+        const serverCount = parseInt(link.dataset.unreadCount || '0', 10);
+        const now = new Date();
+        const todayKey = dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+        const dueReminders = Object.keys(reminders).filter(k => k <= todayKey).length;
+        const total = serverCount + dueReminders;
+        if (total > 0) {
+            badge.textContent = total;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    updateNotifBadge();
 
     function renderCalendar() {
         const today = new Date();
@@ -1060,22 +1184,67 @@
         }
         for (let d = 1; d <= daysInMonth; d++) {
             const div = document.createElement('div');
+            const key = dateKey(year, month, d);
             div.className = 'calendar-day';
+            if (reminders[key]) div.classList.add('has-reminder');
             if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 div.classList.add('today');
             }
+            if (key === selectedDateKey) div.classList.add('selected');
             div.textContent = d;
+            div.onclick = () => selectDay(year, month, d);
             grid.appendChild(div);
         }
     }
 
+    function selectDay(year, month, day) {
+        selectedDateKey = dateKey(year, month, day);
+        renderCalendar();
+        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        document.getElementById('reminder-date-label').textContent = 'Reminder for ' + monthNames[month] + ' ' + day + ', ' + year;
+        const input = document.getElementById('reminder-input');
+        input.value = reminders[selectedDateKey] || '';
+        document.getElementById('reminder-delete-btn').style.display = reminders[selectedDateKey] ? 'inline-block' : 'none';
+    }
+
+    function saveReminder() {
+        if (!selectedDateKey) return;
+        const text = document.getElementById('reminder-input').value.trim();
+        if (text) {
+            reminders[selectedDateKey] = text;
+        } else {
+            delete reminders[selectedDateKey];
+        }
+        saveReminders();
+        renderCalendar();
+        updateNotifBadge();
+        document.getElementById('reminder-delete-btn').style.display = reminders[selectedDateKey] ? 'inline-block' : 'none';
+    }
+
+    function deleteReminder() {
+        if (!selectedDateKey) return;
+        delete reminders[selectedDateKey];
+        saveReminders();
+        document.getElementById('reminder-input').value = '';
+        document.getElementById('reminder-delete-btn').style.display = 'none';
+        renderCalendar();
+        updateNotifBadge();
+    }
+
     function changeMonth(dir) {
         calDate.setMonth(calDate.getMonth() + dir);
+        selectedDateKey = null;
+        document.getElementById('reminder-date-label').textContent = 'Tap a date to add a reminder';
+        document.getElementById('reminder-input').value = '';
+        document.getElementById('reminder-delete-btn').style.display = 'none';
         renderCalendar();
     }
 
     function showCalendar() {
+        calDate = new Date();
+        const today = new Date();
         renderCalendar();
+        selectDay(today.getFullYear(), today.getMonth(), today.getDate());
         document.getElementById('calendar-modal').classList.add('open');
     }
 
