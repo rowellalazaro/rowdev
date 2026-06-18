@@ -87,17 +87,18 @@
 
         /* ── NAVBAR ── */
         .navbar {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            background: #0f1f3d;
-            border-bottom: 1px solid #7ec8e3;
-            position: relative;
-            z-index: 100;
-            gap: 15px;
-            border-radius: 0 24px 24px 0;
-        }
-
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    background: #0f1f3d;
+    margin: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    border: 1px solid #7ec8e3;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    gap: 15px;
+}
         .hamburger {
             display: flex;
             flex-direction: column;
@@ -288,19 +289,21 @@
 
         /* ── SIDE MENU ── */
         .side-menu {
-            position: fixed;
-            top: 0; left: -300px;
-            width: 270px;
-            height: 100%;
-            background: #0f1f3d;
-            z-index: 300;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-            transition: left 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-radius: 0 24px 24px 0; /* curved right edge */
-        }
+    position: fixed;
+    top: 12px;
+    left: -300px;
+    width: 270px;
+    height: calc(100% - 24px);
+    background: #0f1f3d;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+    border: 1px solid #7ec8e3;
+    border-radius: 24px;
+    z-index: 300;
+    transition: left 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
         .side-menu.open { left: 0; }
 
@@ -400,6 +403,16 @@
         .side-menu-bottom .logout-item:hover {
             background: rgba(255, 107, 107, 0.1);
         }
+
+        .side-menu.active {
+          left: 12px;
+        }
+        .navbar,
+        .side-menu {
+             background: rgba(15, 31, 61, 0.92);
+             backdrop-filter: blur(12px);
+             -webkit-backdrop-filter: blur(12px);
+}
 
         .container {
             width: 70%;
