@@ -327,6 +327,15 @@
         border-left: 3px solid #57a3c1;
     }
 
+    /* ZIP auto-fill highlight animation */
+    @keyframes zipHighlight {
+        0%   { background: #d4f7d4; border-color: #28a745; }
+        100% { background: #f8faff; border-color: #c0cfe0; }
+    }
+    .zip-autofilled {
+        animation: zipHighlight 1.5s ease forwards;
+    }
+
     body.dark .autocomplete-list { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .autocomplete-list li { color: #d0e8f5 !important; }
     body.dark .autocomplete-list li:hover { background: #1a2a3a !important; }
@@ -508,7 +517,7 @@
                         <label>City/Municipality <span class="req">*</span></label>
                         <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
                                required placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'res_city_list', 'res_province')"
+                               oninput="fetchCities(this.value, 'res_city_list', 'res_province', 'res_zip')"
                                onchange="clearBarangay('res')">
                         <ul id="res_city_list" class="autocomplete-list"></ul>
                     </div>
@@ -566,7 +575,7 @@
                         <label>City/Municipality</label>
                         <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
                                placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province')"
+                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province', 'perm_zip')"
                                onchange="clearBarangay('perm')">
                         <ul id="perm_city_list" class="autocomplete-list"></ul>
                     </div>
@@ -819,11 +828,18 @@
 </div>
 
 <script>
-    // ── ADDRESS AUTOCOMPLETE ──
-    let provinceData = [];
-    let cityData = {};
-    let barangayData = {};
+    // ══════════════════════════════════════════════
+    // ADDRESS AUTOCOMPLETE + ZIP AUTO-FILL
+    // Uses psgc.cloud API which includes zip_code
+    // ══════════════════════════════════════════════
 
+    let provinceData = [];
+
+    // Single cache for all cities + municipalities (fetched once)
+    window._psgcCitiesCache = null;
+    window._psgcCitiesLoading = false;
+
+    // ── PROVINCES (still uses psgc.gitlab.io — no zip needed here) ──
     async function fetchProvinces(query, listId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
@@ -833,67 +849,112 @@
                 provinceData = await res.json();
             } catch(e) { list.style.display = 'none'; return; }
         }
-        const filtered = provinceData.filter(p =>
-            p.name.toLowerCase().includes(query.toLowerCase())
-        ).slice(0, 8);
+        const filtered = provinceData
+            .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 8);
         showList(list, filtered.map(p => p.name), (val) => {
             document.getElementById(listId.replace('_list', '')).value = val;
             list.style.display = 'none';
         });
     }
 
-    async function fetchCities(query, listId, provinceInputId) {
+    // ── LOAD ALL CITIES & MUNICIPALITIES (cached, with zip_code) ──
+    async function loadAllCities() {
+        if (window._psgcCitiesCache) return window._psgcCitiesCache;
+        if (window._psgcCitiesLoading) {
+            // Wait for existing fetch to finish
+            await new Promise(resolve => {
+                const interval = setInterval(() => {
+                    if (window._psgcCitiesCache) { clearInterval(interval); resolve(); }
+                }, 100);
+            });
+            return window._psgcCitiesCache;
+        }
+        window._psgcCitiesLoading = true;
+        try {
+            const [citiesRes, munisRes] = await Promise.all([
+                fetch('https://psgc.cloud/api/cities'),
+                fetch('https://psgc.cloud/api/municipalities')
+            ]);
+            const cities = await citiesRes.json();
+            const munis  = await munisRes.json();
+            window._psgcCitiesCache = [...cities, ...munis];
+        } catch(e) {
+            window._psgcCitiesCache = [];
+        }
+        window._psgcCitiesLoading = false;
+        return window._psgcCitiesCache;
+    }
+
+    // Pre-load on page ready so first keystroke feels instant
+    document.addEventListener('DOMContentLoaded', () => loadAllCities());
+
+    // ── CITIES / MUNICIPALITIES with ZIP auto-fill ──
+    async function fetchCities(query, listId, provinceInputId, zipInputId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
-        const provinceName = document.getElementById(provinceInputId).value;
-        try {
-            if (provinceData.length === 0) {
-                const res = await fetch('https://psgc.gitlab.io/api/provinces/');
-                provinceData = await res.json();
-            }
-            const province = provinceData.find(p => p.name.toLowerCase() === provinceName.toLowerCase());
-            let cities = [];
-            if (province) {
-                const cacheKey = province.code;
-                if (!cityData[cacheKey]) {
-                    const res = await fetch(`https://psgc.gitlab.io/api/provinces/${province.code}/cities-municipalities/`);
-                    cityData[cacheKey] = await res.json();
+
+        const pool = await loadAllCities();
+        if (!pool || pool.length === 0) { list.style.display = 'none'; return; }
+
+        const filtered = pool
+            .filter(c => c.name.toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 10);
+
+        list.innerHTML = '';
+        if (filtered.length === 0) { list.style.display = 'none'; return; }
+
+        filtered.forEach(item => {
+            const li = document.createElement('li');
+            const zipLabel = item.zip_code
+                ? `<span style="font-size:11px; color:#888; margin-left:6px;">ZIP ${item.zip_code}</span>`
+                : '';
+            li.innerHTML = `${item.name}${zipLabel}`;
+            li.onclick = () => {
+                // Set city/municipality name
+                document.getElementById(listId.replace('_list', '')).value = item.name;
+                // ✅ Auto-fill ZIP Code
+                if (item.zip_code && zipInputId) {
+                    const zipEl = document.getElementById(zipInputId);
+                    if (zipEl) {
+                        zipEl.value = item.zip_code;
+                        // Flash green to show it was auto-filled
+                        zipEl.classList.remove('zip-autofilled');
+                        void zipEl.offsetWidth; // force reflow
+                        zipEl.classList.add('zip-autofilled');
+                    }
                 }
-                cities = cityData[cacheKey];
-            } else {
-                const res = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
-                cities = await res.json();
-            }
-            const filtered = cities.filter(c =>
-                c.name.toLowerCase().includes(query.toLowerCase())
-            ).slice(0, 8);
-            showList(list, filtered.map(c => c.name), (val) => {
-                document.getElementById(listId.replace('_list', '')).value = val;
                 list.style.display = 'none';
-            });
-        } catch(e) { list.style.display = 'none'; }
+            };
+            list.appendChild(li);
+        });
+        list.style.display = 'block';
     }
+
+    // ── BARANGAYS ──
+    let barangayData = {};
 
     async function fetchBarangays(query, listId, cityInputId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
         const cityName = document.getElementById(cityInputId).value;
         try {
-            const allCitiesRes = await fetch('https://psgc.gitlab.io/api/cities-municipalities/');
-            const allCities = await allCitiesRes.json();
-            const city = allCities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
+            const pool = await loadAllCities();
+            const city = pool.find(c => c.name.toLowerCase() === cityName.toLowerCase());
             let barangays = [];
             if (city) {
                 const cacheKey = city.code;
                 if (!barangayData[cacheKey]) {
-                    const res = await fetch(`https://psgc.gitlab.io/api/cities-municipalities/${city.code}/barangays/`);
+                    // psgc.cloud uses /api/cities/{code}/barangays or /api/municipalities/{code}/barangays
+                    const type = city.type && city.type.toLowerCase().includes('city') ? 'cities' : 'municipalities';
+                    const res = await fetch(`https://psgc.cloud/api/${type}/${city.code}/barangays`);
                     barangayData[cacheKey] = await res.json();
                 }
                 barangays = barangayData[cacheKey];
             }
-            const filtered = barangays.filter(b =>
-                b.name.toLowerCase().includes(query.toLowerCase())
-            ).slice(0, 8);
+            const filtered = (barangays || [])
+                .filter(b => b.name.toLowerCase().includes(query.toLowerCase()))
+                .slice(0, 8);
             showList(list, filtered.map(b => b.name), (val) => {
                 document.getElementById(listId.replace('_list', '')).value = val;
                 list.style.display = 'none';
@@ -901,6 +962,7 @@
         } catch(e) { list.style.display = 'none'; }
     }
 
+    // ── GENERIC LIST RENDERER ──
     function showList(listEl, items, onSelect) {
         listEl.innerHTML = '';
         if (items.length === 0) { listEl.style.display = 'none'; return; }
@@ -916,18 +978,21 @@
     function clearCityBarangay(prefix) {
         document.getElementById(prefix + '_city').value = '';
         document.getElementById(prefix + '_barangay').value = '';
+        document.getElementById(prefix + '_zip').value = '';
     }
 
     function clearBarangay(prefix) {
         document.getElementById(prefix + '_barangay').value = '';
     }
 
+    // Close all dropdowns on outside click
     document.addEventListener('click', function(e) {
         document.querySelectorAll('.autocomplete-list').forEach(list => {
             list.style.display = 'none';
         });
     });
 
+    // ── COPY RESIDENTIAL → PERMANENT (includes ZIP) ──
     function copyResAddress(checkbox) {
         if (checkbox.checked) {
             document.getElementById('perm_house_no').value    = document.getElementById('res_house_no').value;
@@ -940,7 +1005,9 @@
         }
     }
 
-    // ── COLLEGE COURSE AUTOCOMPLETE ──
+    // ══════════════════════════════════════════════
+    // COLLEGE COURSE AUTOCOMPLETE
+    // ══════════════════════════════════════════════
     const allCourses = {
         'Engineering': ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
         'IT & Computing': ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],
@@ -976,7 +1043,9 @@
         if (query.length >= 1) filterCourses(query);
     }
 
-    // ── SKILLS AUTOCOMPLETE ──
+    // ══════════════════════════════════════════════
+    // SKILLS AUTOCOMPLETE
+    // ══════════════════════════════════════════════
     const skillsByCategory = {
         'Technical': ['Python','Java','JavaScript','PHP','C++','C#','HTML/CSS','React','Django','Laravel','SQL','MySQL','PostgreSQL','MongoDB','Git','Docker','Linux','Networking','Data Analysis','Machine Learning','AI','Cloud Computing','AWS','Azure','Mobile Development','Android','iOS'],
         'Soft Skills': ['Communication','Leadership','Teamwork','Problem Solving','Critical Thinking','Time Management','Adaptability','Creativity','Work Ethic','Attention to Detail','Decision Making','Conflict Resolution','Public Speaking','Negotiation','Emotional Intelligence'],
@@ -1006,7 +1075,9 @@
 
     function filterSkillSuggestions(query) {
         const list = document.getElementById('skill_suggestions_list');
-        const pool = activeSkillCat === 'all' ? getAllSkills() : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
+        const pool = activeSkillCat === 'all'
+            ? getAllSkills()
+            : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
         if (query.length < 1) { list.style.display = 'none'; return; }
         const filtered = pool.filter(s => s.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
         list.innerHTML = '';
