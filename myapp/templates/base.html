@@ -13,11 +13,10 @@
 
         
         body.dark { 
-            background: #121824 !important; /* Mas modernong madilim na background */
+            background: #121824 !important;
             color: #e2e8f0 !important; 
         }
         
-        /* Pwersahin ang lahat ng teksto na mag-adapt sa dark mode kahit may inline style */
         body.dark p, body.dark span, body.dark a,
         body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, 
         body.dark small, body.dark strong, body.dark li, body.dark label { 
@@ -29,7 +28,6 @@
             border-bottom: 1px solid #334155 !important; 
         }
         
-        /* Cards at Box containers sa Dark Mode */
         body.dark .card { 
             background: #1e293b !important; 
             color: #ffffff !important; 
@@ -43,7 +41,6 @@
         body.dark .settings-section h4 { color: #38bdf8 !important; }
         body.dark .save-btn { background: #38bdf8 !important; color: #0f172a !important; }
         
-        /* Forms / Inputs sa Dark Mode */
         body.dark input[type="text"], body.dark input[type="password"],
         body.dark input[type="email"], body.dark textarea, body.dark select {
             background: #0f172a !important; 
@@ -53,21 +50,18 @@
         
         body.dark .container { color: #e2e8f0 !important; }
 
-        /* Side Menu sa Dark Mode */
         body.dark .side-menu { background: #1e293b !important; }
         body.dark .side-menu-links a:hover { background: #38bdf8 !important; color: #0f172a !important; }
         body.dark .side-menu-links a.active { background: #38bdf8 !important; color: #0f172a !important; }
         body.dark .side-menu-user-info { border-bottom-color: #334155 !important; }
         body.dark .display-email { color: #94a3b8 !important; }
 
-        /* About Modal sa Dark Mode */
         body.dark .about-modal-box { background: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important; }
         body.dark .about-title, body.dark .about-section-title { color: #38bdf8 !important; }
         body.dark .about-text, body.dark .about-subtext { color: #cbd5e1 !important; }
         body.dark .about-meta { color: #94a3b8 !important; }
         body.dark .about-modal-close { color: #ffffff !important; }
 
-        /* To Do Modal sa Dark Mode */
         body.dark .todo-modal-box { background: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important; }
         body.dark .todo-modal-title { color: #38bdf8 !important; }
         body.dark .todo-modal-close { color: #ffffff !important; }
@@ -76,7 +70,6 @@
         body.dark .todo-empty { color: #64748b !important; }
         body.dark .todo-badge { border-color: #1e293b !important; }
 
-        /* Calendar Modal sa Dark Mode */
         body.dark .calendar-modal-box { background: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important; }
         body.dark .calendar-modal-title { color: #38bdf8 !important; }
         body.dark .calendar-modal-close { color: #ffffff !important; }
@@ -92,7 +85,7 @@
         body.dark .reminder-input { background: #0f172a !important; color: #f8fafc !important; border-color: #475569 !important; }
         body.dark .reminder-delete-btn { color: #e2e8f0 !important; border-color: #475569 !important; }
 
-        /* ── LIGHT MODE / STANDARD STYLES ── */
+        /* ── NAVBAR ── */
         .navbar {
             display: flex;
             align-items: center;
@@ -126,15 +119,12 @@
             border-radius: 3px;
         }
 
-        .logo {
-            font-family: sans-serif;
-            font-size: 22px;
+        /* Dynamic page title in navbar */
+        .navbar-page-title {
+            font-size: 18px;
             font-weight: bold;
             color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            letter-spacing: 0.5px;
         }
 
         .nav-right {
@@ -208,7 +198,7 @@
 
         body.dark .notif-badge { border-color: #1e293b; }
 
-        /* ── TO DO BUTTON (sits beside the notification bell) ── */
+        /* ── TO DO BUTTON ── */
         .todo-bell {
             position: relative;
             display: flex;
@@ -257,7 +247,7 @@
             box-sizing: border-box;
         }
 
-        /* ── CALENDAR BUTTON (sits beside the To Do button) ── */
+        /* ── CALENDAR BUTTON ── */
         .calendar-bell {
             position: relative;
             display: flex;
@@ -308,6 +298,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            border-radius: 0 24px 24px 0; /* curved right edge */
         }
 
         .side-menu.open { left: 0; }
@@ -334,32 +325,9 @@
         .side-menu-user-info {
             padding: 16px 20px 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .side-menu-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #7ec8e3;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #0f1f3d;
-            margin-bottom: 10px;
-        }
-
-        .side-menu-user-info .display-name {
-            font-size: 16px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .side-menu-user-info .display-email {
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            margin-top: 3px;
+            gap: 12px;
         }
 
         .side-menu-links {
@@ -498,7 +466,7 @@
             font-weight: bold;
         }
 
-        /* ── ABOUT MODAL STYLES ── */
+        /* ── ABOUT MODAL ── */
         .about-modal {
             display: none;
             position: fixed;
@@ -537,7 +505,7 @@
         .about-subtext { color: #555; font-size: 13px; line-height: 1.5; margin: 0; }
         .about-meta { color: rgba(0, 48, 130, 0.63); font-size: 13px; margin: 4px 0; }
 
-        /* ── TO DO MODAL STYLES (same pattern as the About modal) ── */
+        /* ── TO DO MODAL ── */
         .todo-modal {
             display: none;
             position: fixed;
@@ -670,7 +638,7 @@
 
         .todo-item .todo-delete:hover { color: #820000; }
 
-        /* ── CALENDAR MODAL STYLES (same pattern as the To Do / About modals) ── */
+        /* ── CALENDAR MODAL ── */
         .calendar-modal {
             display: none;
             position: fixed;
@@ -884,10 +852,7 @@
         </div>
     {% endif %}
 
-    <a href="{% url 'home' %}" class="logo">
-        <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:45px; width:auto;">
-        <span>Iramora</span>
-    </a>
+    <span class="navbar-page-title" id="navbar-page-title"></span>
 
     {% if user.is_authenticated %}
     <div class="nav-right">
@@ -926,9 +891,9 @@
         <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
     </div>
 
-    <div class="side-menu-user-info" style="display:flex; align-items:center; gap:12px;">
-    <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:44px; width:44px; border-radius:10px; object-fit:cover; flex-shrink:0;">
-    <span style="font-size:20px; font-weight:bold; color:#ffffff; letter-spacing:1px;">Iramora</span>
+    <div class="side-menu-user-info">
+        <img src="{% static 'images/logo.jpg' %}" alt="Iramora" style="height:44px; width:44px; border-radius:10px; object-fit:cover; flex-shrink:0;">
+        <span style="font-size:20px; font-weight:bold; color:#ffffff; letter-spacing:1px;">Iramora</span>
     </div>
 
     <div class="side-menu-links">
@@ -1056,7 +1021,7 @@
         document.getElementById('about-modal').classList.remove('open');
     }
 
-    /* ── TO DO (modal triggered by the navbar button beside notifications) ── */
+    /* ── TO DO ── */
     let todos = JSON.parse(localStorage.getItem('iramora_todos') || '[]');
 
     function saveTodos() { localStorage.setItem('iramora_todos', JSON.stringify(todos)); }
@@ -1128,7 +1093,7 @@
 
     updateTodoBadge();
 
-    /* ── CALENDAR (modal triggered by the navbar button) ── */
+    /* ── CALENDAR ── */
     let calDate = new Date();
     let reminders = JSON.parse(localStorage.getItem('iramora_reminders') || '{}');
     let selectedDateKey = null;
@@ -1249,6 +1214,29 @@
 
     function closeCalendar() {
         document.getElementById('calendar-modal').classList.remove('open');
+    }
+
+    /* ── NAVBAR PAGE TITLE ── */
+    const navTitle = document.getElementById('navbar-page-title');
+    if (navTitle) {
+        const path = window.location.pathname;
+        if (path === '/' || path.includes('/home') || path === '/dashboard/') {
+            navTitle.textContent = 'Dashboard';
+        } else if (path.includes('/diary')) {
+            navTitle.textContent = 'Diary';
+        } else if (path.includes('/profile')) {
+            navTitle.textContent = 'My Profile';
+        } else if (path.includes('/pds')) {
+            navTitle.textContent = 'My PDS';
+        } else if (path.includes('/notifications')) {
+            navTitle.textContent = 'Notifications';
+        } else if (path.includes('/files')) {
+            navTitle.textContent = 'Files';
+        } else if (path.includes('/settings')) {
+            navTitle.textContent = 'Settings';
+        } else {
+            navTitle.textContent = 'Iramora';
+        }
     }
 </script>
 
