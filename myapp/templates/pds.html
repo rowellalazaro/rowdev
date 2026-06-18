@@ -508,7 +508,7 @@
                     <div class="pds-field" style="position:relative;">
                         <label>Province <span class="req">*</span></label>
                         <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
-                               required placeholder="e.g. Bulacan" autocomplete="off"
+                               required placeholder="e.g. Bulacan or Metro Manila" autocomplete="off"
                                oninput="fetchProvinces(this.value, 'res_province_list')"
                                onchange="clearCityBarangay('res')">
                         <ul id="res_province_list" class="autocomplete-list"></ul>
@@ -516,7 +516,7 @@
                     <div class="pds-field" style="position:relative;">
                         <label>City/Municipality <span class="req">*</span></label>
                         <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
-                               required placeholder="e.g. Malolos" autocomplete="off"
+                               required placeholder="e.g. Malolos or Quezon City" autocomplete="off"
                                oninput="fetchCities(this.value, 'res_city_list', 'res_province', 'res_zip')"
                                onchange="clearBarangay('res')">
                         <ul id="res_city_list" class="autocomplete-list"></ul>
@@ -566,7 +566,7 @@
                     <div class="pds-field" style="position:relative;">
                         <label>Province</label>
                         <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
-                               placeholder="e.g. Bulacan" autocomplete="off"
+                               placeholder="e.g. Bulacan or Metro Manila" autocomplete="off"
                                oninput="fetchProvinces(this.value, 'perm_province_list')"
                                onchange="clearCityBarangay('perm')">
                         <ul id="perm_province_list" class="autocomplete-list"></ul>
@@ -574,7 +574,7 @@
                     <div class="pds-field" style="position:relative;">
                         <label>City/Municipality</label>
                         <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
-                               placeholder="e.g. Malolos" autocomplete="off"
+                               placeholder="e.g. Malolos or Quezon City" autocomplete="off"
                                oninput="fetchCities(this.value, 'perm_city_list', 'perm_province', 'perm_zip')"
                                onchange="clearBarangay('perm')">
                         <ul id="perm_city_list" class="autocomplete-list"></ul>
@@ -828,25 +828,34 @@
 </div>
 
 <script>
-    // ══════════════════════════════════════════════
-    // ADDRESS AUTOCOMPLETE + ZIP AUTO-FILL
-    // Uses psgc.cloud API which includes zip_code
-    // ══════════════════════════════════════════════
+    
 
     let provinceData = [];
 
-    // Single cache for all cities + municipalities (fetched once)
+    // NCR (Metro Manila) is NOT divided into provinces in the PSGC — it's
+    // split into 4 districts instead — so it never shows up from the
+    // provinces API. These are added manually so residents of Manila,
+    // Quezon City, Makati, etc. have something to pick for "Province".
+    const ncrProvinceEntries = [
+        { name: 'Metro Manila (NCR)' },
+        { name: 'NCR - 1st District' },
+        { name: 'NCR - 2nd District' },
+        { name: 'NCR - 3rd District' },
+        { name: 'NCR - 4th District' },
+    ];
+
     window._psgcCitiesCache = null;
     window._psgcCitiesLoading = false;
 
-    // ── PROVINCES (still uses psgc.gitlab.io — no zip needed here) ──
+    
     async function fetchProvinces(query, listId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
         if (provinceData.length === 0) {
             try {
                 const res = await fetch('https://psgc.gitlab.io/api/provinces/');
-                provinceData = await res.json();
+                const apiProvinces = await res.json();
+                provinceData = [...apiProvinces, ...ncrProvinceEntries];
             } catch(e) { list.style.display = 'none'; return; }
         }
         const filtered = provinceData
@@ -858,7 +867,7 @@
         });
     }
 
-    // ── LOAD ALL CITIES & MUNICIPALITIES (cached, with zip_code) ──
+    
     async function loadAllCities() {
         if (window._psgcCitiesCache) return window._psgcCitiesCache;
         if (window._psgcCitiesLoading) {
@@ -886,10 +895,10 @@
         return window._psgcCitiesCache;
     }
 
-    // Pre-load on page ready so first keystroke feels instant
+   
     document.addEventListener('DOMContentLoaded', () => loadAllCities());
 
-    // ── CITIES / MUNICIPALITIES with ZIP auto-fill ──
+    
     async function fetchCities(query, listId, provinceInputId, zipInputId) {
         const list = document.getElementById(listId);
         if (query.length < 1) { list.style.display = 'none'; return; }
@@ -992,7 +1001,7 @@
         });
     });
 
-    // ── COPY RESIDENTIAL → PERMANENT (includes ZIP) ──
+   
     function copyResAddress(checkbox) {
         if (checkbox.checked) {
             document.getElementById('perm_house_no').value    = document.getElementById('res_house_no').value;
@@ -1005,9 +1014,7 @@
         }
     }
 
-    // ══════════════════════════════════════════════
-    // COLLEGE COURSE AUTOCOMPLETE
-    // ══════════════════════════════════════════════
+  
     const allCourses = {
         'Engineering': ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
         'IT & Computing': ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],
