@@ -834,134 +834,138 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════
-// PSGC Cloud v1 — full hierarchy, no hardcodes
-// Typing ANY letter in ANY field shows matching results from PH
+// PSGC Cloud — correct flat endpoints, all confirmed working
+//   /api/provinces          → [{code, name}]
+//   /api/cities             → [{code, name, zip_code}]
+//   /api/municipalities     → [{code, name, zip_code}]
+//   /api/cities-municipalities/{code}/barangays → [{code,name}]
+// Province scoping = code prefix match (first 6 chars)
 // ══════════════════════════════════════════════════════════════
 
-const API = 'https://psgc.cloud/api/v1';
+const PSGC = 'https://psgc.cloud/api';
 
-// ── Fetch cache ───────────────────────────────────────────────
+// ── Cache ─────────────────────────────────────────────────────
 const _cache = {};
 async function apiGet(url) {
     if (_cache[url]) return _cache[url];
     try {
-        const res = await fetch(url);
+        const res  = await fetch(url);
         if (!res.ok) return [];
         const data = await res.json();
-        const items = Array.isArray(data) ? data : (data.data || []);
-        _cache[url] = items;
-        return items;
+        _cache[url] = Array.isArray(data) ? data : [];
+        return _cache[url];
     } catch (e) { return []; }
 }
 
-// ── Selected PSGC codes per address prefix ────────────────────
-const selectedProvince = { res: null, perm: null };
-const selectedCity     = { res: null, perm: null };
+// ── Preloaded master lists ────────────────────────────────────
+let _provinces = null;
+let _allCities = null;   // cities + municipalities combined
 
-// ── Preloaded full lists (loaded once at page start) ──────────
-let _allProvinces      = null;
-let _allCitiesMunis    = null;
-
-async function getAllProvinces() {
-    if (_allProvinces) return _allProvinces;
-    _allProvinces = await apiGet(`${API}/provinces?per_page=200`);
-    return _allProvinces;
+async function loadProvinces() {
+    if (_provinces) return _provinces;
+    _provinces = await apiGet(`${PSGC}/provinces`);
+    return _provinces;
 }
 
-async function getAllCitiesMunis() {
-    if (_allCitiesMunis) return _allCitiesMunis;
-    // psgc.cloud returns paginated; fetch page by page until done
-    let page = 1, results = [];
-    while (true) {
-        const batch = await apiGet(`${API}/cities-municipalities?per_page=200&page=${page}`);
-        if (!batch || batch.length === 0) break;
-        results = results.concat(batch);
-        if (batch.length < 200) break;
-        page++;
-    }
-    _allCitiesMunis = results;
-    return _allCitiesMunis;
+async function loadAllCities() {
+    if (_allCities) return _allCities;
+    const [cities, munis] = await Promise.all([
+        apiGet(`${PSGC}/cities`),
+        apiGet(`${PSGC}/municipalities`)
+    ]);
+    _allCities = [...cities, ...munis];
+    return _allCities;
 }
 
-// ── Preload in background on page load ───────────────────────
+// ── Selected codes per prefix (res / perm) ───────────────────
+const selProvCode = { res: null, perm: null };
+const selCityCode = { res: null, perm: null };
+
+// ── Preload on page load + re-seed saved values ───────────────
 document.addEventListener('DOMContentLoaded', async () => {
-    // Load provinces and cities in background for instant autocomplete
-    getAllProvinces();
-    getAllCitiesMunis();
-    // Re-seed PSGC codes from saved form values
-    await seedCodesFromSavedValues();
+    // Load in background — fast (2 small requests)
+    await Promise.all([loadProvinces(), loadAllCities()]);
+    seedSavedValues();
 });
 
+async function seedSavedValues() {
+    const provs = await loadProvinces();
+    const cities = await loadAllCities();
+    for (const p of ['res', 'perm']) {
+        const pName = (document.getElementById(p + '_province').value || '').trim().toLowerCase();
+        const cName = (document.getElementById(p + '_city').value || '').trim().toLowerCase();
+        if (pName) {
+            const prov = provs.find(x => x.name.toLowerCase() === pName);
+            if (prov) selProvCode[p] = prov.code;
+        }
+        if (cName) {
+            const city = cities.find(x => x.name.toLowerCase() === cName);
+            if (city) selCityCode[p] = city.code;
+        }
+    }
+}
+
 // ══════════════════════════════════════════════════════════════
-// PROVINCES — shows dropdown on any input, even 1 letter
+// PROVINCES  — type any letter, shows all matching PH provinces
 // ══════════════════════════════════════════════════════════════
 async function fetchProvinces(query, listId) {
     const list   = document.getElementById(listId);
     const prefix = listId.startsWith('res') ? 'res' : 'perm';
-    if (query.length < 1) { list.style.display = 'none'; return; }
+    if (!query) { list.style.display = 'none'; return; }
 
-    const all     = await getAllProvinces();
+    const all     = await loadProvinces();
     const q       = query.toLowerCase();
-    const filtered = all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
+    const matches = all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
 
-    showList(list, filtered.map(p => ({ label: p.name, value: p })), (p) => {
+    renderList(list, matches, p => p.name, p => {
         document.getElementById(listId.replace('_list', '')).value = p.name;
-        selectedProvince[prefix] = p.code;
-        selectedCity[prefix]     = null;
+        selProvCode[prefix] = p.code;
+        selCityCode[prefix] = null;
         document.getElementById(prefix + '_city').value     = '';
         document.getElementById(prefix + '_barangay').value = '';
         document.getElementById(prefix + '_zip').value      = '';
-        list.style.display = 'none';
     });
 }
 
 // ══════════════════════════════════════════════════════════════
 // CITIES / MUNICIPALITIES
-// • If province is selected → filter only that province's cities
-// • If no province selected → search entire PH
-// Always shows results on any letter typed
+// • Province selected → show only cities in that province (code prefix)
+// • No province → show all matching PH cities/munis
 // ══════════════════════════════════════════════════════════════
 async function fetchCities(query, listId, provinceInputId, zipInputId) {
     const list   = document.getElementById(listId);
     const prefix = listId.startsWith('res') ? 'res' : 'perm';
-    if (query.length < 1) { list.style.display = 'none'; return; }
+    if (!query) { list.style.display = 'none'; return; }
 
-    const q        = query.toLowerCase();
-    const provCode = selectedProvince[prefix];
-    let items;
+    const all  = await loadAllCities();
+    const q    = query.toLowerCase();
+    const pCode = selProvCode[prefix];
 
-    if (provCode) {
-        // Scoped: fetch all cities for this province (cached), filter client-side
-        const all = await apiGet(`${API}/provinces/${provCode}/cities-municipalities`);
-        items = all.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
-    } else {
-        // No province selected → search all PH cities/munis
-        const all = await getAllCitiesMunis();
-        items = all.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
-    }
+    // Province code first 6 chars = province prefix for cities
+    const pool = pCode
+        ? all.filter(c => c.code.startsWith(pCode.slice(0, 6)))
+        : all;
+
+    const matches = pool.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
 
     list.innerHTML = '';
-    if (items.length === 0) { list.style.display = 'none'; return; }
+    if (!matches.length) { list.style.display = 'none'; return; }
 
-    items.forEach(item => {
+    matches.forEach(item => {
         const li = document.createElement('li');
-        const zipLabel = item.zip_code
-            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>`
-            : '';
-        li.innerHTML = `${item.name}${zipLabel}`;
+        const zip = item.zip_code
+            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>` : '';
+        li.innerHTML = item.name + zip;
         li.onclick = () => {
             document.getElementById(listId.replace('_list', '')).value = item.name;
-            selectedCity[prefix] = item.code;
-            // Auto-fill ZIP
-            if (zipInputId) {
-                const zipEl = document.getElementById(zipInputId);
-                if (zipEl) {
-                    zipEl.value = item.zip_code || '';
-                    if (item.zip_code) {
-                        zipEl.classList.remove('zip-autofilled');
-                        void zipEl.offsetWidth;
-                        zipEl.classList.add('zip-autofilled');
-                    }
+            selCityCode[prefix] = item.code;
+            const zipEl = document.getElementById(zipInputId);
+            if (zipEl) {
+                zipEl.value = item.zip_code || '';
+                if (item.zip_code) {
+                    zipEl.classList.remove('zip-autofilled');
+                    void zipEl.offsetWidth;
+                    zipEl.classList.add('zip-autofilled');
                 }
             }
             document.getElementById(prefix + '_barangay').value = '';
@@ -973,105 +977,77 @@ async function fetchCities(query, listId, provinceInputId, zipInputId) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// BARANGAYS
-// • If city is selected → fetch that city's barangays
-// • If city not yet selected → try to resolve city code from
-//   the city input field text first, then search
-// Always shows results on any letter typed
+// BARANGAYS — scoped to selected city, fetched on demand
+// Falls back to resolving city from typed text if needed
 // ══════════════════════════════════════════════════════════════
 async function fetchBarangays(query, listId, prefix) {
     const list = document.getElementById(listId);
-    if (query.length < 1) { list.style.display = 'none'; return; }
+    if (!query) { list.style.display = 'none'; return; }
 
-    // If we don't have a city code yet, try to resolve from the text field
-    if (!selectedCity[prefix]) {
-        const cityName = (document.getElementById(prefix + '_city').value || '').trim();
-        if (cityName) {
-            const all  = await getAllCitiesMunis();
-            const city = all.find(c => c.name.toLowerCase() === cityName.toLowerCase());
-            if (city) selectedCity[prefix] = city.code;
+    // Resolve city code from text if not yet set
+    if (!selCityCode[prefix]) {
+        const cName = (document.getElementById(prefix + '_city').value || '').trim().toLowerCase();
+        if (cName) {
+            const all  = await loadAllCities();
+            const city = all.find(c => c.name.toLowerCase() === cName);
+            if (city) selCityCode[prefix] = city.code;
         }
     }
 
-    if (!selectedCity[prefix]) { list.style.display = 'none'; return; }
+    if (!selCityCode[prefix]) { list.style.display = 'none'; return; }
 
-    const all   = await apiGet(`${API}/cities-municipalities/${selectedCity[prefix]}/barangays`);
-    const q     = query.toLowerCase();
-    const items = all.filter(b => b.name.toLowerCase().includes(q)).slice(0, 10);
+    const url      = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
+    const all      = await apiGet(url);
+    const q        = query.toLowerCase();
+    const matches  = all.filter(b => b.name.toLowerCase().includes(q)).slice(0, 10);
 
-    showList(list, items.map(b => ({ label: b.name, value: b.name })), (val) => {
+    renderList(list, matches, b => b.name, val => {
         document.getElementById(listId.replace('_list', '')).value = val;
-        list.style.display = 'none';
     });
 }
 
-// ══════════════════════════════════════════════════════════════
-// GENERIC LIST RENDERER
-// ══════════════════════════════════════════════════════════════
-function showList(listEl, items, onSelect) {
+// ── Generic list renderer ─────────────────────────────────────
+function renderList(listEl, items, labelFn, onSelect) {
     listEl.innerHTML = '';
-    if (items.length === 0) { listEl.style.display = 'none'; return; }
+    if (!items.length) { listEl.style.display = 'none'; return; }
     items.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = item.label;
-        li.onclick = () => onSelect(item.value);
+        li.textContent = labelFn(item);
+        li.onclick = () => { onSelect(item); listEl.style.display = 'none'; };
         listEl.appendChild(li);
     });
     listEl.style.display = 'block';
 }
 
-// ══════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════
+// ── Helpers ───────────────────────────────────────────────────
 function clearCityBarangay(prefix) {
-    selectedProvince[prefix] = null;
-    selectedCity[prefix]     = null;
+    selProvCode[prefix] = null;
+    selCityCode[prefix] = null;
     document.getElementById(prefix + '_city').value     = '';
     document.getElementById(prefix + '_barangay').value = '';
     document.getElementById(prefix + '_zip').value      = '';
 }
 
 function clearBarangay(prefix) {
-    selectedCity[prefix] = null;
+    selCityCode[prefix] = null;
     document.getElementById(prefix + '_barangay').value = '';
 }
 
 function copyResAddress(checkbox) {
-    if (checkbox.checked) {
-        ['house_no','street','subdivision','barangay','city','province','zip'].forEach(f => {
-            const src = document.getElementById('res_' + f);
-            const dst = document.getElementById('perm_' + f);
-            if (src && dst) dst.value = src.value;
-        });
-        selectedProvince['perm'] = selectedProvince['res'];
-        selectedCity['perm']     = selectedCity['res'];
-    }
-}
-
-// Re-seed PSGC codes from already-saved field values on page reload
-async function seedCodesFromSavedValues() {
-    const all = await getAllCitiesMunis();
-    const provs = await getAllProvinces();
-    for (const prefix of ['res', 'perm']) {
-        const provName  = (document.getElementById(prefix + '_province').value || '').trim();
-        const cityName  = (document.getElementById(prefix + '_city').value || '').trim();
-
-        if (provName) {
-            const prov = provs.find(p => p.name.toLowerCase() === provName.toLowerCase());
-            if (prov) selectedProvince[prefix] = prov.code;
-        }
-        if (cityName) {
-            const city = all.find(c => c.name.toLowerCase() === cityName.toLowerCase());
-            if (city) selectedCity[prefix] = city.code;
-        }
-    }
+    if (!checkbox.checked) return;
+    ['house_no','street','subdivision','barangay','city','province','zip'].forEach(f => {
+        const s = document.getElementById('res_' + f);
+        const d = document.getElementById('perm_' + f);
+        if (s && d) d.value = s.value;
+    });
+    selProvCode['perm'] = selProvCode['res'];
+    selCityCode['perm'] = selCityCode['res'];
 }
 
 // Close dropdowns on outside click
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap')) {
+document.addEventListener('click', e => {
+    if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap'))
         document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
-    }
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -1090,23 +1066,18 @@ const allCourses = {
     'Social Work':       ['BS Social Work','BS Community Development'],
 };
 
-function getAllCourses() { return Object.values(allCourses).flat(); }
-
 function filterCourses(query) {
     const list = document.getElementById('college_course_list');
-    if (query.length < 1) { list.style.display = 'none'; return; }
-    const filtered = getAllCourses()
-        .filter(c => c.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 10);
-    showList(list, filtered.map(c => ({ label: c, value: c })), (val) => {
+    if (!query) { list.style.display = 'none'; return; }
+    const q  = query.toLowerCase();
+    const matches = Object.values(allCourses).flat().filter(c => c.toLowerCase().includes(q)).slice(0, 10);
+    renderList(list, matches, c => c, val => {
         document.getElementById('college_course_input').value = val;
-        list.style.display = 'none';
     });
 }
 
 function showCourseList() {
-    const q = document.getElementById('college_course_input').value;
-    if (q.length >= 1) filterCourses(q);
+    filterCourses(document.getElementById('college_course_input').value);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1123,10 +1094,6 @@ const skillsByCategory = {
 
 let activeSkillCat = 'all';
 
-function getAllSkills() {
-    return Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })));
-}
-
 function filterSkillCat(cat, btn) {
     activeSkillCat = cat;
     document.querySelectorAll('.skill-cat-btn').forEach(b => b.classList.remove('active'));
@@ -1135,22 +1102,20 @@ function filterSkillCat(cat, btn) {
         document.getElementById('skill_category_select').value = cat;
         document.getElementById('skill_category_hidden').value = cat;
     }
-    const query = document.getElementById('skill_search_input').value;
-    if (query.length >= 1) filterSkillSuggestions(query);
+    filterSkillSuggestions(document.getElementById('skill_search_input').value);
 }
 
 function filterSkillSuggestions(query) {
     const list = document.getElementById('skill_suggestions_list');
+    if (!query) { list.style.display = 'none'; return; }
     const pool = activeSkillCat === 'all'
-        ? getAllSkills()
+        ? Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })))
         : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
-    if (query.length < 1) { list.style.display = 'none'; return; }
-    const filtered = pool
-        .filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 10);
+    const q = query.toLowerCase();
+    const matches = pool.filter(s => s.name.toLowerCase().includes(q)).slice(0, 10);
     list.innerHTML = '';
-    if (filtered.length === 0) { list.style.display = 'none'; return; }
-    filtered.forEach(item => {
+    if (!matches.length) { list.style.display = 'none'; return; }
+    matches.forEach(item => {
         const li = document.createElement('li');
         li.innerHTML = `${item.name} <span style="font-size:11px;color:#888;">(${item.cat})</span>`;
         li.onclick = () => {
@@ -1165,8 +1130,7 @@ function filterSkillSuggestions(query) {
 }
 
 function showSkillSuggestions() {
-    const q = document.getElementById('skill_search_input').value;
-    if (q.length >= 1) filterSkillSuggestions(q);
+    filterSkillSuggestions(document.getElementById('skill_search_input').value);
 }
 </script>
 {% endblock %}
