@@ -3,354 +3,66 @@
 {% block content %}
 
 <style>
-    .pds-container {
-        max-width: 750px;
-        margin: 30px auto;
-    }
-
-    .pds-section {
-        background: white;
-        border: 2px solid #001f52;
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 24px;
-    }
-
-    .pds-section h2 {
-        color: #001f52;
-        font-size: 16px;
-        font-weight: bold;
-        margin: 0 0 18px 0;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #e0e6f0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .pds-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-    }
-
+    .pds-container { max-width: 750px; margin: 30px auto; }
+    .pds-section { background: white; border: 2px solid #001f52; border-radius: 12px; padding: 25px; margin-bottom: 24px; }
+    .pds-section h2 { color: #001f52; font-size: 16px; font-weight: bold; margin: 0 0 18px 0; padding-bottom: 10px; border-bottom: 2px solid #e0e6f0; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pds-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .pds-grid.three { grid-template-columns: 1fr 1fr 1fr; }
     .pds-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
     .pds-grid.full { grid-template-columns: 1fr; }
-
-    .pds-field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .pds-field label {
-        font-size: 11px;
-        font-weight: bold;
-        color: #001f52;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .pds-field label .req {
-        color: #cc0000;
-        margin-left: 2px;
-    }
-
-    .pds-field input,
-    .pds-field select,
-    .pds-field textarea {
-        padding: 8px 10px;
-        border: 1px solid #c0cfe0;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #001f52;
-        background: #f8faff;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .pds-field input:focus,
-    .pds-field select:focus,
-    .pds-field textarea:focus {
-        outline: none;
-        border-color: #001f52;
-        background: white;
-    }
-
-    .pds-save-btn {
-        margin-top: 16px;
-        background: #001f52;
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
+    .pds-field { display: flex; flex-direction: column; gap: 4px; position: relative; }
+    .pds-field label { font-size: 11px; font-weight: bold; color: #001f52; text-transform: uppercase; letter-spacing: 0.3px; }
+    .pds-field label .req { color: #cc0000; margin-left: 2px; }
+    .pds-field input, .pds-field select, .pds-field textarea { padding: 8px 10px; border: 1px solid #c0cfe0; border-radius: 6px; font-size: 14px; color: #001f52; background: #f8faff; width: 100%; box-sizing: border-box; }
+    .pds-field input:focus, .pds-field select:focus, .pds-field textarea:focus { outline: none; border-color: #001f52; background: white; }
+    .pds-save-btn { margin-top: 16px; background: #001f52; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
     .pds-save-btn:hover { background: #003082; }
-
-    .work-card {
-        background: #f0f4ff;
-        border-radius: 8px;
-        padding: 12px 15px;
-        margin-bottom: 10px;
-        border-left: 3px solid #57a3c1;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
+    .work-card { background: #f0f4ff; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; border-left: 3px solid #57a3c1; display: flex; justify-content: space-between; align-items: flex-start; }
     .work-info p { margin: 2px 0; font-size: 13px; color: #001f52; }
     .work-info strong { font-size: 14px; }
-
-    .delete-btn {
-        background: #f8d7da;
-        color: #721c24;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-
-    .skill-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #e8f0ff;
-        color: #001f52;
-        border-radius: 20px;
-        padding: 5px 12px;
-        font-size: 13px;
-        font-weight: bold;
-        margin: 4px;
-    }
-
-    .skill-tag button {
-        background: none;
-        border: none;
-        color: #721c24;
-        cursor: pointer;
-        font-size: 14px;
-        padding: 0;
-        line-height: 1;
-    }
-
-    .add-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 12px;
-        align-items: flex-end;
-        flex-wrap: wrap;
-    }
-
-    .add-row input {
-        padding: 8px 10px;
-        border: 1px solid #c0cfe0;
-        border-radius: 6px;
-        font-size: 13px;
-        color: #001f52;
-        background: #f8faff;
-        flex: 1;
-        min-width: 120px;
-    }
-
-    .add-btn {
-        background: #57a3c1;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: bold;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-    .edu-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-    }
-
-    .edu-table th {
-        background: #e8f0ff;
-        color: #001f52;
-        padding: 8px 10px;
-        text-align: left;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .edu-table td {
-        padding: 8px 10px;
-        border-bottom: 1px solid #e0e6f0;
-        color: #001f52;
-        vertical-align: top;
-    }
-
-    .edu-table td input,
-    .edu-table td select {
-        width: 100%;
-        padding: 6px 8px;
-        border: 1px solid #c0cfe0;
-        border-radius: 4px;
-        font-size: 13px;
-        color: #001f52;
-        background: #f8faff;
-        box-sizing: border-box;
-    }
-
-    .section-divider {
-        border: none;
-        border-top: 2px solid #e0e6f0;
-        margin: 20px 0;
-    }
-
-    .subsection-title {
-        color: #001f52;
-        font-weight: bold;
-        font-size: 13px;
-        margin-bottom: 10px;
-        margin-top: 0;
-    }
-
-    .res-address-box {
-        background: #f0f7ff;
-        border: 1px solid #c0cfe0;
-        border-radius: 10px;
-        padding: 16px;
-        margin-bottom: 16px;
-    }
-
-    .perm-address-box {
-        background: #f0f7ff;
-        border: 1px solid #c0cfe0;
-        border-radius: 10px;
-        padding: 16px;
-        margin-bottom: 16px;
-    }
-
-    .autocomplete-list {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #c0cfe0;
-        border-radius: 6px;
-        max-height: 180px;
-        overflow-y: auto;
-        z-index: 999;
-        list-style: none;
-        padding: 0;
-        margin: 2px 0 0 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        display: none;
-    }
-
-    .autocomplete-list li {
-        padding: 8px 12px;
-        cursor: pointer;
-        font-size: 13px;
-        color: #001f52;
-    }
-
+    .delete-btn { background: #f8d7da; color: #721c24; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+    .skill-tag { display: inline-flex; align-items: center; gap: 6px; background: #e8f0ff; color: #001f52; border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: bold; margin: 4px; }
+    .skill-tag button { background: none; border: none; color: #721c24; cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
+    .add-row { display: flex; gap: 10px; margin-top: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .add-row input { padding: 8px 10px; border: 1px solid #c0cfe0; border-radius: 6px; font-size: 13px; color: #001f52; background: #f8faff; flex: 1; min-width: 120px; }
+    .add-btn { background: #57a3c1; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .edu-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .edu-table th { background: #e8f0ff; color: #001f52; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .edu-table td { padding: 8px 10px; border-bottom: 1px solid #e0e6f0; color: #001f52; vertical-align: top; position: relative; }
+    .edu-table td input, .edu-table td select { width: 100%; padding: 6px 8px; border: 1px solid #c0cfe0; border-radius: 4px; font-size: 13px; color: #001f52; background: #f8faff; box-sizing: border-box; }
+    .section-divider { border: none; border-top: 2px solid #e0e6f0; margin: 20px 0; }
+    .subsection-title { color: #001f52; font-weight: bold; font-size: 13px; margin-bottom: 10px; margin-top: 0; }
+    .res-address-box { background: #f0f7ff; border: 1px solid #c0cfe0; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .perm-address-box { background: #f0f7ff; border: 1px solid #c0cfe0; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #c0cfe0; border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 9999; list-style: none; padding: 0; margin: 2px 0 0 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; }
+    .autocomplete-list li { padding: 8px 12px; cursor: pointer; font-size: 13px; color: #001f52; border-bottom: 1px solid #f0f4ff; }
+    .autocomplete-list li:last-child { border-bottom: none; }
     .autocomplete-list li:hover { background: #e8f0ff; }
-
-    .skill-search-wrap {
-        position: relative;
-        flex: 1;
-        min-width: 180px;
-    }
-
-    .skill-category-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-
-    .skill-cat-btn {
-        padding: 5px 12px;
-        border-radius: 20px;
-        border: 1.5px solid #c0cfe0;
-        background: #f8faff;
-        color: #001f52;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.15s;
-    }
-
-    .skill-cat-btn.active {
-        background: #001f52;
-        color: white;
-        border-color: #001f52;
-    }
-
-    .skill-count-badge {
-        display: inline-block;
-        background: #57a3c1;
-        color: white;
-        border-radius: 20px;
-        padding: 2px 10px;
-        font-size: 12px;
-        font-weight: bold;
-        margin-left: 6px;
-    }
-
+    .skill-search-wrap { position: relative; flex: 1; min-width: 180px; }
+    .skill-category-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .skill-cat-btn { padding: 5px 12px; border-radius: 20px; border: 1.5px solid #c0cfe0; background: #f8faff; color: #001f52; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.15s; }
+    .skill-cat-btn.active { background: #001f52; color: white; border-color: #001f52; }
+    .skill-count-badge { display: inline-block; background: #57a3c1; color: white; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: bold; margin-left: 6px; }
     .skill-count-badge.done { background: #28a745; }
-
-    .skill-req-note {
-        font-size: 12px;
-        color: #cc0000;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
+    .skill-req-note { font-size: 12px; color: #cc0000; margin-bottom: 10px; font-weight: bold; }
     .skill-req-note.satisfied { color: #28a745; }
-
-    .work-limit-note {
-        font-size: 12px;
-        color: #557;
-        margin-bottom: 12px;
-        background: #f0f4ff;
-        border-radius: 6px;
-        padding: 8px 12px;
-        border-left: 3px solid #57a3c1;
-    }
-
-    @keyframes zipHighlight {
-        0%   { background: #d4f7d4; border-color: #28a745; }
-        100% { background: #f8faff; border-color: #c0cfe0; }
-    }
-    .zip-autofilled {
-        animation: zipHighlight 1.5s ease forwards;
-    }
+    .work-limit-note { font-size: 12px; color: #557; margin-bottom: 12px; background: #f0f4ff; border-radius: 6px; padding: 8px 12px; border-left: 3px solid #57a3c1; }
+    @keyframes zipHighlight { 0% { background: #d4f7d4; border-color: #28a745; } 100% { background: #f8faff; border-color: #c0cfe0; } }
+    .zip-autofilled { animation: zipHighlight 1.5s ease forwards; }
 
     body.dark .autocomplete-list { background: #1e3448 !important; border-color: #0f1f2e !important; }
-    body.dark .autocomplete-list li { color: #d0e8f5 !important; }
+    body.dark .autocomplete-list li { color: #d0e8f5 !important; border-bottom-color: #0f1f2e !important; }
     body.dark .autocomplete-list li:hover { background: #1a2a3a !important; }
     body.dark .pds-section { background: #1e3448 !important; border-color: #0f1f2e !important; }
     body.dark .pds-section h2 { color: #7ec8e3 !important; border-bottom-color: #0f1f2e !important; }
     body.dark .pds-field label { color: #7ec8e3 !important; }
-    body.dark .pds-field input,
-    body.dark .pds-field select,
-    body.dark .pds-field textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .pds-field input, body.dark .pds-field select, body.dark .pds-field textarea { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .work-card { background: #1a2a3a !important; }
     body.dark .work-info p { color: #d0e8f5 !important; }
     body.dark .skill-tag { background: #1a2a3a !important; color: #d0e8f5 !important; }
     body.dark .edu-table th { background: #1a2a3a !important; color: #7ec8e3 !important; }
     body.dark .edu-table td { border-bottom-color: #0f1f2e !important; color: #d0e8f5 !important; }
-    body.dark .edu-table td input,
-    body.dark .edu-table td select { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
+    body.dark .edu-table td input, body.dark .edu-table td select { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .add-row input { background: #1a2a3a !important; color: #d0e8f5 !important; border-color: #0f1f2e !important; }
     body.dark .subsection-title { color: #7ec8e3 !important; }
     body.dark .res-address-box { background: #1a2a3a !important; border-color: #0f1f2e !important; }
@@ -370,9 +82,6 @@
     </div>
     {% endif %}
 
-    <!-- ═══════════════════════════════════════════════════
-         SINGLE FORM: Personal Info + Address + Education
-         ═══════════════════════════════════════════════════ -->
     <form method="post" id="main-pds-form">
         {% csrf_token %}
         <input type="hidden" name="action" value="save_all">
@@ -380,7 +89,6 @@
         <!-- I. PERSONAL INFORMATION -->
         <div class="pds-section">
             <h2>I. Personal Information</h2>
-
             <p class="subsection-title">Personal Details</p>
             <div class="pds-grid">
                 <div class="pds-field">
@@ -462,9 +170,7 @@
                     </select>
                 </div>
             </div>
-
             <hr class="section-divider">
-
             <p class="subsection-title">Contact Numbers</p>
             <div class="pds-grid three">
                 <div class="pds-field">
@@ -482,12 +188,11 @@
             </div>
         </div>
 
-        <!-- II & III. ADDRESS -->
+        <!-- II. ADDRESS -->
         <div class="pds-section">
             <h2>II. Address</h2>
 
-            <!-- RESIDENTIAL -->
-            <h3 style="font-size:14px; font-weight:700; color:#001f52; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Residential Address</h3>
+            <h3 style="font-size:14px;font-weight:700;color:#001f52;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Residential Address</h3>
             <div class="res-address-box">
                 <div class="pds-grid three">
                     <div class="pds-field">
@@ -504,34 +209,32 @@
                     </div>
                 </div>
                 <div class="pds-grid three" style="margin-top:10px;">
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>Province <span class="req">*</span></label>
                         <input type="text" name="res_province" id="res_province"
-                               value="{{ pds.res_province }}"
-                               required placeholder="e.g. Bulacan" autocomplete="off"
-                               oninput="fetchProvinces(this.value, 'res_province_list')"
-                               onchange="clearCityBarangay('res')">
+                               value="{{ pds.res_province }}" required
+                               placeholder="e.g. Bulacan" autocomplete="off"
+                               oninput="onProvinceInput(this,'res')">
                         <ul id="res_province_list" class="autocomplete-list"></ul>
                     </div>
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>City/Municipality <span class="req">*</span></label>
                         <input type="text" name="res_city" id="res_city"
-                               value="{{ pds.res_city }}"
-                               required placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'res_city_list', 'res_province', 'res_zip')"
-                               onchange="clearBarangay('res')">
+                               value="{{ pds.res_city }}" required
+                               placeholder="e.g. Malolos" autocomplete="off"
+                               oninput="onCityInput(this,'res')">
                         <ul id="res_city_list" class="autocomplete-list"></ul>
                     </div>
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>Barangay <span class="req">*</span></label>
                         <input type="text" name="res_barangay" id="res_barangay"
-                               value="{{ pds.res_barangay }}"
-                               required placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res')">
+                               value="{{ pds.res_barangay }}" required
+                               placeholder="e.g. Brgy. Santol" autocomplete="off"
+                               oninput="onBarangayInput(this,'res')">
                         <ul id="res_barangay_list" class="autocomplete-list"></ul>
                     </div>
                 </div>
-                <div style="margin-top:10px; max-width:150px;">
+                <div style="margin-top:10px;max-width:150px;">
                     <div class="pds-field">
                         <label>ZIP Code</label>
                         <input type="text" name="res_zip" id="res_zip" value="{{ pds.res_zip }}" placeholder="e.g. 3000">
@@ -539,12 +242,11 @@
                 </div>
             </div>
 
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid #dce3f0;">
+            <hr style="margin:24px 0;border:none;border-top:1px solid #dce3f0;">
 
-            <!-- PERMANENT -->
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-                <h3 style="font-size:14px; font-weight:700; color:#001f52; text-transform:uppercase; letter-spacing:0.5px; margin:0;">Permanent Address</h3>
-                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <h3 style="font-size:14px;font-weight:700;color:#001f52;text-transform:uppercase;letter-spacing:0.5px;margin:0;">Permanent Address</h3>
+                <label style="font-size:13px;color:#001f52;display:flex;align-items:center;gap:6px;cursor:pointer;">
                     <input type="checkbox" id="same-as-res" onchange="copyResAddress(this)">
                     Same as Residential Address
                 </label>
@@ -565,34 +267,32 @@
                     </div>
                 </div>
                 <div class="pds-grid three" style="margin-top:10px;">
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>Province</label>
                         <input type="text" name="perm_province" id="perm_province"
                                value="{{ pds.perm_province }}"
                                placeholder="e.g. Bulacan" autocomplete="off"
-                               oninput="fetchProvinces(this.value, 'perm_province_list')"
-                               onchange="clearCityBarangay('perm')">
+                               oninput="onProvinceInput(this,'perm')">
                         <ul id="perm_province_list" class="autocomplete-list"></ul>
                     </div>
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>City/Municipality</label>
                         <input type="text" name="perm_city" id="perm_city"
                                value="{{ pds.perm_city }}"
                                placeholder="e.g. Malolos" autocomplete="off"
-                               oninput="fetchCities(this.value, 'perm_city_list', 'perm_province', 'perm_zip')"
-                               onchange="clearBarangay('perm')">
+                               oninput="onCityInput(this,'perm')">
                         <ul id="perm_city_list" class="autocomplete-list"></ul>
                     </div>
-                    <div class="pds-field" style="position:relative;">
+                    <div class="pds-field">
                         <label>Barangay</label>
                         <input type="text" name="perm_barangay" id="perm_barangay"
                                value="{{ pds.perm_barangay }}"
                                placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm')">
+                               oninput="onBarangayInput(this,'perm')">
                         <ul id="perm_barangay_list" class="autocomplete-list"></ul>
                     </div>
                 </div>
-                <div style="margin-top:10px; max-width:150px;">
+                <div style="margin-top:10px;max-width:150px;">
                     <div class="pds-field">
                         <label>ZIP Code</label>
                         <input type="text" name="perm_zip" id="perm_zip" value="{{ pds.perm_zip }}" placeholder="e.g. 3000">
@@ -617,7 +317,7 @@
                 <tbody>
                     {% for level in 'elementary,secondary,vocational'|split:',' %}
                     <tr>
-                        <td style="font-weight:bold; text-transform:capitalize;">{{ level }}</td>
+                        <td style="font-weight:bold;text-transform:capitalize;">{{ level }}</td>
                         {% with edu=education|get:level %}
                         <td><input type="text" name="{{ level }}_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
                         <td><input type="text" name="{{ level }}_course" value="{{ edu.course|default:'' }}" placeholder="N/A if not applicable"></td>
@@ -643,17 +343,14 @@
                         {% endwith %}
                     </tr>
                     {% endfor %}
-
-                    <!-- COLLEGE ROW -->
                     <tr style="background:#f0f7ff;">
                         <td style="font-weight:bold;">College</td>
                         {% with edu=education|get:'college' %}
                         <td><input type="text" name="college_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
-                        <td style="position:relative;">
+                        <td>
                             <input type="text" name="college_course" id="college_course_input"
                                    value="{{ edu.course|default:'' }}"
-                                   placeholder="Search course..."
-                                   autocomplete="off"
+                                   placeholder="Search course..." autocomplete="off"
                                    oninput="filterCourses(this.value)"
                                    onfocus="showCourseList()">
                             <ul id="college_course_list" class="autocomplete-list"></ul>
@@ -683,35 +380,24 @@
             </table>
         </div>
 
-        <!-- SINGLE SAVE BUTTON -->
-        <div style="text-align:center; margin-bottom:24px;">
-            <button type="submit" class="pds-save-btn" style="padding: 12px 48px; font-size:15px;">
-                💾 Save
-            </button>
+        <div style="text-align:center;margin-bottom:24px;">
+            <button type="submit" class="pds-save-btn" style="padding:12px 48px;font-size:15px;">💾 Save</button>
         </div>
-
     </form>
-    <!-- END MAIN FORM -->
 
     <!-- V. WORK EXPERIENCE -->
     <div class="pds-section">
-        <h2>V. Work Experience <span style="font-size:12px; font-weight:normal; color:#888;">(Optional — max 3)</span></h2>
-
+        <h2>V. Work Experience <span style="font-size:12px;font-weight:normal;color:#888;">(Optional — max 3)</span></h2>
         <div class="work-limit-note">
             💼 You can add up to <strong>3</strong> work experiences. This section is <strong>not required</strong>.
             Currently added: <strong>{{ work_list|length }}/3</strong>
         </div>
-
         {% for work in work_list %}
         <div class="work-card">
             <div class="work-info">
                 <strong>{{ work.position }}</strong>
                 <p>{{ work.company }}</p>
-                <p style="color:#888;">
-                    {{ work.date_from|date:"M Y"|default:"" }}
-                    —
-                    {% if work.is_current %}Present{% else %}{{ work.date_to|date:"M Y"|default:"" }}{% endif %}
-                </p>
+                <p style="color:#888;">{{ work.date_from|date:"M Y"|default:"" }} — {% if work.is_current %}Present{% else %}{{ work.date_to|date:"M Y"|default:"" }}{% endif %}</p>
             </div>
             <form method="post" style="margin:0;">
                 {% csrf_token %}
@@ -721,9 +407,8 @@
             </form>
         </div>
         {% empty %}
-        <p style="color:#888; font-size:13px;">No work experience added yet.</p>
+        <p style="color:#888;font-size:13px;">No work experience added yet.</p>
         {% endfor %}
-
         {% if work_list|length < 3 %}
         <form method="post" style="margin-top:16px;">
             {% csrf_token %}
@@ -747,39 +432,33 @@
                 </div>
             </div>
             <div style="margin-top:10px;">
-                <label style="font-size:13px; color:#001f52; display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px;color:#001f52;display:flex;align-items:center;gap:6px;">
                     <input type="checkbox" name="is_current"> Currently working here
                 </label>
             </div>
             <button type="submit" class="pds-save-btn" style="background:#57a3c1;">+ Add Work Experience</button>
         </form>
         {% else %}
-        <p style="color:#57a3c1; font-size:13px; margin-top:10px; font-weight:bold;">✅ Maximum of 3 work experiences reached.</p>
+        <p style="color:#57a3c1;font-size:13px;margin-top:10px;font-weight:bold;">✅ Maximum of 3 work experiences reached.</p>
         {% endif %}
     </div>
 
-    <!-- VI. SKILLS / ELIGIBILITY -->
+    <!-- VI. SKILLS -->
     <div class="pds-section">
         <h2>VI. Skills / Eligibility
-            <span class="skill-count-badge {% if skills|length >= 5 %}done{% endif %}">
-                {{ skills|length }}/5
-            </span>
+            <span class="skill-count-badge {% if skills|length >= 5 %}done{% endif %}">{{ skills|length }}/5</span>
         </h2>
-
         {% if skills|length < 5 %}
         <p class="skill-req-note">⚠️ Please add at least 5 skills. ({{ skills|length }}/5 added)</p>
         {% else %}
         <p class="skill-req-note satisfied">✅ Minimum skills requirement met! ({{ skills|length }} skills added)</p>
         {% endif %}
-
         <div style="margin-bottom:12px;">
             {% for skill in skills %}
             <span class="skill-tag">
                 {{ skill.name }}
-                {% if skill.category %}
-                <span style="font-size:10px; opacity:0.7;">({{ skill.category }})</span>
-                {% endif %}
-                <form method="post" style="display:inline; margin:0;">
+                {% if skill.category %}<span style="font-size:10px;opacity:0.7;">({{ skill.category }})</span>{% endif %}
+                <form method="post" style="display:inline;margin:0;">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="delete_skill">
                     <input type="hidden" name="skill_id" value="{{ skill.id }}">
@@ -787,20 +466,18 @@
                 </form>
             </span>
             {% empty %}
-            <p style="color:#888; font-size:13px;">No skills added yet. Add at least 5 skills.</p>
+            <p style="color:#888;font-size:13px;">No skills added yet. Add at least 5 skills.</p>
             {% endfor %}
         </div>
-
         <div class="skill-category-tabs">
-            <button type="button" class="skill-cat-btn active" onclick="filterSkillCat('all', this)">All</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical', this)">Technical</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Soft Skills', this)">Soft Skills</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Language', this)">Language</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Eligibility', this)">Eligibility</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Office', this)">Office Tools</button>
-            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Other', this)">Other</button>
+            <button type="button" class="skill-cat-btn active" onclick="filterSkillCat('all',this)">All</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Technical',this)">Technical</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Soft Skills',this)">Soft Skills</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Language',this)">Language</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Eligibility',this)">Eligibility</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Office',this)">Office Tools</button>
+            <button type="button" class="skill-cat-btn" onclick="filterSkillCat('Other',this)">Other</button>
         </div>
-
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="add_skill">
@@ -808,13 +485,12 @@
             <div class="add-row">
                 <div class="skill-search-wrap">
                     <input type="text" name="skill_name" id="skill_search_input"
-                           placeholder="Search or type a skill..."
-                           autocomplete="off"
+                           placeholder="Search or type a skill..." autocomplete="off"
                            oninput="filterSkillSuggestions(this.value)"
                            onfocus="showSkillSuggestions()">
                     <ul id="skill_suggestions_list" class="autocomplete-list"></ul>
                 </div>
-                <div class="pds-field" style="min-width:130px; margin-top:0;">
+                <div class="pds-field" style="min-width:130px;margin-top:0;">
                     <select name="skill_category_select" id="skill_category_select"
                             onchange="document.getElementById('skill_category_hidden').value=this.value">
                         <option value="Technical">💻 Technical</option>
@@ -833,16 +509,26 @@
 </div>
 
 <script>
-
+// ══════════════════════════════════════════════════════════════
+// PSGC Cloud API
+// Confirmed endpoints:
+//   /api/provinces          → [{code, name}]
+//   /api/cities             → [{code, name, zip_code}]  ← names may have trailing spaces
+//   /api/municipalities     → [{code, name, zip_code}]
+//   /api/cities-municipalities/{code}/barangays → [{code, name}]
+//
+// Province-to-city scoping: province.code.slice(0,5) === city.code.slice(0,5)
+// Verified: slice(0,5) is unique per province, slice(0,6) BREAKS (misses cities)
+// ══════════════════════════════════════════════════════════════
 
 const PSGC = 'https://psgc.cloud/api';
 
-// ── Cache ─────────────────────────────────────────────────────
+// ── Simple fetch cache ────────────────────────────────────────
 const _cache = {};
 async function apiGet(url) {
     if (_cache[url]) return _cache[url];
     try {
-        const res  = await fetch(url);
+        const res = await fetch(url);
         if (!res.ok) return [];
         const data = await res.json();
         _cache[url] = Array.isArray(data) ? data : [];
@@ -850,154 +536,159 @@ async function apiGet(url) {
     } catch (e) { return []; }
 }
 
-// ── Clean city name: trim spaces + fix mojibake ───────────────
-function cleanName(name) {
-    if (!name) return '';
-    let s = name.trim();
-    // Fix common UTF-8 double-encoded chars (Ã± → ñ, Ã¼ → ü, etc.)
-    try {
-        if (s.includes('Ã')) {
-            s = decodeURIComponent(escape(s));
-        }
-    } catch(e) {}
+// ── Name cleaning ─────────────────────────────────────────────
+function cleanName(raw) {
+    if (!raw) return '';
+    let s = raw.trim();
+    // Fix double-encoded UTF-8 (Ã± → ñ etc.)
+    if (s.includes('Ã')) {
+        try { s = decodeURIComponent(escape(s)); } catch(e) {}
+    }
     return s;
 }
 
-// ── Short name for display: "City of Malolos" → "Malolos (City)"
-// But keep original for matching
-function shortDisplay(name) {
-    const n = cleanName(name);
-    const prefixes = ['City of ', 'Municipality of '];
-    for (const p of prefixes) {
-        if (n.startsWith(p)) {
-            return n.slice(p.length) + ' (City)';
-        }
-    }
-    // "Malolos City", "Batangas City " etc.
-    if (n.endsWith(' City') || n.endsWith(' City ')) {
-        return n.trim();
-    }
-    return n;
+// Convert "City of Malolos" → "Malolos" for display & search
+// Keep original cleaned name for code-lookup
+function toDisplayName(cleaned) {
+    if (cleaned.startsWith('City of '))         return cleaned.slice(8);
+    if (cleaned.startsWith('Municipality of ')) return cleaned.slice(16);
+    // "Malolos City", "Batangas City" — already fine
+    return cleaned;
 }
 
-// ── Preloaded master lists ────────────────────────────────────
+// ── Master data (loaded once) ─────────────────────────────────
 let _provinces = null;
-let _allCities = null;
+let _cities    = null;   // combined cities + municipalities
 
-async function loadProvinces() {
+async function getProvinces() {
     if (_provinces) return _provinces;
     const raw = await apiGet(`${PSGC}/provinces`);
-    _provinces = raw.map(p => ({ ...p, name: cleanName(p.name) }));
+    _provinces = raw.map(p => ({
+        code: p.code,
+        name: cleanName(p.name),           // e.g. "Bulacan"
+        prefix: p.code.slice(0, 5),        // e.g. "03014"
+    }));
     return _provinces;
 }
 
-async function loadAllCities() {
-    if (_allCities) return _allCities;
-    const [cities, munis] = await Promise.all([
+async function getCities() {
+    if (_cities) return _cities;
+    const [rawCities, rawMunis] = await Promise.all([
         apiGet(`${PSGC}/cities`),
-        apiGet(`${PSGC}/municipalities`)
+        apiGet(`${PSGC}/municipalities`),
     ]);
-    // Clean names, add a searchable lowercase field that includes both
-    // "City of Malolos" and just "Malolos" for flexible matching
-    _allCities = [...cities, ...munis].map(c => {
-        const cleaned = cleanName(c.name);
-        const display = shortDisplay(c.name);
-        // searchable = full cleaned name + short name (covers "malolos" matching "City of Malolos")
-        const searchable = (cleaned + ' ' + display).toLowerCase();
-        return { ...c, name: cleaned, display, searchable, zip_code: c.zip_code || '' };
+    _cities = [...rawCities, ...rawMunis].map(c => {
+        const name    = cleanName(c.name);      // e.g. "City of Malolos" or "Plaridel"
+        const display = toDisplayName(name);    // e.g. "Malolos" or "Plaridel"
+        return {
+            code:    c.code,
+            name,
+            display,
+            zip:     c.zip_code ? c.zip_code.trim() : '',
+            prefix:  c.code.slice(0, 5),        // matches province prefix
+            // searchable includes both "city of malolos" and "malolos"
+            search:  (name + ' ' + display).toLowerCase(),
+        };
     });
-    return _allCities;
+    return _cities;
 }
 
-// ── Selected PSGC codes per prefix ───────────────────────────
-const selProvCode = { res: null, perm: null };
-const selCityCode = { res: null, perm: null };
+// ── Selected codes per address block ─────────────────────────
+const sel = {
+    res:  { provCode: null, cityCode: null },
+    perm: { provCode: null, cityCode: null },
+};
 
-// ── Preload on DOMContentLoaded ───────────────────────────────
+// ── Preload data and seed saved values on page load ───────────
 document.addEventListener('DOMContentLoaded', async () => {
-    await Promise.all([loadProvinces(), loadAllCities()]);
-    seedSavedValues();
-});
+    // Load both in parallel — fast (~2 small requests)
+    const [provs, cities] = await Promise.all([getProvinces(), getCities()]);
 
-async function seedSavedValues() {
-    const provs  = await loadProvinces();
-    const cities = await loadAllCities();
+    // Seed codes from already-saved field values (so barangay works on reload)
     for (const p of ['res', 'perm']) {
-        const pName = (document.getElementById(p + '_province').value || '').trim().toLowerCase();
-        const cName = (document.getElementById(p + '_city').value || '').trim().toLowerCase();
+        const pName = (document.getElementById(p+'_province').value||'').trim().toLowerCase();
+        const cName = (document.getElementById(p+'_city').value||'').trim().toLowerCase();
         if (pName) {
             const prov = provs.find(x => x.name.toLowerCase() === pName);
-            if (prov) selProvCode[p] = prov.code;
+            if (prov) sel[p].provCode = prov.code;
         }
         if (cName) {
-            // Match against cleaned name OR display name
             const city = cities.find(x =>
-                x.name.toLowerCase() === cName ||
                 x.display.toLowerCase() === cName ||
-                x.searchable.includes(cName)
+                x.name.toLowerCase()    === cName
             );
-            if (city) selCityCode[p] = city.code;
+            if (city) sel[p].cityCode = city.code;
         }
     }
-}
+});
 
 // ══════════════════════════════════════════════════════════════
-// PROVINCES
+// PROVINCE INPUT
+// Type any letter → shows all matching PH provinces
 // ══════════════════════════════════════════════════════════════
-async function fetchProvinces(query, listId) {
-    const list   = document.getElementById(listId);
-    const prefix = listId.startsWith('res') ? 'res' : 'perm';
-    if (!query) { list.style.display = 'none'; return; }
-    const all    = await loadProvinces();
-    const q      = query.toLowerCase();
+async function onProvinceInput(input, pfx) {
+    const list = document.getElementById(pfx + '_province_list');
+    const q    = input.value.trim().toLowerCase();
+    if (!q) { list.style.display = 'none'; return; }
+
+    const all     = await getProvinces();
     const matches = all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
-    renderList(list, matches, p => p.name, p => {
-        document.getElementById(listId.replace('_list', '')).value = p.name;
-        selProvCode[prefix] = p.code;
-        selCityCode[prefix] = null;
-        document.getElementById(prefix + '_city').value     = '';
-        document.getElementById(prefix + '_barangay').value = '';
-        document.getElementById(prefix + '_zip').value      = '';
+
+    renderDropdown(list, matches, p => p.name, p => {
+        input.value        = p.name;
+        sel[pfx].provCode  = p.code;
+        sel[pfx].cityCode  = null;
+        // Clear dependent fields
+        document.getElementById(pfx+'_city').value     = '';
+        document.getElementById(pfx+'_barangay').value = '';
+        document.getElementById(pfx+'_zip').value      = '';
     });
 }
 
 // ══════════════════════════════════════════════════════════════
-// CITIES / MUNICIPALITIES
-// Scoped by province code prefix when province is selected.
-// Matches against both "City of Malolos" and "Malolos".
+// CITY / MUNICIPALITY INPUT
+// Province selected → show ONLY that province's cities (prefix match)
+// No province → show all PH cities matching the query
+// Auto-fills ZIP on selection
 // ══════════════════════════════════════════════════════════════
-async function fetchCities(query, listId, provinceInputId, zipInputId) {
-    const list   = document.getElementById(listId);
-    const prefix = listId.startsWith('res') ? 'res' : 'perm';
-    if (!query) { list.style.display = 'none'; return; }
-    const all    = await loadAllCities();
-    const q      = query.toLowerCase();
-    const pCode  = selProvCode[prefix];
-    // Scope to province using first 6 chars of PSGC code
-    const pool   = pCode ? all.filter(c => c.code.startsWith(pCode.slice(0, 6))) : all;
-    const matches = pool.filter(c => c.searchable.includes(q)).slice(0, 10);
+async function onCityInput(input, pfx) {
+    const list = document.getElementById(pfx + '_city_list');
+    const q    = input.value.trim().toLowerCase();
+    if (!q) { list.style.display = 'none'; return; }
+
+    const all      = await getCities();
+    const provCode = sel[pfx].provCode;
+
+    // KEY FIX: slice(0,5) — verified correct, slice(0,6) misses many cities
+    const pool = provCode
+        ? all.filter(c => c.prefix === provCode.slice(0, 5))
+        : all;
+
+    const matches = pool.filter(c => c.search.includes(q)).slice(0, 10);
 
     list.innerHTML = '';
     if (!matches.length) { list.style.display = 'none'; return; }
-    matches.forEach(item => {
-        const li = document.createElement('li');
-        const zip = item.zip_code
-            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>` : '';
-        li.innerHTML = item.display + zip;
+
+    matches.forEach(city => {
+        const li  = document.createElement('li');
+        const zip = city.zip
+            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${city.zip}</span>`
+            : '';
+        li.innerHTML = city.display + zip;
         li.onclick = () => {
-            // Save the display name to the input (e.g. "Malolos (City)")
-            document.getElementById(listId.replace('_list', '')).value = item.display;
-            selCityCode[prefix] = item.code;
-            const zipEl = document.getElementById(zipInputId);
-            if (zipEl) {
-                zipEl.value = item.zip_code || '';
-                if (item.zip_code) {
-                    zipEl.classList.remove('zip-autofilled');
-                    void zipEl.offsetWidth;
-                    zipEl.classList.add('zip-autofilled');
-                }
+            input.value       = city.display;
+            sel[pfx].cityCode = city.code;
+            // Auto-fill ZIP
+            const zipEl = document.getElementById(pfx + '_zip');
+            if (zipEl && city.zip) {
+                zipEl.value = city.zip;
+                zipEl.classList.remove('zip-autofilled');
+                void zipEl.offsetWidth; // reflow for animation
+                zipEl.classList.add('zip-autofilled');
             }
-            document.getElementById(prefix + '_barangay').value = '';
+            // Clear barangay when city changes
+            document.getElementById(pfx + '_barangay').value = '';
+            sel[pfx].cityCode = city.code; // ensure set
             list.style.display = 'none';
         };
         list.appendChild(li);
@@ -1006,39 +697,43 @@ async function fetchCities(query, listId, provinceInputId, zipInputId) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// BARANGAYS — fetched per city on demand, cached
+// BARANGAY INPUT
+// City selected → fetch & show only that city's barangays
+// Falls back to resolving city from text if code not yet set
 // ══════════════════════════════════════════════════════════════
-async function fetchBarangays(query, listId, prefix) {
-    const list = document.getElementById(listId);
-    if (!query) { list.style.display = 'none'; return; }
-    // Resolve city code from typed text if not yet set via dropdown
-    if (!selCityCode[prefix]) {
-        const cName  = (document.getElementById(prefix + '_city').value || '').trim().toLowerCase();
+async function onBarangayInput(input, pfx) {
+    const list = document.getElementById(pfx + '_barangay_list');
+    const q    = input.value.trim().toLowerCase();
+    if (!q) { list.style.display = 'none'; return; }
+
+    // If city code not set yet, try resolving from the city text field
+    if (!sel[pfx].cityCode) {
+        const cName = (document.getElementById(pfx+'_city').value||'').trim().toLowerCase();
         if (cName) {
-            const all  = await loadAllCities();
+            const all  = await getCities();
             const city = all.find(c =>
-                c.name.toLowerCase() === cName ||
                 c.display.toLowerCase() === cName ||
-                c.searchable.includes(cName)
+                c.name.toLowerCase()    === cName
             );
-            if (city) selCityCode[prefix] = city.code;
+            if (city) sel[pfx].cityCode = city.code;
         }
     }
-    if (!selCityCode[prefix]) { list.style.display = 'none'; return; }
-    const url    = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
-    const all    = await apiGet(url);
-    const q      = query.toLowerCase();
-    const matches = all
-        .map(b => ({ ...b, name: cleanName(b.name) }))
-        .filter(b => b.name.toLowerCase().includes(q))
+
+    if (!sel[pfx].cityCode) { list.style.display = 'none'; return; }
+
+    const raw     = await apiGet(`${PSGC}/cities-municipalities/${sel[pfx].cityCode}/barangays`);
+    const matches = raw
+        .map(b => cleanName(b.name))
+        .filter(n => n.toLowerCase().includes(q))
         .slice(0, 10);
-    renderList(list, matches, b => b.name, val => {
-        document.getElementById(listId.replace('_list', '')).value = val;
+
+    renderDropdown(list, matches, n => n, val => {
+        input.value = val;
     });
 }
 
-// ── Generic list renderer ─────────────────────────────────────
-function renderList(listEl, items, labelFn, onSelect) {
+// ── Generic dropdown renderer ─────────────────────────────────
+function renderDropdown(listEl, items, labelFn, onSelect) {
     listEl.innerHTML = '';
     if (!items.length) { listEl.style.display = 'none'; return; }
     items.forEach(item => {
@@ -1050,39 +745,26 @@ function renderList(listEl, items, labelFn, onSelect) {
     listEl.style.display = 'block';
 }
 
-// ── Helpers ───────────────────────────────────────────────────
-function clearCityBarangay(prefix) {
-    selProvCode[prefix] = null;
-    selCityCode[prefix] = null;
-    document.getElementById(prefix + '_city').value     = '';
-    document.getElementById(prefix + '_barangay').value = '';
-    document.getElementById(prefix + '_zip').value      = '';
-}
+// ── Close all dropdowns on outside click ─────────────────────
+document.addEventListener('click', e => {
+    if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap') && !e.target.closest('.edu-table td'))
+        document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
+});
 
-function clearBarangay(prefix) {
-    selCityCode[prefix] = null;
-    document.getElementById(prefix + '_barangay').value = '';
-}
-
-function copyResAddress(checkbox) {
-    if (!checkbox.checked) return;
+// ── Same as Residential ───────────────────────────────────────
+function copyResAddress(cb) {
+    if (!cb.checked) return;
     ['house_no','street','subdivision','barangay','city','province','zip'].forEach(f => {
         const s = document.getElementById('res_' + f);
         const d = document.getElementById('perm_' + f);
         if (s && d) d.value = s.value;
     });
-    selProvCode['perm'] = selProvCode['res'];
-    selCityCode['perm'] = selCityCode['res'];
+    sel['perm'].provCode = sel['res'].provCode;
+    sel['perm'].cityCode = sel['res'].cityCode;
 }
 
-// Close dropdowns on outside click
-document.addEventListener('click', e => {
-    if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap'))
-        document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
-});
-
 // ══════════════════════════════════════════════════════════════
-// COLLEGE COURSE AUTOCOMPLETE (static)
+// COLLEGE COURSE (static)
 // ══════════════════════════════════════════════════════════════
 const allCourses = {
     'Engineering':       ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
@@ -1097,19 +779,19 @@ const allCourses = {
     'Social Work':       ['BS Social Work','BS Community Development'],
 };
 
-function filterCourses(query) {
+function filterCourses(q) {
     const list = document.getElementById('college_course_list');
-    if (!query) { list.style.display = 'none'; return; }
-    const q = query.toLowerCase();
-    const matches = Object.values(allCourses).flat().filter(c => c.toLowerCase().includes(q)).slice(0, 10);
-    renderList(list, matches, c => c, val => {
+    if (!q) { list.style.display = 'none'; return; }
+    const matches = Object.values(allCourses).flat()
+        .filter(c => c.toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+    renderDropdown(list, matches, c => c, val => {
         document.getElementById('college_course_input').value = val;
     });
 }
 function showCourseList() { filterCourses(document.getElementById('college_course_input').value); }
 
 // ══════════════════════════════════════════════════════════════
-// SKILLS AUTOCOMPLETE (static)
+// SKILLS (static)
 // ══════════════════════════════════════════════════════════════
 const skillsByCategory = {
     'Technical':   ['Python','Java','JavaScript','PHP','C++','C#','HTML/CSS','React','Django','Laravel','SQL','MySQL','PostgreSQL','MongoDB','Git','Docker','Linux','Networking','Data Analysis','Machine Learning','AI','Cloud Computing','AWS','Azure','Mobile Development','Android','iOS'],
@@ -1136,10 +818,9 @@ function filterSkillSuggestions(query) {
     const list = document.getElementById('skill_suggestions_list');
     if (!query) { list.style.display = 'none'; return; }
     const pool = activeSkillCat === 'all'
-        ? Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })))
-        : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
-    const q = query.toLowerCase();
-    const matches = pool.filter(s => s.name.toLowerCase().includes(q)).slice(0, 10);
+        ? Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({name:s, cat})))
+        : (skillsByCategory[activeSkillCat]||[]).map(s => ({name:s, cat:activeSkillCat}));
+    const matches = pool.filter(s => s.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
     list.innerHTML = '';
     if (!matches.length) { list.style.display = 'none'; return; }
     matches.forEach(item => {
@@ -1157,4 +838,5 @@ function filterSkillSuggestions(query) {
 }
 function showSkillSuggestions() { filterSkillSuggestions(document.getElementById('skill_search_input').value); }
 </script>
+
 {% endblock %}
