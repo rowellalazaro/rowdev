@@ -327,7 +327,6 @@
         border-left: 3px solid #57a3c1;
     }
 
-    /* ZIP auto-fill highlight animation */
     @keyframes zipHighlight {
         0%   { background: #d4f7d4; border-color: #28a745; }
         100% { background: #f8faff; border-color: #c0cfe0; }
@@ -507,25 +506,28 @@
                 <div class="pds-grid three" style="margin-top:10px;">
                     <div class="pds-field" style="position:relative;">
                         <label>Province <span class="req">*</span></label>
-                        <input type="text" name="res_province" id="res_province" value="{{ pds.res_province }}"
-                               required placeholder="e.g. Bulacan or Metro Manila" autocomplete="off"
+                        <input type="text" name="res_province" id="res_province"
+                               value="{{ pds.res_province }}"
+                               required placeholder="e.g. Bulacan" autocomplete="off"
                                oninput="fetchProvinces(this.value, 'res_province_list')"
                                onchange="clearCityBarangay('res')">
                         <ul id="res_province_list" class="autocomplete-list"></ul>
                     </div>
                     <div class="pds-field" style="position:relative;">
                         <label>City/Municipality <span class="req">*</span></label>
-                        <input type="text" name="res_city" id="res_city" value="{{ pds.res_city }}"
-                               required placeholder="e.g. Malolos or Quezon City" autocomplete="off"
+                        <input type="text" name="res_city" id="res_city"
+                               value="{{ pds.res_city }}"
+                               required placeholder="e.g. Malolos" autocomplete="off"
                                oninput="fetchCities(this.value, 'res_city_list', 'res_province', 'res_zip')"
                                onchange="clearBarangay('res')">
                         <ul id="res_city_list" class="autocomplete-list"></ul>
                     </div>
                     <div class="pds-field" style="position:relative;">
                         <label>Barangay <span class="req">*</span></label>
-                        <input type="text" name="res_barangay" id="res_barangay" value="{{ pds.res_barangay }}"
+                        <input type="text" name="res_barangay" id="res_barangay"
+                               value="{{ pds.res_barangay }}"
                                required placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res_city')">
+                               oninput="fetchBarangays(this.value, 'res_barangay_list', 'res')">
                         <ul id="res_barangay_list" class="autocomplete-list"></ul>
                     </div>
                 </div>
@@ -565,25 +567,28 @@
                 <div class="pds-grid three" style="margin-top:10px;">
                     <div class="pds-field" style="position:relative;">
                         <label>Province</label>
-                        <input type="text" name="perm_province" id="perm_province" value="{{ pds.perm_province }}"
-                               placeholder="e.g. Bulacan or Metro Manila" autocomplete="off"
+                        <input type="text" name="perm_province" id="perm_province"
+                               value="{{ pds.perm_province }}"
+                               placeholder="e.g. Bulacan" autocomplete="off"
                                oninput="fetchProvinces(this.value, 'perm_province_list')"
                                onchange="clearCityBarangay('perm')">
                         <ul id="perm_province_list" class="autocomplete-list"></ul>
                     </div>
                     <div class="pds-field" style="position:relative;">
                         <label>City/Municipality</label>
-                        <input type="text" name="perm_city" id="perm_city" value="{{ pds.perm_city }}"
-                               placeholder="e.g. Malolos or Quezon City" autocomplete="off"
+                        <input type="text" name="perm_city" id="perm_city"
+                               value="{{ pds.perm_city }}"
+                               placeholder="e.g. Malolos" autocomplete="off"
                                oninput="fetchCities(this.value, 'perm_city_list', 'perm_province', 'perm_zip')"
                                onchange="clearBarangay('perm')">
                         <ul id="perm_city_list" class="autocomplete-list"></ul>
                     </div>
                     <div class="pds-field" style="position:relative;">
                         <label>Barangay</label>
-                        <input type="text" name="perm_barangay" id="perm_barangay" value="{{ pds.perm_barangay }}"
+                        <input type="text" name="perm_barangay" id="perm_barangay"
+                               value="{{ pds.perm_barangay }}"
                                placeholder="e.g. Brgy. Santol" autocomplete="off"
-                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm_city')">
+                               oninput="fetchBarangays(this.value, 'perm_barangay_list', 'perm')">
                         <ul id="perm_barangay_list" class="autocomplete-list"></ul>
                     </div>
                 </div>
@@ -644,14 +649,13 @@
                         <td style="font-weight:bold;">College</td>
                         {% with edu=education|get:'college' %}
                         <td><input type="text" name="college_school" value="{{ edu.school|default:'' }}" placeholder="N/A if not applicable"></td>
-                        <td>
+                        <td style="position:relative;">
                             <input type="text" name="college_course" id="college_course_input"
                                    value="{{ edu.course|default:'' }}"
                                    placeholder="Search course..."
                                    autocomplete="off"
                                    oninput="filterCourses(this.value)"
-                                   onfocus="showCourseList()"
-                                   style="position:relative;">
+                                   onfocus="showCourseList()">
                             <ul id="college_course_list" class="autocomplete-list"></ul>
                         </td>
                         <td>
@@ -682,14 +686,14 @@
         <!-- SINGLE SAVE BUTTON -->
         <div style="text-align:center; margin-bottom:24px;">
             <button type="submit" class="pds-save-btn" style="padding: 12px 48px; font-size:15px;">
-                💾 Save 
+                💾 Save
             </button>
         </div>
 
     </form>
     <!-- END MAIN FORM -->
 
-    <!-- V. WORK EXPERIENCE (separate — has its own add/delete logic) -->
+    <!-- V. WORK EXPERIENCE -->
     <div class="pds-section">
         <h2>V. Work Experience <span style="font-size:12px; font-weight:normal; color:#888;">(Optional — max 3)</span></h2>
 
@@ -754,7 +758,7 @@
         {% endif %}
     </div>
 
-    <!-- VI. SKILLS / ELIGIBILITY (separate — has its own add/delete logic) -->
+    <!-- VI. SKILLS / ELIGIBILITY -->
     <div class="pds-section">
         <h2>VI. Skills / Eligibility
             <span class="skill-count-badge {% if skills|length >= 5 %}done{% endif %}">
@@ -811,7 +815,8 @@
                     <ul id="skill_suggestions_list" class="autocomplete-list"></ul>
                 </div>
                 <div class="pds-field" style="min-width:130px; margin-top:0;">
-                    <select name="skill_category_select" id="skill_category_select" onchange="document.getElementById('skill_category_hidden').value=this.value">
+                    <select name="skill_category_select" id="skill_category_select"
+                            onchange="document.getElementById('skill_category_hidden').value=this.value">
                         <option value="Technical">💻 Technical</option>
                         <option value="Soft Skills">🤝 Soft Skills</option>
                         <option value="Language">🌐 Language</option>
@@ -828,378 +833,301 @@
 </div>
 
 <script>
-    
+// ══════════════════════════════════════════════════════════════
+// PSGC Cloud v1 API — full hierarchy, no hardcodes
+// Province → City/Municipality (zip_code from API) → Barangay
+// ══════════════════════════════════════════════════════════════
 
-    let provinceDataCache = null;
-    let provinceDataLoading = false;
+const API = 'https://psgc.cloud/api/v1';
 
-    // NCR (Metro Manila) is NOT divided into provinces in the PSGC — it's
-    // split into 4 districts instead — so it never shows up from the
-    // provinces API. These are added manually so residents of Manila,
-    // Quezon City, Makati, etc. have something to pick for "Province".
-    const ncrProvinceEntries = [
-        { name: 'Metro Manila (NCR)', isNCR: true },
-        { name: 'NCR - 1st District', isNCR: true },
-        { name: 'NCR - 2nd District', isNCR: true },
-        { name: 'NCR - 3rd District', isNCR: true },
-        { name: 'NCR - 4th District', isNCR: true },
-    ];
+// ── Simple fetch cache (URL → parsed JSON array) ─────────────
+const _cache = {};
 
-    // A handful of highly-urbanized cities are administratively independent
-    // of any province in the PSGC, so their PSGC code doesn't nest under the
-    // province most people actually associate them with. Mapped here by
-    // PSGC code so they still show up once that province is chosen.
-    const independentCityProvinceOverrides = {
-        '0330100000': 'pampanga',          // City of Angeles
-        '0331400000': 'zambales',          // City of Olongapo
-        '0631000000': 'iloilo',            // City of Iloilo
-        '0630200000': 'negros occidental', // City of Bacolod
-        '0730600000': 'cebu',              // City of Cebu
-        '0731100000': 'cebu',              // City of Lapu-Lapu
-        '0731300000': 'cebu',              // City of Mandaue
-        '1130700000': 'davao del sur',     // City of Davao
-        '0931700000': 'zamboanga del sur', // City of Zamboanga
-        '1030500000': 'misamis oriental',  // City of Cagayan De Oro
-        '1030900000': 'lanao del norte',   // City of Iligan
-        '1230800000': 'south cotabato',    // City of General Santos
-        '1430300000': 'benguet',           // City of Baguio
-        '1630400000': 'agusan del norte',  // City of Butuan
-        '1731500000': 'palawan',           // City of Puerto Princesa
-        '0831600000': 'leyte',             // City of Tacloban
-    };
+async function apiGet(url) {
+    if (_cache[url]) return _cache[url];
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        // v1 may return paginated { data: [...] } or plain array
+        const items = Array.isArray(data) ? data : (data.data || []);
+        _cache[url] = items;
+        return items;
+    } catch (e) {
+        return [];
+    }
+}
 
-    window._psgcCitiesCache = null;
-    window._psgcCitiesLoading = false;
+// ── State: track selected PSGC codes per address prefix ──────
+const selectedProvince = { res: null, perm: null };
+const selectedCity     = { res: null, perm: null };
 
-    async function loadAllProvinces() {
-        if (provinceDataCache) return provinceDataCache;
-        if (provinceDataLoading) {
-            await new Promise(resolve => {
-                const interval = setInterval(() => {
-                    if (provinceDataCache) { clearInterval(interval); resolve(); }
-                }, 100);
-            });
-            return provinceDataCache;
-        }
-        provinceDataLoading = true;
-        try {
-            const res = await fetch('https://psgc.gitlab.io/api/provinces/');
-            const apiProvinces = await res.json();
-            provinceDataCache = [...apiProvinces, ...ncrProvinceEntries];
-        } catch(e) {
-            provinceDataCache = [...ncrProvinceEntries];
-        }
-        provinceDataLoading = false;
-        return provinceDataCache;
+// ══════════════════════════════════════════════════════════════
+// PROVINCES — search-as-you-type via API ?q= param
+// ══════════════════════════════════════════════════════════════
+async function fetchProvinces(query, listId) {
+    const list   = document.getElementById(listId);
+    const prefix = listId.startsWith('res') ? 'res' : 'perm';
+    if (query.length < 1) { list.style.display = 'none'; return; }
+
+    const items = await apiGet(`${API}/provinces?q=${encodeURIComponent(query)}&per_page=10`);
+
+    showList(list, items.map(p => ({ label: p.name, value: p })), (p) => {
+        document.getElementById(listId.replace('_list', '')).value = p.name;
+        selectedProvince[prefix] = p.code;
+        selectedCity[prefix]     = null;
+        // Clear dependent fields when province changes
+        document.getElementById(prefix + '_city').value     = '';
+        document.getElementById(prefix + '_barangay').value = '';
+        document.getElementById(prefix + '_zip').value      = '';
+        list.style.display = 'none';
+    });
+}
+
+// ══════════════════════════════════════════════════════════════
+// CITIES / MUNICIPALITIES
+// Scoped to province when province is already selected.
+// zip_code comes directly from the API — no corrections needed.
+// ══════════════════════════════════════════════════════════════
+async function fetchCities(query, listId, provinceInputId, zipInputId) {
+    const list   = document.getElementById(listId);
+    const prefix = listId.startsWith('res') ? 'res' : 'perm';
+    if (query.length < 1) { list.style.display = 'none'; return; }
+
+    let items;
+    const provCode = selectedProvince[prefix];
+
+    if (provCode) {
+        // Fetch all cities/munis for this province (cached after first load)
+        // then filter client-side
+        const all = await apiGet(`${API}/provinces/${provCode}/cities-municipalities`);
+        items = all.filter(c => c.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
+    } else {
+        // No province selected yet — global search
+        items = await apiGet(`${API}/cities-municipalities?q=${encodeURIComponent(query)}&per_page=10`);
     }
 
-    async function fetchProvinces(query, listId) {
-        const list = document.getElementById(listId);
-        if (query.length < 1) { list.style.display = 'none'; return; }
-        const pool = await loadAllProvinces();
-        const filtered = pool
-            .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
-            .slice(0, 8);
-        showList(list, filtered.map(p => p.name), (val) => {
-            document.getElementById(listId.replace('_list', '')).value = val;
-            list.style.display = 'none';
-        });
-    }
+    list.innerHTML = '';
+    if (items.length === 0) { list.style.display = 'none'; return; }
 
-    // The psgc.cloud cities/municipalities/barangays data is double
-    // UTF-8 encoded for accented letters (e.g. "ñ" comes through as the
-    // two-character mojibake "Ã±"). This repairs it by re-decoding the
-    // string's char codes as UTF-8 bytes — but only when the telltale "Ã"
-    // is present, so correctly-encoded strings are left untouched.
-    function fixMojibake(str) {
-        if (!str || !str.includes('Ã')) return str;
-        try {
-            const bytes = Uint8Array.from(str, c => c.charCodeAt(0));
-            return new TextDecoder('utf-8').decode(bytes);
-        } catch (e) {
-            return str;
-        }
-    }
-
-    // A few zip_code values in the source API are simply wrong (verified
-    // against official sources). Corrected here as they're spotted, keyed
-    // by PSGC code.
-    const zipCodeCorrections = {
-        '0301417000': '3004', // Plaridel, Bulacan — API lists 3015 (which is actually Guiguinto's zip)
-    };
-
-    
-    async function loadAllCities() {
-        if (window._psgcCitiesCache) return window._psgcCitiesCache;
-        if (window._psgcCitiesLoading) {
-            // Wait for existing fetch to finish
-            await new Promise(resolve => {
-                const interval = setInterval(() => {
-                    if (window._psgcCitiesCache) { clearInterval(interval); resolve(); }
-                }, 100);
-            });
-            return window._psgcCitiesCache;
-        }
-        window._psgcCitiesLoading = true;
-        try {
-            const [citiesRes, munisRes] = await Promise.all([
-                fetch('https://psgc.cloud/api/cities'),
-                fetch('https://psgc.cloud/api/municipalities')
-            ]);
-            const cities = await citiesRes.json();
-            const munis  = await munisRes.json();
-            window._psgcCitiesCache = [...cities, ...munis].map(c => ({
-                ...c,
-                name: fixMojibake(c.name),
-                zip_code: zipCodeCorrections[c.code] || c.zip_code,
-            }));
-        } catch(e) {
-            window._psgcCitiesCache = [];
-        }
-        window._psgcCitiesLoading = false;
-        return window._psgcCitiesCache;
-    }
-
-   
-    document.addEventListener('DOMContentLoaded', () => loadAllCities());
-
-    // Scope the city/municipality pool down to whatever province is
-    // currently typed into the given province field. Matches by PSGC code
-    // prefix (city codes nest under their province's code), with a small
-    // override list for independent cities like Cebu City or Davao City.
-    async function getCitiesScopedToProvince(pool, provinceInputId) {
-        const provinceName = provinceInputId ? (document.getElementById(provinceInputId).value || '').trim() : '';
-        if (!provinceName) return pool;
-
-        const provinces = await loadAllProvinces();
-        const matchedProvince = provinces.find(p => p.name.toLowerCase() === provinceName.toLowerCase());
-        if (!matchedProvince) return pool; // unrecognized/partial text — don't hide everything
-
-        if (matchedProvince.isNCR) {
-            return pool.filter(c => c.code && c.code.startsWith('13'));
-        }
-        if (matchedProvince.psgc10DigitCode) {
-            const prefix = matchedProvince.psgc10DigitCode.slice(0, 5);
-            const provinceKey = matchedProvince.name.toLowerCase();
-            return pool.filter(c =>
-                (c.code && c.code.slice(0, 5) === prefix) ||
-                independentCityProvinceOverrides[c.code] === provinceKey
-            );
-        }
-        return pool;
-    }
-
-    
-    async function fetchCities(query, listId, provinceInputId, zipInputId) {
-        const list = document.getElementById(listId);
-        if (query.length < 1) { list.style.display = 'none'; return; }
-
-        const pool = await loadAllCities();
-        if (!pool || pool.length === 0) { list.style.display = 'none'; return; }
-
-        const scoped = await getCitiesScopedToProvince(pool, provinceInputId);
-
-        const filtered = scoped
-            .filter(c => c.name.toLowerCase().includes(query.toLowerCase()))
-            .slice(0, 10);
-
-        list.innerHTML = '';
-        if (filtered.length === 0) { list.style.display = 'none'; return; }
-
-        filtered.forEach(item => {
-            const li = document.createElement('li');
-            const zipLabel = item.zip_code
-                ? `<span style="font-size:11px; color:#888; margin-left:6px;">ZIP ${item.zip_code}</span>`
-                : '';
-            li.innerHTML = `${item.name}${zipLabel}`;
-            li.onclick = () => {
-                // Set city/municipality name
-                document.getElementById(listId.replace('_list', '')).value = item.name;
-                // ✅ Auto-fill ZIP Code
-                if (item.zip_code && zipInputId) {
-                    const zipEl = document.getElementById(zipInputId);
-                    if (zipEl) {
-                        zipEl.value = item.zip_code;
-                        // Flash green to show it was auto-filled
+    items.forEach(item => {
+        const li = document.createElement('li');
+        const zipLabel = item.zip_code
+            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>`
+            : '';
+        li.innerHTML = `${item.name}${zipLabel}`;
+        li.onclick = () => {
+            document.getElementById(listId.replace('_list', '')).value = item.name;
+            selectedCity[prefix] = item.code;
+            // Auto-fill ZIP from API data
+            if (zipInputId) {
+                const zipEl = document.getElementById(zipInputId);
+                if (zipEl) {
+                    zipEl.value = item.zip_code || '';
+                    if (item.zip_code) {
                         zipEl.classList.remove('zip-autofilled');
-                        void zipEl.offsetWidth; // force reflow
+                        void zipEl.offsetWidth; // force reflow for animation
                         zipEl.classList.add('zip-autofilled');
                     }
                 }
-                list.style.display = 'none';
-            };
-            list.appendChild(li);
-        });
-        list.style.display = 'block';
-    }
-
-    // ── BARANGAYS ──
-    let barangayData = {};
-
-    async function fetchBarangays(query, listId, cityInputId) {
-        const list = document.getElementById(listId);
-        if (query.length < 1) { list.style.display = 'none'; return; }
-        const cityName = document.getElementById(cityInputId).value;
-        try {
-            const pool = await loadAllCities();
-            const city = pool.find(c => c.name.toLowerCase() === cityName.toLowerCase());
-            let barangays = [];
-            if (city) {
-                const cacheKey = city.code;
-                if (!barangayData[cacheKey]) {
-                    // psgc.cloud uses /api/cities/{code}/barangays or /api/municipalities/{code}/barangays
-                    const type = city.type && city.type.toLowerCase().includes('city') ? 'cities' : 'municipalities';
-                    const res = await fetch(`https://psgc.cloud/api/${type}/${city.code}/barangays`);
-                    barangayData[cacheKey] = await res.json();
-                }
-                barangays = barangayData[cacheKey];
             }
-            const filtered = (barangays || [])
-                .filter(b => b.name.toLowerCase().includes(query.toLowerCase()))
-                .slice(0, 8);
-            showList(list, filtered.map(b => b.name), (val) => {
-                document.getElementById(listId.replace('_list', '')).value = val;
-                list.style.display = 'none';
-            });
-        } catch(e) { list.style.display = 'none'; }
-    }
-
-    // ── GENERIC LIST RENDERER ──
-    function showList(listEl, items, onSelect) {
-        listEl.innerHTML = '';
-        if (items.length === 0) { listEl.style.display = 'none'; return; }
-        items.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            li.onclick = () => onSelect(item);
-            listEl.appendChild(li);
-        });
-        listEl.style.display = 'block';
-    }
-
-    function clearCityBarangay(prefix) {
-        document.getElementById(prefix + '_city').value = '';
-        document.getElementById(prefix + '_barangay').value = '';
-        document.getElementById(prefix + '_zip').value = '';
-    }
-
-    function clearBarangay(prefix) {
-        document.getElementById(prefix + '_barangay').value = '';
-    }
-
-    // Close all dropdowns on outside click
-    document.addEventListener('click', function(e) {
-        document.querySelectorAll('.autocomplete-list').forEach(list => {
+            // Clear barangay when city changes
+            document.getElementById(prefix + '_barangay').value = '';
             list.style.display = 'none';
-        });
+        };
+        list.appendChild(li);
     });
+    list.style.display = 'block';
+}
 
-   
-    function copyResAddress(checkbox) {
-        if (checkbox.checked) {
-            document.getElementById('perm_house_no').value    = document.getElementById('res_house_no').value;
-            document.getElementById('perm_street').value      = document.getElementById('res_street').value;
-            document.getElementById('perm_subdivision').value = document.getElementById('res_subdivision').value;
-            document.getElementById('perm_barangay').value    = document.getElementById('res_barangay').value;
-            document.getElementById('perm_city').value        = document.getElementById('res_city').value;
-            document.getElementById('perm_province').value    = document.getElementById('res_province').value;
-            document.getElementById('perm_zip').value         = document.getElementById('res_zip').value;
-        }
+// ══════════════════════════════════════════════════════════════
+// BARANGAYS — scoped to selected city/municipality
+// ══════════════════════════════════════════════════════════════
+async function fetchBarangays(query, listId, prefix) {
+    const list     = document.getElementById(listId);
+    const cityCode = selectedCity[prefix];
+    if (query.length < 1) { list.style.display = 'none'; return; }
+    if (!cityCode) { list.style.display = 'none'; return; }
+
+    const all  = await apiGet(`${API}/cities-municipalities/${cityCode}/barangays`);
+    const items = all
+        .filter(b => b.name.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 10);
+
+    showList(list, items.map(b => ({ label: b.name, value: b.name })), (val) => {
+        document.getElementById(listId.replace('_list', '')).value = val;
+        list.style.display = 'none';
+    });
+}
+
+// ══════════════════════════════════════════════════════════════
+// GENERIC LIST RENDERER
+// items = [{ label: string, value: any }]
+// ══════════════════════════════════════════════════════════════
+function showList(listEl, items, onSelect) {
+    listEl.innerHTML = '';
+    if (items.length === 0) { listEl.style.display = 'none'; return; }
+    items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.label;
+        li.onclick = () => onSelect(item.value);
+        listEl.appendChild(li);
+    });
+    listEl.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+function clearCityBarangay(prefix) {
+    selectedProvince[prefix] = null;
+    selectedCity[prefix]     = null;
+    document.getElementById(prefix + '_city').value     = '';
+    document.getElementById(prefix + '_barangay').value = '';
+    document.getElementById(prefix + '_zip').value      = '';
+}
+
+function clearBarangay(prefix) {
+    selectedCity[prefix] = null;
+    document.getElementById(prefix + '_barangay').value = '';
+}
+
+// Copy residential → permanent (also copies PSGC codes for barangay lookup)
+function copyResAddress(checkbox) {
+    if (checkbox.checked) {
+        ['house_no', 'street', 'subdivision', 'barangay', 'city', 'province', 'zip'].forEach(f => {
+            const src = document.getElementById('res_' + f);
+            const dst = document.getElementById('perm_' + f);
+            if (src && dst) dst.value = src.value;
+        });
+        selectedProvince['perm'] = selectedProvince['res'];
+        selectedCity['perm']     = selectedCity['res'];
     }
+}
 
-  
-    const allCourses = {
-        'Engineering': ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
-        'IT & Computing': ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],
-        'Business': ['BS Business Administration','BS Accountancy','BS Management Accounting','BS Marketing Management','BS Financial Management','BS Human Resource Management','BS Entrepreneurship','BS Office Administration'],
-        'Education': ['Bachelor of Elementary Education','Bachelor of Secondary Education','Bachelor of Physical Education','Bachelor of Early Childhood Education','BS Special Education'],
-        'Health': ['BS Nursing','BS Medical Technology','BS Pharmacy','BS Physical Therapy','BS Occupational Therapy','BS Nutrition and Dietetics','BS Midwifery','Doctor of Medicine','BS Dentistry','BS Radiologic Technology'],
-        'Arts & Humanities': ['AB Communication','AB Journalism','AB English','AB Filipino','AB Political Science','AB Psychology','AB Philosophy','AB Sociology','AB History','Fine Arts','BS Architecture'],
-        'Science': ['BS Biology','BS Chemistry','BS Physics','BS Environmental Science','BS Geology','BS Statistics','BS Mathematics','BS Forestry','BS Agriculture'],
-        'Law & Governance': ['Bachelor of Laws (LLB)','BS Criminology','BS Public Administration','BS Political Science'],
-        'Hospitality': ['BS Tourism Management','BS Hotel and Restaurant Management','BS Culinary Arts'],
-        'Social Work': ['BS Social Work','BS Community Development'],
-    };
+// On page load: re-seed province/city codes from saved field values
+// so barangay autocomplete works immediately after a save/reload.
+document.addEventListener('DOMContentLoaded', async () => {
+    for (const prefix of ['res', 'perm']) {
+        const provName = (document.getElementById(prefix + '_province').value || '').trim();
+        const cityName = (document.getElementById(prefix + '_city').value || '').trim();
+        if (!provName) continue;
 
-    let activeCourseCategory = 'all';
+        // Resolve province code
+        const provs = await apiGet(`${API}/provinces?q=${encodeURIComponent(provName)}&per_page=5`);
+        const prov  = provs.find(p => p.name.toLowerCase() === provName.toLowerCase()) || provs[0];
+        if (!prov) continue;
+        selectedProvince[prefix] = prov.code;
 
-    function getAllCourses() {
-        return Object.values(allCourses).flat();
+        if (!cityName) continue;
+        // Resolve city code from province's city list
+        const cities = await apiGet(`${API}/provinces/${prov.code}/cities-municipalities`);
+        const city   = cities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
+        if (city) selectedCity[prefix] = city.code;
     }
+});
 
-    function filterCourses(query) {
-        const list = document.getElementById('college_course_list');
-        const pool = activeCourseCategory === 'all' ? getAllCourses() : (allCourses[activeCourseCategory] || []);
-        if (query.length < 1) { list.style.display = 'none'; return; }
-        const filtered = pool.filter(c => c.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
-        showList(list, filtered, (val) => {
-            document.getElementById('college_course_input').value = val;
+// Close all dropdowns when clicking outside
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap')) {
+        document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
+    }
+});
+
+// ══════════════════════════════════════════════════════════════
+// COLLEGE COURSE AUTOCOMPLETE (static list — no API needed)
+// ══════════════════════════════════════════════════════════════
+const allCourses = {
+    'Engineering':      ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
+    'IT & Computing':   ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],
+    'Business':         ['BS Business Administration','BS Accountancy','BS Management Accounting','BS Marketing Management','BS Financial Management','BS Human Resource Management','BS Entrepreneurship','BS Office Administration'],
+    'Education':        ['Bachelor of Elementary Education','Bachelor of Secondary Education','Bachelor of Physical Education','Bachelor of Early Childhood Education','BS Special Education'],
+    'Health':           ['BS Nursing','BS Medical Technology','BS Pharmacy','BS Physical Therapy','BS Occupational Therapy','BS Nutrition and Dietetics','BS Midwifery','Doctor of Medicine','BS Dentistry','BS Radiologic Technology'],
+    'Arts & Humanities':['AB Communication','AB Journalism','AB English','AB Filipino','AB Political Science','AB Psychology','AB Philosophy','AB Sociology','AB History','Fine Arts','BS Architecture'],
+    'Science':          ['BS Biology','BS Chemistry','BS Physics','BS Environmental Science','BS Geology','BS Statistics','BS Mathematics','BS Forestry','BS Agriculture'],
+    'Law & Governance': ['Bachelor of Laws (LLB)','BS Criminology','BS Public Administration','BS Political Science'],
+    'Hospitality':      ['BS Tourism Management','BS Hotel and Restaurant Management','BS Culinary Arts'],
+    'Social Work':      ['BS Social Work','BS Community Development'],
+};
+
+function getAllCourses() { return Object.values(allCourses).flat(); }
+
+function filterCourses(query) {
+    const list = document.getElementById('college_course_list');
+    if (query.length < 1) { list.style.display = 'none'; return; }
+    const filtered = getAllCourses()
+        .filter(c => c.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 10);
+    showList(list, filtered.map(c => ({ label: c, value: c })), (val) => {
+        document.getElementById('college_course_input').value = val;
+        list.style.display = 'none';
+    });
+}
+
+function showCourseList() {
+    const q = document.getElementById('college_course_input').value;
+    if (q.length >= 1) filterCourses(q);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SKILLS AUTOCOMPLETE (static list)
+// ══════════════════════════════════════════════════════════════
+const skillsByCategory = {
+    'Technical':   ['Python','Java','JavaScript','PHP','C++','C#','HTML/CSS','React','Django','Laravel','SQL','MySQL','PostgreSQL','MongoDB','Git','Docker','Linux','Networking','Data Analysis','Machine Learning','AI','Cloud Computing','AWS','Azure','Mobile Development','Android','iOS'],
+    'Soft Skills': ['Communication','Leadership','Teamwork','Problem Solving','Critical Thinking','Time Management','Adaptability','Creativity','Work Ethic','Attention to Detail','Decision Making','Conflict Resolution','Public Speaking','Negotiation','Emotional Intelligence'],
+    'Language':    ['English (Fluent)','Filipino (Fluent)','Spanish','Japanese','Korean','Mandarin Chinese','Arabic','French','German','Ilocano','Cebuano','Hiligaynon','Waray'],
+    'Eligibility': ['Civil Service Eligible (Professional)','Civil Service Eligible (Sub-Professional)','Board Exam Passer','Bar Exam Passer','PRC Licensed','CSE Passer','NAPOLCOM Eligible','RA 1080'],
+    'Office':      ['Microsoft Word','Microsoft Excel','Microsoft PowerPoint','Microsoft Outlook','Google Docs','Google Sheets','Google Slides','Canva','Adobe Photoshop','Adobe Illustrator','Zoom','MS Teams','Slack'],
+    'Other':       ['Driving','First Aid','Cooking','Photography','Video Editing','Graphic Design','Accounting','Bookkeeping','Research','Training & Facilitation','Event Management','Customer Service','Sales'],
+};
+
+let activeSkillCat = 'all';
+
+function getAllSkills() {
+    return Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })));
+}
+
+function filterSkillCat(cat, btn) {
+    activeSkillCat = cat;
+    document.querySelectorAll('.skill-cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (cat !== 'all') {
+        document.getElementById('skill_category_select').value = cat;
+        document.getElementById('skill_category_hidden').value = cat;
+    }
+    const query = document.getElementById('skill_search_input').value;
+    if (query.length >= 1) filterSkillSuggestions(query);
+}
+
+function filterSkillSuggestions(query) {
+    const list = document.getElementById('skill_suggestions_list');
+    const pool = activeSkillCat === 'all'
+        ? getAllSkills()
+        : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
+    if (query.length < 1) { list.style.display = 'none'; return; }
+    const filtered = pool
+        .filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 10);
+    list.innerHTML = '';
+    if (filtered.length === 0) { list.style.display = 'none'; return; }
+    filtered.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `${item.name} <span style="font-size:11px;color:#888;">(${item.cat})</span>`;
+        li.onclick = () => {
+            document.getElementById('skill_search_input').value = item.name;
+            document.getElementById('skill_category_select').value = item.cat;
+            document.getElementById('skill_category_hidden').value = item.cat;
             list.style.display = 'none';
-        });
-    }
+        };
+        list.appendChild(li);
+    });
+    list.style.display = 'block';
+}
 
-    function showCourseList() {
-        const query = document.getElementById('college_course_input').value;
-        if (query.length >= 1) filterCourses(query);
-    }
-
-    // ══════════════════════════════════════════════
-    // SKILLS AUTOCOMPLETE
-    // ══════════════════════════════════════════════
-    const skillsByCategory = {
-        'Technical': ['Python','Java','JavaScript','PHP','C++','C#','HTML/CSS','React','Django','Laravel','SQL','MySQL','PostgreSQL','MongoDB','Git','Docker','Linux','Networking','Data Analysis','Machine Learning','AI','Cloud Computing','AWS','Azure','Mobile Development','Android','iOS'],
-        'Soft Skills': ['Communication','Leadership','Teamwork','Problem Solving','Critical Thinking','Time Management','Adaptability','Creativity','Work Ethic','Attention to Detail','Decision Making','Conflict Resolution','Public Speaking','Negotiation','Emotional Intelligence'],
-        'Language': ['English (Fluent)','Filipino (Fluent)','Spanish','Japanese','Korean','Mandarin Chinese','Arabic','French','German','Ilocano','Cebuano','Hiligaynon','Waray'],
-        'Eligibility': ['Civil Service Eligible (Professional)','Civil Service Eligible (Sub-Professional)','Board Exam Passer','Bar Exam Passer','PRC Licensed','CSE Passer','NAPOLCOM Eligible','RA 1080'],
-        'Office': ['Microsoft Word','Microsoft Excel','Microsoft PowerPoint','Microsoft Outlook','Google Docs','Google Sheets','Google Slides','Canva','Adobe Photoshop','Adobe Illustrator','Zoom','MS Teams','Slack'],
-        'Other': ['Driving','First Aid','Cooking','Photography','Video Editing','Graphic Design','Accounting','Bookkeeping','Research','Training & Facilitation','Event Management','Customer Service','Sales'],
-    };
-
-    let activeSkillCat = 'all';
-
-    function getAllSkills() {
-        return Object.entries(skillsByCategory).flatMap(([cat, skills]) => skills.map(s => ({ name: s, cat })));
-    }
-
-    function filterSkillCat(cat, btn) {
-        activeSkillCat = cat;
-        document.querySelectorAll('.skill-cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (cat !== 'all') {
-            document.getElementById('skill_category_select').value = cat;
-            document.getElementById('skill_category_hidden').value = cat;
-        }
-        const query = document.getElementById('skill_search_input').value;
-        if (query.length >= 1) filterSkillSuggestions(query);
-    }
-
-    function filterSkillSuggestions(query) {
-        const list = document.getElementById('skill_suggestions_list');
-        const pool = activeSkillCat === 'all'
-            ? getAllSkills()
-            : (skillsByCategory[activeSkillCat] || []).map(s => ({ name: s, cat: activeSkillCat }));
-        if (query.length < 1) { list.style.display = 'none'; return; }
-        const filtered = pool.filter(s => s.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
-        list.innerHTML = '';
-        if (filtered.length === 0) { list.style.display = 'none'; return; }
-        filtered.forEach(item => {
-            const li = document.createElement('li');
-            li.innerHTML = `${item.name} <span style="font-size:11px; color:#888;">(${item.cat})</span>`;
-            li.onclick = () => {
-                document.getElementById('skill_search_input').value = item.name;
-                document.getElementById('skill_category_select').value = item.cat;
-                document.getElementById('skill_category_hidden').value = item.cat;
-                list.style.display = 'none';
-            };
-            list.appendChild(li);
-        });
-        list.style.display = 'block';
-    }
-
-    function showSkillSuggestions() {
-        const query = document.getElementById('skill_search_input').value;
-        if (query.length >= 1) filterSkillSuggestions(query);
-    }
+function showSkillSuggestions() {
+    const q = document.getElementById('skill_search_input').value;
+    if (q.length >= 1) filterSkillSuggestions(q);
+}
 </script>
 
 {% endblock %}
