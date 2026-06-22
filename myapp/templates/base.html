@@ -250,6 +250,26 @@
         }
 
         /* ── CALENDAR BUTTON ── */
+        .calendar-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background-color: #ff3b30;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #0f1f3d;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
         .calendar-bell {
             position: relative;
             display: flex;
@@ -874,14 +894,15 @@
 
     {% if user.is_authenticated %}
     <div class="nav-right">
-        <button type="button" class="calendar-bell" onclick="showCalendar()">
-            <svg viewBox="0 0 24 24">
-                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                <path d="M3 9h18"></path>
-                <path d="M8 3v4"></path>
-                <path d="M16 3v4"></path>
-            </svg>
-        </button>
+       <button type="button" class="calendar-bell" onclick="showCalendar()">
+    <svg viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+        <path d="M3 9h18"></path>
+        <path d="M8 3v4"></path>
+        <path d="M16 3v4"></path>
+    </svg>
+    <span class="calendar-badge" id="calendar-badge" style="display:none;"></span>
+</button> 
 
         <button type="button" class="todo-bell" onclick="showTodo()">
             <svg viewBox="0 0 24 24">
@@ -1123,25 +1144,36 @@
     }
 
     function updateNotifBadge() {
-        const link = document.getElementById('notif-bell-link');
-        const badge = document.getElementById('notif-badge');
-        if (!link || !badge) return;
-        const serverCount = parseInt(link.dataset.unreadCount || '0', 10);
-        const now = new Date();
-        const todayKey = dateKey(now.getFullYear(), now.getMonth(), now.getDate());
-        const dueReminders = Object.keys(reminders).filter(k => k <= todayKey).length;
-        const total = serverCount + dueReminders;
-        if (total > 0) {
-            badge.textContent = total;
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
+    const link = document.getElementById('notif-bell-link');
+    const badge = document.getElementById('notif-badge');
+    if (!link || !badge) return;
+    const serverCount = parseInt(link.dataset.unreadCount || '0', 10);
+    if (serverCount > 0) {
+        badge.textContent = serverCount;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
     }
+}
+
+function updateCalendarBadge() {
+    const badge = document.getElementById('calendar-badge');
+    if (!badge) return;
+    const now = new Date();
+    const todayKey = dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+    const dueReminders = Object.keys(reminders).filter(k => k <= todayKey).length;
+    if (dueReminders > 0) {
+        badge.textContent = dueReminders;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
 
     updateNotifBadge();
+    updateCalendarBadge();
 
-    function renderCalendar() {
+function renderCalendar() {
         const today = new Date();
         const year = calDate.getFullYear();
         const month = calDate.getMonth();
@@ -1198,11 +1230,12 @@
             delete reminders[selectedDateKey];
         }
         saveReminders();
+        document.getElementById('reminder-input').value = '';
+        document.getElementById('reminder-delete-btn').style.display = 'none';
         renderCalendar();
-        updateNotifBadge();
-        document.getElementById('reminder-delete-btn').style.display = reminders[selectedDateKey] ? 'inline-block' : 'none';
-    }
-
+        updateCalendarBadge();
+    } 
+    
     function deleteReminder() {
         if (!selectedDateKey) return;
         delete reminders[selectedDateKey];
