@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -122,6 +124,33 @@ class PDS(models.Model):
         ('other', 'Other'),
     ]
     CITIZENSHIP_CHOICES = [('filipino', 'Filipino'), ('dual', 'Dual Citizenship')]
+    RELIGION_CHOICES = [
+        ('catholic', 'Roman Catholic'),
+        ('protestant', 'Protestant'),
+        ('iglesia_ni_cristo', 'Iglesia ni Cristo'),
+        ('islam', 'Islam'),
+        ('other', 'Other'),
+        ('none', 'Prefer not to say'),
+    ]
+
+    # Maps province name -> region label, used for the `region` property below.
+    # Extend this as you cover more provinces.
+    PROVINCE_TO_REGION = {
+        'Bulacan': 'Region III - Central Luzon',
+        'Pampanga': 'Region III - Central Luzon',
+        'Nueva Ecija': 'Region III - Central Luzon',
+        'Tarlac': 'Region III - Central Luzon',
+        'Zambales': 'Region III - Central Luzon',
+        'Bataan': 'Region III - Central Luzon',
+        'Aurora': 'Region III - Central Luzon',
+        'Metro Manila': 'NCR - National Capital Region',
+        'Manila': 'NCR - National Capital Region',
+        'Cavite': 'Region IV-A - CALABARZON',
+        'Laguna': 'Region IV-A - CALABARZON',
+        'Batangas': 'Region IV-A - CALABARZON',
+        'Rizal': 'Region IV-A - CALABARZON',
+        'Quezon': 'Region IV-A - CALABARZON',
+    }
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='pds')
 
@@ -133,20 +162,23 @@ class PDS(models.Model):
     age = models.CharField(max_length=5, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
-    sex = models.CharField(max_length=10, choices=SEX_CHOICES, blank=True)
-    civil_status = models.CharField(max_length=20, choices=CIVIL_STATUS_CHOICES, blank=True)
+    sex = models.CharField(max_length=10, choices=SEX_CHOICES, blank=True, db_index=True)
+    civil_status = models.CharField(max_length=20, choices=CIVIL_STATUS_CHOICES, blank=True, db_index=True)
     height = models.CharField(max_length=20, blank=True)
     weight = models.CharField(max_length=20, blank=True)
-    blood_type = models.CharField(max_length=5, blank=True)
-    citizenship = models.CharField(max_length=20, choices=CITIZENSHIP_CHOICES, blank=True)
+    height_cm = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    weight_kg = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    blood_type = models.CharField(max_length=5, blank=True, db_index=True)
+    citizenship = models.CharField(max_length=20, choices=CITIZENSHIP_CHOICES, blank=True, db_index=True)
+    religion = models.CharField(max_length=30, choices=RELIGION_CHOICES, blank=True, db_index=True)
 
     # Residential Address
     res_house_no = models.CharField(max_length=100, blank=True)
     res_street = models.CharField(max_length=100, blank=True)
     res_subdivision = models.CharField(max_length=100, blank=True)
     res_barangay = models.CharField(max_length=100, blank=True)
-    res_city = models.CharField(max_length=100, blank=True)
-    res_province = models.CharField(max_length=100, blank=True)
+    res_city = models.CharField(max_length=100, blank=True, db_index=True)
+    res_province = models.CharField(max_length=100, blank=True, db_index=True)
     res_zip = models.CharField(max_length=10, blank=True)
 
     # Permanent Address
@@ -164,6 +196,38 @@ class PDS(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        # Normalize free-text location fields so "bulacan", "Bulacan ", "BULACAN"
+        # don't fragment into separate rows in stats breakdowns.
+        for field in ['res_province', 'res_city', 'res_barangay', 'perm_province', 'perm_city', 'perm_barangay']:
+            value = getattr(self, field)
+            if value:
+                setattr(self, field, value.strip().title())
+        super().save(*args, **kwargs)
+
+    @property
+    def computed_age(self):
+        """Age derived from date_of_birth, used instead of the free-text `age` field for stats."""
+        if not self.date_of_birth:
+            return None
+        today = date.today()
+        return today.year - self.date_of_birth.year - (
+            (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+        )
+
+    @property
+    def region(self):
+        """Region derived from res_province, kept in sync automatically rather than typed separately."""
+        return self.PROVINCE_TO_REGION.get(self.res_province, 'Unspecified')
+
+    @property
+    def highest_education_level(self):
+        """Single highest education level for this respondent, or None if no records."""
+        levels = self.education.values_list('level', flat=True)
+        if not levels:
+            return None
+        return max(levels, key=lambda lvl: Education.LEVEL_RANK.get(lvl, 0))
+
     def __str__(self):
         return f"PDS of {self.user.username}"
 
@@ -175,17 +239,22 @@ class Education(models.Model):
         ('vocational', 'Vocational'),
         ('college', 'College'),
     ]
+    LEVEL_RANK = {'elementary': 1, 'secondary': 2, 'vocational': 3, 'college': 4}
     EDU_STATUS_CHOICES = [
         ('graduated', 'Graduated'),
         ('undergraduate', 'Undergraduate'),
         ('ongoing', 'Ongoing'),
     ]
     pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='education')
-    level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES, db_index=True)
     school = models.CharField(max_length=200, blank=True)
     course = models.CharField(max_length=200, blank=True)
     edu_status = models.CharField(max_length=20, choices=EDU_STATUS_CHOICES, blank=True)
     year_graduated = models.CharField(max_length=10, blank=True)
+
+    @property
+    def level_rank(self):
+        return self.LEVEL_RANK.get(self.level, 0)
 
     def __str__(self):
         return f"{self.level} - {self.school}"
@@ -210,11 +279,23 @@ class Skill(models.Model):
         ('language', 'Language'),
         ('tools', 'Tools & Software'),
         ('professional', 'Professional'),
+        ('hobby', 'Hobby/Interest'),
         ('other', 'Other'),
     ]
     pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=200)
-    category = models.CharField(max_length=20, choices=SKILL_CATEGORIES, default='other')
+    category = models.CharField(max_length=20, choices=SKILL_CATEGORIES, default='other', db_index=True)
 
     def __str__(self):
         return self.name
+
+
+class Recognition(models.Model):
+    """Non-academic distinctions / recognitions (awards, citations, etc.)."""
+    pds = models.ForeignKey(PDS, on_delete=models.CASCADE, related_name='recognitions')
+    title = models.CharField(max_length=200)
+    issuing_body = models.CharField(max_length=200, blank=True)
+    year = models.CharField(max_length=10, blank=True)
+
+    def __str__(self):
+        return self.title
