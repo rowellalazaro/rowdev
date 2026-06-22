@@ -834,15 +834,21 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════
-// PSGC Cloud — Fixed merged endpoints for all cities/municipalities
+// PSGC Cloud — confirmed flat endpoints
+//   /api/provinces       → [{code, name}]
+//   /api/cities          → [{code, name, zip_code}]  (names have trailing spaces + "City of" prefix)
+//   /api/municipalities  → [{code, name, zip_code}]
+//   /api/cities-municipalities/{code}/barangays
 // ══════════════════════════════════════════════════════════════
-const PSGC = 'https://psgc.cloud/api';
-const _cache = {};
 
+const PSGC = 'https://psgc.cloud/api';
+
+// ── Cache ─────────────────────────────────────────────────────
+const _cache = {};
 async function apiGet(url) {
     if (_cache[url]) return _cache[url];
     try {
-        const res = await fetch(url);
+        const res  = await fetch(url);
         if (!res.ok) return [];
         const data = await res.json();
         _cache[url] = Array.isArray(data) ? data : [];
@@ -850,54 +856,153 @@ async function apiGet(url) {
     } catch (e) { return []; }
 }
 
-// ── Clean and normalize names
+// ── Clean city name: trim spaces + fix mojibake ───────────────
 function cleanName(name) {
     if (!name) return '';
-    return name.trim().replace(/Ã±/g, 'ñ').replace(/Ã¼/g, 'ü');
+    let s = name.trim();
+    // Fix common UTF-8 double-encoded chars (Ã± → ñ, Ã¼ → ü, etc.)
+    try {
+        if (s.includes('Ã')) {
+            s = decodeURIComponent(escape(s));
+        }
+    } catch(e) {}
+    return s;
 }
 
-// ── Unified City/Municipality Loader
+// ── Short name for display: "City of Malolos" → "Malolos (City)"
+// But keep original for matching
+function shortDisplay(name) {
+    const n = cleanName(name);
+    const prefixes = ['City of ', 'Municipality of '];
+    for (const p of prefixes) {
+        if (n.startsWith(p)) {
+            return n.slice(p.length) + ' (City)';
+        }
+    }
+    // "Malolos City", "Batangas City " etc.
+    if (n.endsWith(' City') || n.endsWith(' City ')) {
+        return n.trim();
+    }
+    return n;
+}
+
+// ── Preloaded master lists ────────────────────────────────────
+let _provinces = null;
 let _allCities = null;
+
+async function loadProvinces() {
+    if (_provinces) return _provinces;
+    const raw = await apiGet(`${PSGC}/provinces`);
+    _provinces = raw.map(p => ({ ...p, name: cleanName(p.name) }));
+    return _provinces;
+}
+
 async function loadAllCities() {
     if (_allCities) return _allCities;
-    // Fetch both to ensure no missing entries
     const [cities, munis] = await Promise.all([
         apiGet(`${PSGC}/cities`),
         apiGet(`${PSGC}/municipalities`)
     ]);
-    _allCities = [...cities, ...munis].map(c => ({
-        ...c,
-        name: cleanName(c.name),
-        zip_code: c.zip_code || ''
-    }));
+    // Clean names, add a searchable lowercase field that includes both
+    // "City of Malolos" and just "Malolos" for flexible matching
+    _allCities = [...cities, ...munis].map(c => {
+        const cleaned = cleanName(c.name);
+        const display = shortDisplay(c.name);
+        // searchable = full cleaned name + short name (covers "malolos" matching "City of Malolos")
+        const searchable = (cleaned + ' ' + display).toLowerCase();
+        return { ...c, name: cleaned, display, searchable, zip_code: c.zip_code || '' };
+    });
     return _allCities;
 }
 
-// ── Fixed Scoped Fetching
-async function fetchCities(query, listId, provinceInputId, zipInputId) {
-    const list = document.getElementById(listId);
+// ── Selected PSGC codes per prefix ───────────────────────────
+const selProvCode = { res: null, perm: null };
+const selCityCode = { res: null, perm: null };
+
+// ── Preload on DOMContentLoaded ───────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+    await Promise.all([loadProvinces(), loadAllCities()]);
+    seedSavedValues();
+});
+
+async function seedSavedValues() {
+    const provs  = await loadProvinces();
+    const cities = await loadAllCities();
+    for (const p of ['res', 'perm']) {
+        const pName = (document.getElementById(p + '_province').value || '').trim().toLowerCase();
+        const cName = (document.getElementById(p + '_city').value || '').trim().toLowerCase();
+        if (pName) {
+            const prov = provs.find(x => x.name.toLowerCase() === pName);
+            if (prov) selProvCode[p] = prov.code;
+        }
+        if (cName) {
+            // Match against cleaned name OR display name
+            const city = cities.find(x =>
+                x.name.toLowerCase() === cName ||
+                x.display.toLowerCase() === cName ||
+                x.searchable.includes(cName)
+            );
+            if (city) selCityCode[p] = city.code;
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROVINCES
+// ══════════════════════════════════════════════════════════════
+async function fetchProvinces(query, listId) {
+    const list   = document.getElementById(listId);
     const prefix = listId.startsWith('res') ? 'res' : 'perm';
     if (!query) { list.style.display = 'none'; return; }
+    const all    = await loadProvinces();
+    const q      = query.toLowerCase();
+    const matches = all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
+    renderList(list, matches, p => p.name, p => {
+        document.getElementById(listId.replace('_list', '')).value = p.name;
+        selProvCode[prefix] = p.code;
+        selCityCode[prefix] = null;
+        document.getElementById(prefix + '_city').value     = '';
+        document.getElementById(prefix + '_barangay').value = '';
+        document.getElementById(prefix + '_zip').value      = '';
+    });
+}
 
-    const all = await loadAllCities();
-    const provCode = selProvCode[prefix];
-    
-    // Logic: If province is selected, filter by the first 6 digits of PSGC code.
-    // If no province is selected, search the entire merged list.
-    const pool = provCode ? all.filter(c => c.code.startsWith(provCode.slice(0, 6))) : all;
-    const matches = pool.filter(c => c.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
+// ══════════════════════════════════════════════════════════════
+// CITIES / MUNICIPALITIES
+// Scoped by province code prefix when province is selected.
+// Matches against both "City of Malolos" and "Malolos".
+// ══════════════════════════════════════════════════════════════
+async function fetchCities(query, listId, provinceInputId, zipInputId) {
+    const list   = document.getElementById(listId);
+    const prefix = listId.startsWith('res') ? 'res' : 'perm';
+    if (!query) { list.style.display = 'none'; return; }
+    const all    = await loadAllCities();
+    const q      = query.toLowerCase();
+    const pCode  = selProvCode[prefix];
+    // Scope to province using first 6 chars of PSGC code
+    const pool   = pCode ? all.filter(c => c.code.startsWith(pCode.slice(0, 6))) : all;
+    const matches = pool.filter(c => c.searchable.includes(q)).slice(0, 10);
 
     list.innerHTML = '';
     if (!matches.length) { list.style.display = 'none'; return; }
-    
     matches.forEach(item => {
         const li = document.createElement('li');
-        li.innerHTML = `${item.name} <span style="font-size:11px;color:#888;">${item.zip_code ? 'ZIP ' + item.zip_code : ''}</span>`;
+        const zip = item.zip_code
+            ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>` : '';
+        li.innerHTML = item.display + zip;
         li.onclick = () => {
-            document.getElementById(listId.replace('_list', '')).value = item.name;
+            // Save the display name to the input (e.g. "Malolos (City)")
+            document.getElementById(listId.replace('_list', '')).value = item.display;
             selCityCode[prefix] = item.code;
             const zipEl = document.getElementById(zipInputId);
-            if (zipEl) zipEl.value = item.zip_code;
+            if (zipEl) {
+                zipEl.value = item.zip_code || '';
+                if (item.zip_code) {
+                    zipEl.classList.remove('zip-autofilled');
+                    void zipEl.offsetWidth;
+                    zipEl.classList.add('zip-autofilled');
+                }
+            }
             document.getElementById(prefix + '_barangay').value = '';
             list.style.display = 'none';
         };
@@ -906,26 +1011,36 @@ async function fetchCities(query, listId, provinceInputId, zipInputId) {
     list.style.display = 'block';
 }
 
-// ── Barangay Fetching (Keep existing logic)
+// ══════════════════════════════════════════════════════════════
+// BARANGAYS — fetched per city on demand, cached
+// ══════════════════════════════════════════════════════════════
 async function fetchBarangays(query, listId, prefix) {
     const list = document.getElementById(listId);
+    if (!query) { list.style.display = 'none'; return; }
+    // Resolve city code from typed text if not yet set via dropdown
+    if (!selCityCode[prefix]) {
+        const cName  = (document.getElementById(prefix + '_city').value || '').trim().toLowerCase();
+        if (cName) {
+            const all  = await loadAllCities();
+            const city = all.find(c =>
+                c.name.toLowerCase() === cName ||
+                c.display.toLowerCase() === cName ||
+                c.searchable.includes(cName)
+            );
+            if (city) selCityCode[prefix] = city.code;
+        }
+    }
     if (!selCityCode[prefix]) { list.style.display = 'none'; return; }
-    
-    const url = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
-    const all = await apiGet(url);
-    const matches = all.filter(b => b.name.toLowerCase().includes(query.toLowerCase())).slice(0, 10);
-    
-    list.innerHTML = '';
-    matches.forEach(b => {
-        const li = document.createElement('li');
-        li.textContent = b.name;
-        li.onclick = () => {
-            document.getElementById(listId.replace('_list', '')).value = b.name;
-            list.style.display = 'none';
-        };
-        list.appendChild(li);
+    const url    = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
+    const all    = await apiGet(url);
+    const q      = query.toLowerCase();
+    const matches = all
+        .map(b => ({ ...b, name: cleanName(b.name) }))
+        .filter(b => b.name.toLowerCase().includes(q))
+        .slice(0, 10);
+    renderList(list, matches, b => b.name, val => {
+        document.getElementById(listId.replace('_list', '')).value = val;
     });
-    list.style.display = 'block';
 }
 
 // ── Generic list renderer ─────────────────────────────────────
