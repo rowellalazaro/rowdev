@@ -834,12 +834,11 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════
-// PSGC Cloud — correct flat endpoints, all confirmed working
-//   /api/provinces          → [{code, name}]
-//   /api/cities             → [{code, name, zip_code}]
-//   /api/municipalities     → [{code, name, zip_code}]
-//   /api/cities-municipalities/{code}/barangays → [{code,name}]
-// Province scoping = code prefix match (first 6 chars)
+// PSGC Cloud — confirmed flat endpoints
+//   /api/provinces       → [{code, name}]
+//   /api/cities          → [{code, name, zip_code}]  (names have trailing spaces + "City of" prefix)
+//   /api/municipalities  → [{code, name, zip_code}]
+//   /api/cities-municipalities/{code}/barangays
 // ══════════════════════════════════════════════════════════════
 
 const PSGC = 'https://psgc.cloud/api';
@@ -857,13 +856,44 @@ async function apiGet(url) {
     } catch (e) { return []; }
 }
 
+// ── Clean city name: trim spaces + fix mojibake ───────────────
+function cleanName(name) {
+    if (!name) return '';
+    let s = name.trim();
+    // Fix common UTF-8 double-encoded chars (Ã± → ñ, Ã¼ → ü, etc.)
+    try {
+        if (s.includes('Ã')) {
+            s = decodeURIComponent(escape(s));
+        }
+    } catch(e) {}
+    return s;
+}
+
+// ── Short name for display: "City of Malolos" → "Malolos (City)"
+// But keep original for matching
+function shortDisplay(name) {
+    const n = cleanName(name);
+    const prefixes = ['City of ', 'Municipality of '];
+    for (const p of prefixes) {
+        if (n.startsWith(p)) {
+            return n.slice(p.length) + ' (City)';
+        }
+    }
+    // "Malolos City", "Batangas City " etc.
+    if (n.endsWith(' City') || n.endsWith(' City ')) {
+        return n.trim();
+    }
+    return n;
+}
+
 // ── Preloaded master lists ────────────────────────────────────
 let _provinces = null;
-let _allCities = null;   // cities + municipalities combined
+let _allCities = null;
 
 async function loadProvinces() {
     if (_provinces) return _provinces;
-    _provinces = await apiGet(`${PSGC}/provinces`);
+    const raw = await apiGet(`${PSGC}/provinces`);
+    _provinces = raw.map(p => ({ ...p, name: cleanName(p.name) }));
     return _provinces;
 }
 
@@ -873,23 +903,30 @@ async function loadAllCities() {
         apiGet(`${PSGC}/cities`),
         apiGet(`${PSGC}/municipalities`)
     ]);
-    _allCities = [...cities, ...munis];
+    // Clean names, add a searchable lowercase field that includes both
+    // "City of Malolos" and just "Malolos" for flexible matching
+    _allCities = [...cities, ...munis].map(c => {
+        const cleaned = cleanName(c.name);
+        const display = shortDisplay(c.name);
+        // searchable = full cleaned name + short name (covers "malolos" matching "City of Malolos")
+        const searchable = (cleaned + ' ' + display).toLowerCase();
+        return { ...c, name: cleaned, display, searchable, zip_code: c.zip_code || '' };
+    });
     return _allCities;
 }
 
-// ── Selected codes per prefix (res / perm) ───────────────────
+// ── Selected PSGC codes per prefix ───────────────────────────
 const selProvCode = { res: null, perm: null };
 const selCityCode = { res: null, perm: null };
 
-// ── Preload on page load + re-seed saved values ───────────────
+// ── Preload on DOMContentLoaded ───────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-    // Load in background — fast (2 small requests)
     await Promise.all([loadProvinces(), loadAllCities()]);
     seedSavedValues();
 });
 
 async function seedSavedValues() {
-    const provs = await loadProvinces();
+    const provs  = await loadProvinces();
     const cities = await loadAllCities();
     for (const p of ['res', 'perm']) {
         const pName = (document.getElementById(p + '_province').value || '').trim().toLowerCase();
@@ -899,24 +936,27 @@ async function seedSavedValues() {
             if (prov) selProvCode[p] = prov.code;
         }
         if (cName) {
-            const city = cities.find(x => x.name.toLowerCase() === cName);
+            // Match against cleaned name OR display name
+            const city = cities.find(x =>
+                x.name.toLowerCase() === cName ||
+                x.display.toLowerCase() === cName ||
+                x.searchable.includes(cName)
+            );
             if (city) selCityCode[p] = city.code;
         }
     }
 }
 
 // ══════════════════════════════════════════════════════════════
-// PROVINCES  — type any letter, shows all matching PH provinces
+// PROVINCES
 // ══════════════════════════════════════════════════════════════
 async function fetchProvinces(query, listId) {
     const list   = document.getElementById(listId);
     const prefix = listId.startsWith('res') ? 'res' : 'perm';
     if (!query) { list.style.display = 'none'; return; }
-
-    const all     = await loadProvinces();
-    const q       = query.toLowerCase();
+    const all    = await loadProvinces();
+    const q      = query.toLowerCase();
     const matches = all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
-
     renderList(list, matches, p => p.name, p => {
         document.getElementById(listId.replace('_list', '')).value = p.name;
         selProvCode[prefix] = p.code;
@@ -929,35 +969,30 @@ async function fetchProvinces(query, listId) {
 
 // ══════════════════════════════════════════════════════════════
 // CITIES / MUNICIPALITIES
-// • Province selected → show only cities in that province (code prefix)
-// • No province → show all matching PH cities/munis
+// Scoped by province code prefix when province is selected.
+// Matches against both "City of Malolos" and "Malolos".
 // ══════════════════════════════════════════════════════════════
 async function fetchCities(query, listId, provinceInputId, zipInputId) {
     const list   = document.getElementById(listId);
     const prefix = listId.startsWith('res') ? 'res' : 'perm';
     if (!query) { list.style.display = 'none'; return; }
-
-    const all  = await loadAllCities();
-    const q    = query.toLowerCase();
-    const pCode = selProvCode[prefix];
-
-    // Province code first 6 chars = province prefix for cities
-    const pool = pCode
-        ? all.filter(c => c.code.startsWith(pCode.slice(0, 6)))
-        : all;
-
-    const matches = pool.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
+    const all    = await loadAllCities();
+    const q      = query.toLowerCase();
+    const pCode  = selProvCode[prefix];
+    // Scope to province using first 6 chars of PSGC code
+    const pool   = pCode ? all.filter(c => c.code.startsWith(pCode.slice(0, 6))) : all;
+    const matches = pool.filter(c => c.searchable.includes(q)).slice(0, 10);
 
     list.innerHTML = '';
     if (!matches.length) { list.style.display = 'none'; return; }
-
     matches.forEach(item => {
         const li = document.createElement('li');
         const zip = item.zip_code
             ? `<span style="font-size:11px;color:#888;margin-left:6px;">ZIP ${item.zip_code}</span>` : '';
-        li.innerHTML = item.name + zip;
+        li.innerHTML = item.display + zip;
         li.onclick = () => {
-            document.getElementById(listId.replace('_list', '')).value = item.name;
+            // Save the display name to the input (e.g. "Malolos (City)")
+            document.getElementById(listId.replace('_list', '')).value = item.display;
             selCityCode[prefix] = item.code;
             const zipEl = document.getElementById(zipInputId);
             if (zipEl) {
@@ -977,30 +1012,32 @@ async function fetchCities(query, listId, provinceInputId, zipInputId) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// BARANGAYS — scoped to selected city, fetched on demand
-// Falls back to resolving city from typed text if needed
+// BARANGAYS — fetched per city on demand, cached
 // ══════════════════════════════════════════════════════════════
 async function fetchBarangays(query, listId, prefix) {
     const list = document.getElementById(listId);
     if (!query) { list.style.display = 'none'; return; }
-
-    // Resolve city code from text if not yet set
+    // Resolve city code from typed text if not yet set via dropdown
     if (!selCityCode[prefix]) {
-        const cName = (document.getElementById(prefix + '_city').value || '').trim().toLowerCase();
+        const cName  = (document.getElementById(prefix + '_city').value || '').trim().toLowerCase();
         if (cName) {
             const all  = await loadAllCities();
-            const city = all.find(c => c.name.toLowerCase() === cName);
+            const city = all.find(c =>
+                c.name.toLowerCase() === cName ||
+                c.display.toLowerCase() === cName ||
+                c.searchable.includes(cName)
+            );
             if (city) selCityCode[prefix] = city.code;
         }
     }
-
     if (!selCityCode[prefix]) { list.style.display = 'none'; return; }
-
-    const url      = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
-    const all      = await apiGet(url);
-    const q        = query.toLowerCase();
-    const matches  = all.filter(b => b.name.toLowerCase().includes(q)).slice(0, 10);
-
+    const url    = `${PSGC}/cities-municipalities/${selCityCode[prefix]}/barangays`;
+    const all    = await apiGet(url);
+    const q      = query.toLowerCase();
+    const matches = all
+        .map(b => ({ ...b, name: cleanName(b.name) }))
+        .filter(b => b.name.toLowerCase().includes(q))
+        .slice(0, 10);
     renderList(list, matches, b => b.name, val => {
         document.getElementById(listId.replace('_list', '')).value = val;
     });
@@ -1069,16 +1106,13 @@ const allCourses = {
 function filterCourses(query) {
     const list = document.getElementById('college_course_list');
     if (!query) { list.style.display = 'none'; return; }
-    const q  = query.toLowerCase();
+    const q = query.toLowerCase();
     const matches = Object.values(allCourses).flat().filter(c => c.toLowerCase().includes(q)).slice(0, 10);
     renderList(list, matches, c => c, val => {
         document.getElementById('college_course_input').value = val;
     });
 }
-
-function showCourseList() {
-    filterCourses(document.getElementById('college_course_input').value);
-}
+function showCourseList() { filterCourses(document.getElementById('college_course_input').value); }
 
 // ══════════════════════════════════════════════════════════════
 // SKILLS AUTOCOMPLETE (static)
@@ -1091,7 +1125,6 @@ const skillsByCategory = {
     'Office':      ['Microsoft Word','Microsoft Excel','Microsoft PowerPoint','Microsoft Outlook','Google Docs','Google Sheets','Google Slides','Canva','Adobe Photoshop','Adobe Illustrator','Zoom','MS Teams','Slack'],
     'Other':       ['Driving','First Aid','Cooking','Photography','Video Editing','Graphic Design','Accounting','Bookkeeping','Research','Training & Facilitation','Event Management','Customer Service','Sales'],
 };
-
 let activeSkillCat = 'all';
 
 function filterSkillCat(cat, btn) {
@@ -1128,9 +1161,6 @@ function filterSkillSuggestions(query) {
     });
     list.style.display = 'block';
 }
-
-function showSkillSuggestions() {
-    filterSkillSuggestions(document.getElementById('skill_search_input').value);
-}
+function showSkillSuggestions() { filterSkillSuggestions(document.getElementById('skill_search_input').value); }
 </script>
 {% endblock %}
