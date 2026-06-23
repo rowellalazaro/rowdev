@@ -363,16 +363,16 @@
         <div class="weather-card" id="weather-card">
             <div class="weather-top">
                 <div>
-                    <div class="weather-temp" id="weather-temp">29°C</div>
-                    <div class="weather-location" id="weather-location">Malolos, Bulacan</div>
-                    <div class="weather-desc" id="weather-desc">Partly cloudy · Feels like 33°C</div>
+                    <div class="weather-temp" id="weather-temp">--°C</div>
+                    <div class="weather-location" id="weather-location">Loading...</div>
+                    <div class="weather-desc" id="weather-desc">Fetching current weather</div>
                 </div>
-                <div id="weather-icon">☀️</div>
+                <div id="weather-icon">⏳</div>
             </div>
             <div class="weather-stats">
-                <div>Humidity<b id="weather-humidity">78%</b></div>
-                <div>Wind<b id="weather-wind">14 km/h</b></div>
-                <div>UV Index<b id="weather-uv">7 High</b></div>
+                <div>Humidity<b id="weather-humidity">--%</b></div>
+                <div>Wind<b id="weather-wind">-- km/h</b></div>
+                <div>UV Index<b id="weather-uv">--</b></div>
             </div>
             <div class="weather-change-row">
                 <input type="text" id="weather-search" placeholder="Change location...">
@@ -406,7 +406,7 @@
         </div>
 
     </div>
-  
+    <!-- ===== END ADDED ===== -->
 
 </div>
 
@@ -495,7 +495,10 @@
             document.getElementById('mood-log').textContent = 'Mood saved!';
             spawnMoodBurst(this.textContent.trim());
 
-            
+            // Optional: persist to your backend. Create a view + URL named
+            // 'log-mood' that accepts POST {mood: "..."} and this will call it.
+            // Safe to leave as-is if that endpoint doesn't exist yet — it just
+            // fails silently and the click still visually registers above.
             fetch('/log-mood/', {
                 method: 'POST',
                 headers: {
@@ -506,7 +509,7 @@
             }).catch(() => {});
         });
     });
-    
+   
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
         45: '🌫️', 48: '🌫️',
@@ -535,6 +538,27 @@
         return 'Low';
     }
 
+    async function loadWeatherForCoords(lat, lon, label) {
+        const statusEl = document.getElementById('weather-status');
+        try {
+            const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,uv_index,weather_code`);
+            const wData = await wRes.json();
+            const c = wData.current;
+
+            document.getElementById('weather-temp').textContent = Math.round(c.temperature_2m) + '°C';
+            document.getElementById('weather-location').textContent = label;
+            document.getElementById('weather-desc').textContent =
+                `${weatherLabel(c.weather_code)} · Feels like ${Math.round(c.apparent_temperature)}°C`;
+            document.getElementById('weather-humidity').textContent = Math.round(c.relative_humidity_2m) + '%';
+            document.getElementById('weather-wind').textContent = Math.round(c.wind_speed_10m) + ' km/h';
+            document.getElementById('weather-uv').textContent = Math.round(c.uv_index) + ' ' + uvLabel(c.uv_index);
+            document.getElementById('weather-icon').textContent = weatherIcons[c.weather_code] || '☀️';
+            statusEl.textContent = '';
+        } catch (err) {
+            statusEl.textContent = 'Could not fetch weather.';
+        }
+    }
+
     async function changeWeatherLocation() {
         const query = document.getElementById('weather-search').value.trim();
         const statusEl = document.getElementById('weather-status');
@@ -549,26 +573,17 @@
                 return;
             }
             const place = geoData.results[0];
-
-            const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,uv_index,weather_code`);
-            const wData = await wRes.json();
-            const c = wData.current;
-
-            document.getElementById('weather-temp').textContent = Math.round(c.temperature_2m) + '°C';
-            document.getElementById('weather-location').textContent =
-                [place.name, place.admin1, place.country].filter(Boolean).join(', ');
-            document.getElementById('weather-desc').textContent =
-                `${weatherLabel(c.weather_code)} · Feels like ${Math.round(c.apparent_temperature)}°C`;
-            document.getElementById('weather-humidity').textContent = Math.round(c.relative_humidity_2m) + '%';
-            document.getElementById('weather-wind').textContent = Math.round(c.wind_speed_10m) + ' km/h';
-            document.getElementById('weather-uv').textContent = Math.round(c.uv_index) + ' ' + uvLabel(c.uv_index);
-            document.getElementById('weather-icon').textContent = weatherIcons[c.weather_code] || '☀️';
-            statusEl.textContent = '';
+            const label = [place.name, place.admin1, place.country].filter(Boolean).join(', ');
+            await loadWeatherForCoords(place.latitude, place.longitude, label);
             document.getElementById('weather-search').value = '';
         } catch (err) {
             statusEl.textContent = 'Could not fetch weather.';
         }
     }
+
+    // Auto-load real weather for Malolos, Bulacan on page load
+    // (replaces the static placeholder numbers in the HTML)
+    loadWeatherForCoords(14.8433, 120.8113, 'Malolos, Bulacan');
 
     document.getElementById('weather-search').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') changeWeatherLocation();
