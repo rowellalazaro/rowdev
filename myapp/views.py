@@ -5,8 +5,11 @@ from django.contrib.auth.models import Group, User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import JsonResponse  # ← ADDED (for zip_lookup)
+from django.conf import settings  # ← ADDED (to read GOOGLE_MAPS_API_KEY)
+import requests  # ← ADDED (to call the geocoding API)
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
-from .models import Post, Profile, DiaryEntry, PostImage, Notification, PDS, Education, WorkExperience, Skill
+from .models import Post, Profile, DiaryEntry, PostImage, Notification, PDS, Education, WorkExperience, Skill, PostalCode  # ← ADDED PostalCode
 from django.contrib.auth import logout as auth_logout
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
@@ -449,6 +452,94 @@ def delete_skill(request, pk):
     if request.method == 'POST':
         skill.delete()
     return redirect('pds')
+
+
+# ── NEW: geocoder fallback helper, used only when our own DB has no row yet ──
+def _fetch_zip_from_geocoder(city_name, province_name=''):
+    """
+    Calls Google's Geocoding API and pulls the postal_code component out
+    of the first result. Returns None on any failure (missing key, network
+    error, no result, no postal_code component) so the caller can fall
+    back gracefully instead of crashing the request.
+    """
+    api_key = getattr(settings, 'GOOGLE_MAPS_API_KEY', '')
+    if not api_key or not city_name:
+        return None
+
+    address = ', '.join(p for p in [city_name, province_name, 'Philippines'] if p)
+
+    try:
+        resp = requests.get(
+            'https://maps.googleapis.com/maps/api/geocode/json',
+            params={
+                'address': address,
+                'components': 'country:PH',
+                'key': api_key,
+            },
+            timeout=5,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+    except (requests.RequestException, ValueError):
+        return None
+
+    if data.get('status') != 'OK' or not data.get('results'):
+        return None
+
+    for component in data['results'][0].get('address_components', []):
+        if 'postal_code' in component.get('types', []):
+            return component.get('long_name')
+    return None
+
+
+# ── UPDATED: now DB-first, with geocoder fallback + auto-cache ──
+def zip_lookup(request):
+    """
+    GET /pds/zip-lookup/?city_code=031403000&city_name=Malolos&province_name=Bulacan
+
+    Lookup order:
+      1. Our own PostalCode table (free, instant, correctable in admin).
+      2. If not found: Google Geocoding API (needs GOOGLE_MAPS_API_KEY
+         in settings.py). On a hit, the result is cached into PostalCode
+         so the next lookup for that city is a free DB hit, not another
+         paid API call.
+
+    Returns: {"zip": "3000", "source": "db"} / {"zip": "3000", "source": "geocoder"}
+             {"zip": null, "source": null} if nothing was found anywhere.
+    """
+    city_code = (request.GET.get('city_code') or '').strip()
+    city_name = (request.GET.get('city_name') or '').strip()
+    province_name = (request.GET.get('province_name') or '').strip()  # ← ADDED, optional but improves geocoder accuracy
+
+    # 1. Try our own DB first
+    match = None
+    if city_code:
+        match = PostalCode.objects.filter(psgc_city_code=city_code).first()
+    elif city_name:
+        match = PostalCode.objects.filter(city_name__iexact=city_name).first()
+
+    if match:
+        return JsonResponse({'zip': match.zip_code, 'source': 'db'})
+
+    # 2. Not in our DB yet — fall back to the geocoding API
+    zip_code = _fetch_zip_from_geocoder(city_name, province_name)
+    if zip_code:
+        # Cache it for next time, but only if we have a stable key (city_code)
+        # to cache it under — without one we'd risk creating duplicate/wrong
+        # rows keyed loosely on name alone.
+        if city_code:
+            PostalCode.objects.update_or_create(
+                psgc_city_code=city_code,
+                defaults={
+                    'city_name': city_name,
+                    'province_name': province_name,
+                    'zip_code': zip_code,
+                },
+            )
+        return JsonResponse({'zip': zip_code, 'source': 'geocoder'})
+
+    # 3. Nothing found anywhere
+    return JsonResponse({'zip': None, 'source': None})
 
 
 @login_required

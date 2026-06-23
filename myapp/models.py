@@ -218,3 +218,31 @@ class Skill(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# ── NEW: locally-owned ZIP code data ──────────────────────────────
+class PostalCode(models.Model):
+    """
+    Locally-owned ZIP code data, keyed by PSGC city/municipality code.
+    Populate once via the `import_zip_codes` management command, then
+    correct individual rows any time through Django admin — no more
+    relying on psgc.cloud's zip_code field, which is sometimes missing
+    or wrong.
+    """
+    psgc_city_code = models.CharField(
+        max_length=10,
+        unique=True,
+        db_index=True,
+        help_text="PSGC code for the city/municipality, e.g. '031403000'",
+    )
+    city_name = models.CharField(max_length=255)
+    province_name = models.CharField(max_length=255, blank=True, default="")
+    zip_code = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = "Postal/ZIP Code"
+        verbose_name_plural = "Postal/ZIP Codes"
+        ordering = ['province_name', 'city_name']
+
+    def __str__(self):
+        return f"{self.city_name} ({self.province_name}) — {self.zip_code}"

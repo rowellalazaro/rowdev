@@ -1,0 +1,28 @@
+
+BULACAN_ZIPS = {
+    "Malolos": "3000",
+    "Paombong": "3001",
+    "Hagonoy": "3002",
+    "Calumpit": "3003",
+    "Plaridel": "3004",
+    "Pulilan": "3005",
+    "Baliuag": "3006",
+    "Bustos": "3007",
+    "San Rafael": "3008",
+    "Doña Remedios Trinidad": "3009",
+    "San Ildefonso": "3010",
+    "San Miguel": "3011",
+    "Angat": "3012",
+    "Norzagaray": "3013",
+    "Pandi": "3014",
+    "Guiguinto": "3015",
+    "Balagtas": "3016",
+    "Bulakan": "3017",
+    "Bocaue": "3018",
+    "Marilao": "3019",
+    "Meycauayan": "3020",
+    "Obando": "3021",
+    "Santa Maria": "3022",
+    "San Jose del Monte": "3023",
+}
+
