@@ -6,7 +6,6 @@ BULACAN_ZIPS = {
     "Calumpit": "3003",
     "Plaridel": "3004",
     "Pulilan": "3005",
-    "Baliuag": "3006",
     "Bustos": "3007",
     "San Rafael": "3008",
     "Doña Remedios Trinidad": "3009",
@@ -17,12 +16,13 @@ BULACAN_ZIPS = {
     "Pandi": "3014",
     "Guiguinto": "3015",
     "Balagtas": "3016",
-    "Bulakan": "3017",
     "Bocaue": "3018",
     "Marilao": "3019",
     "Meycauayan": "3020",
     "Obando": "3021",
     "Santa Maria": "3022",
     "San Jose del Monte": "3023",
+    "Baliwag": "3006",
+    "Bulacan": "3017"
 }
 
