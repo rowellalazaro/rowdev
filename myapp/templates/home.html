@@ -8,11 +8,14 @@
         display: flex;
         gap: 24px;
         align-items: flex-start;
+        max-width: 600px;   /* ← ADDED: caps the feed width */
+        margin: 0 auto;     /* ← ADDED: centers it on the page */
     }
 
     .home-main {
         flex: 1;
         min-width: 0;
+        width: 100%;        /* ← ADDED: keeps it filling the constrained layout */
     }
 
     .status-box, .post-card {
@@ -32,7 +35,7 @@
     }
 
     .status-textarea {
-        width: 60%;
+        width: 100%;   /* ← CHANGED from 60% — now matches the card's own (now smaller) width */
         box-sizing: border-box;
         height: 70px;
         padding: 10px;
