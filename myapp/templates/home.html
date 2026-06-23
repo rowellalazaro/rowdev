@@ -287,6 +287,17 @@
     body.dark .mood-emoji.selected { border-color: #7ec8e3 !important; background: #16273a !important; }
     body.dark .qa-btn { background: #1a2a3a !important; border-color: #7ec8e3 !important; color: #d0e8f5 !important; }
     body.dark .qa-btn:hover { background: #16273a !important; }
+
+    @keyframes moodFloat {
+        0% {
+            transform: translate(0, 0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--drift), -100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
     /* ===== END ADDED ===== */
 </style>
 
@@ -397,10 +408,10 @@
         <div class="sidebar-card">
             <div class="qa-title">⚡ Quick Actions</div>
             <div class="quick-actions-grid">
-                <a href="{% url 'profile' request.user.username %}" class="qa-btn">Profile</a>
-                <a href="{% url 'diary' %}" class="qa-btn">Diary</a>
+                <a href="{% url 'profile' request.user.username %}" class="qa-btn"> Profile</a>
+                <a href="{% url 'diary' %}" class="qa-btn"> Diary</a>
                 <a href="{% url 'files' %}" class="qa-btn">Files</a>
-                <a href="{% url 'settings' %}" class="qa-btn">Settings</a>
+                <a href="{% url 'settings' %}" class="qa-btn"> Settings</a>
             </div>
         </div>
 
@@ -454,11 +465,38 @@
         return value;
     }
 
+    function spawnMoodBurst(emoji) {
+        const count = 24;
+        for (let i = 0; i < count; i++) {
+            const span = document.createElement('span');
+            span.textContent = emoji;
+            const startX = Math.random() * 100;
+            const drift = (Math.random() - 0.5) * 200;
+            const size = 20 + Math.random() * 24;
+            const duration = 1.6 + Math.random() * 1.2;
+            const delay = Math.random() * 0.4;
+
+            span.style.cssText = `
+                position: fixed;
+                left: ${startX}vw;
+                bottom: -40px;
+                font-size: ${size}px;
+                z-index: 9999;
+                pointer-events: none;
+                --drift: ${drift}px;
+                animation: moodFloat ${duration}s ease-out ${delay}s forwards;
+            `;
+            document.body.appendChild(span);
+            setTimeout(() => span.remove(), (duration + delay) * 1000 + 100);
+        }
+    }
+
     document.querySelectorAll('.mood-emoji').forEach(el => {
         el.addEventListener('click', function () {
             document.querySelectorAll('.mood-emoji').forEach(e => e.classList.remove('selected'));
             this.classList.add('selected');
             document.getElementById('mood-log').textContent = 'Mood saved!';
+            spawnMoodBurst(this.textContent.trim());
 
             // Optional: persist to your backend. Create a view + URL named
             // 'log-mood' that accepts POST {mood: "..."} and this will call it.
@@ -543,7 +581,7 @@
     document.getElementById('weather-search').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') changeWeatherLocation();
     });
-    /* ===== END ADDED ===== */
+   
 </script>
 
 {% endblock %}
