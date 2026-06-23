@@ -288,16 +288,6 @@
     body.dark .qa-btn { background: #1a2a3a !important; border-color: #7ec8e3 !important; color: #d0e8f5 !important; }
     body.dark .qa-btn:hover { background: #16273a !important; }
 
-    @keyframes moodFloat {
-        0% {
-            transform: translate(0, 0) rotate(0deg);
-            opacity: 1;
-        }
-        100% {
-            transform: translate(var(--drift), -100vh) rotate(360deg);
-            opacity: 0;
-        }
-    }
     /* ===== END ADDED ===== */
 </style>
 
@@ -410,13 +400,13 @@
             <div class="quick-actions-grid">
                 <a href="{% url 'profile' request.user.username %}" class="qa-btn"> Profile</a>
                 <a href="{% url 'diary' %}" class="qa-btn"> Diary</a>
-                <a href="{% url 'files' %}" class="qa-btn">Files</a>
+                <a href="{% url 'files' %}" class="qa-btn"> Files</a>
                 <a href="{% url 'settings' %}" class="qa-btn"> Settings</a>
             </div>
         </div>
 
     </div>
-    <!-- ===== END ADDED ===== -->
+  
 
 </div>
 
@@ -467,6 +457,7 @@
 
     function spawnMoodBurst(emoji) {
         const count = 24;
+        const layer = document.documentElement; // bypass any transformed wrapper in base.html
         for (let i = 0; i < count; i++) {
             const span = document.createElement('span');
             span.textContent = emoji;
@@ -477,17 +468,23 @@
             const delay = Math.random() * 0.4;
 
             span.style.cssText = `
-                position: fixed;
+                position: fixed !important;
                 left: ${startX}vw;
                 bottom: -40px;
                 font-size: ${size}px;
-                z-index: 9999;
+                z-index: 999999;
                 pointer-events: none;
-                --drift: ${drift}px;
-                animation: moodFloat ${duration}s ease-out ${delay}s forwards;
+                opacity: 1;
+                transition: transform ${duration}s ease-out ${delay}s, opacity ${duration}s ease-out ${delay}s;
             `;
-            document.body.appendChild(span);
-            setTimeout(() => span.remove(), (duration + delay) * 1000 + 100);
+            layer.appendChild(span);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    span.style.transform = `translate(${drift}px, -100vh) rotate(${Math.random() > 0.5 ? 360 : -360}deg)`;
+                    span.style.opacity = '0';
+                });
+            });
+            setTimeout(() => span.remove(), (duration + delay) * 1000 + 150);
         }
     }
 
@@ -498,10 +495,7 @@
             document.getElementById('mood-log').textContent = 'Mood saved!';
             spawnMoodBurst(this.textContent.trim());
 
-            // Optional: persist to your backend. Create a view + URL named
-            // 'log-mood' that accepts POST {mood: "..."} and this will call it.
-            // Safe to leave as-is if that endpoint doesn't exist yet — it just
-            // fails silently and the click still visually registers above.
+            
             fetch('/log-mood/', {
                 method: 'POST',
                 headers: {
@@ -512,9 +506,7 @@
             }).catch(() => {});
         });
     });
-    /* ===== END ADDED ===== */
-
-    /* ===== ADDED: weather location change (Open-Meteo, no API key needed) ===== */
+    
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
         45: '🌫️', 48: '🌫️',
@@ -581,7 +573,7 @@
     document.getElementById('weather-search').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') changeWeatherLocation();
     });
-   
+    
 </script>
 
 {% endblock %}
