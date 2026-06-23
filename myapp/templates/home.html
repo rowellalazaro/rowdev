@@ -397,10 +397,10 @@
         <div class="sidebar-card">
             <div class="qa-title">⚡ Quick Actions</div>
             <div class="quick-actions-grid">
-                <a href="{% url 'profile' %}" class="qa-btn"> Profile</a>
-                <a href="{% url 'diary' %}" class="qa-btn"> Diary</a>
-                <a href="{% url 'files' %}" class="qa-btn"> Files</a>
-                <a href="{% url 'settings' %}" class="qa-btn"> Settings</a>
+                <a href="{% url 'profile' request.user.username %}" class="qa-btn">Profile</a>
+                <a href="{% url 'diary' %}" class="qa-btn">Diary</a>
+                <a href="{% url 'files' %}" class="qa-btn">Files</a>
+                <a href="{% url 'settings' %}" class="qa-btn">Settings</a>
             </div>
         </div>
 
@@ -460,7 +460,10 @@
             this.classList.add('selected');
             document.getElementById('mood-log').textContent = 'Mood saved!';
 
-           
+            // Optional: persist to your backend. Create a view + URL named
+            // 'log-mood' that accepts POST {mood: "..."} and this will call it.
+            // Safe to leave as-is if that endpoint doesn't exist yet — it just
+            // fails silently and the click still visually registers above.
             fetch('/log-mood/', {
                 method: 'POST',
                 headers: {
@@ -471,7 +474,9 @@
             }).catch(() => {});
         });
     });
-    
+    /* ===== END ADDED ===== */
+
+    /* ===== ADDED: weather location change (Open-Meteo, no API key needed) ===== */
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
         45: '🌫️', 48: '🌫️',
