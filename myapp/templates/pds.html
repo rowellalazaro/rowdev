@@ -509,21 +509,10 @@
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// PSGC Cloud API
-// Confirmed endpoints:
-//   /api/provinces          → [{code, name}]
-//   /api/cities             → [{code, name, zip_code}]  ← names may have trailing spaces
-//   /api/municipalities     → [{code, name, zip_code}]
-//   /api/cities-municipalities/{code}/barangays → [{code, name}]
-//
-// Province-to-city scoping: province.code.slice(0,5) === city.code.slice(0,5)
-// Verified: slice(0,5) is unique per province, slice(0,6) BREAKS (misses cities)
-// ══════════════════════════════════════════════════════════════
+
 
 const PSGC = 'https://psgc.cloud/api';
 
-// ── Simple fetch cache ────────────────────────────────────────
 const _cache = {};
 async function apiGet(url) {
     if (_cache[url]) return _cache[url];
@@ -536,7 +525,7 @@ async function apiGet(url) {
     } catch (e) { return []; }
 }
 
-// ── Name cleaning ─────────────────────────────────────────────
+
 function cleanName(raw) {
     if (!raw) return '';
     let s = raw.trim();
@@ -547,8 +536,7 @@ function cleanName(raw) {
     return s;
 }
 
-// Convert "City of Malolos" → "Malolos" for display & search
-// Keep original cleaned name for code-lookup
+
 function toDisplayName(cleaned) {
     if (cleaned.startsWith('City of '))         return cleaned.slice(8);
     if (cleaned.startsWith('Municipality of ')) return cleaned.slice(16);
@@ -558,15 +546,15 @@ function toDisplayName(cleaned) {
 
 // ── Master data (loaded once) ─────────────────────────────────
 let _provinces = null;
-let _cities    = null;   // combined cities + municipalities
+let _cities    = null;   
 
 async function getProvinces() {
     if (_provinces) return _provinces;
     const raw = await apiGet(`${PSGC}/provinces`);
     _provinces = raw.map(p => ({
         code: p.code,
-        name: cleanName(p.name),           // e.g. "Bulacan"
-        prefix: p.code.slice(0, 5),        // e.g. "03014"
+        name: cleanName(p.name),           
+        prefix: p.code.slice(0, 5),        
     }));
     return _provinces;
 }
@@ -593,18 +581,18 @@ async function getCities() {
     return _cities;
 }
 
-// ── Selected codes per address block ─────────────────────────
+
 const sel = {
     res:  { provCode: null, cityCode: null },
     perm: { provCode: null, cityCode: null },
 };
 
-// ── Preload data and seed saved values on page load ───────────
+
 document.addEventListener('DOMContentLoaded', async () => {
-    // Load both in parallel — fast (~2 small requests)
+    
     const [provs, cities] = await Promise.all([getProvinces(), getCities()]);
 
-    // Seed codes from already-saved field values (so barangay works on reload)
+    
     for (const p of ['res', 'perm']) {
         const pName = (document.getElementById(p+'_province').value||'').trim().toLowerCase();
         const cName = (document.getElementById(p+'_city').value||'').trim().toLowerCase();
@@ -622,10 +610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// ══════════════════════════════════════════════════════════════
-// PROVINCE INPUT
-// Type any letter → shows all matching PH provinces
-// ══════════════════════════════════════════════════════════════
+
 async function onProvinceInput(input, pfx) {
     const list = document.getElementById(pfx + '_province_list');
     const q    = input.value.trim().toLowerCase();
@@ -645,12 +630,8 @@ async function onProvinceInput(input, pfx) {
     });
 }
 
-// ══════════════════════════════════════════════════════════════
-// CITY / MUNICIPALITY INPUT
-// Province selected → show ONLY that province's cities (prefix match)
-// No province → show all PH cities matching the query
-// Auto-fills ZIP on selection
-// ══════════════════════════════════════════════════════════════
+
+
 async function onCityInput(input, pfx) {
     const list = document.getElementById(pfx + '_city_list');
     const q    = input.value.trim().toLowerCase();
@@ -659,7 +640,7 @@ async function onCityInput(input, pfx) {
     const all      = await getCities();
     const provCode = sel[pfx].provCode;
 
-    // KEY FIX: slice(0,5) — verified correct, slice(0,6) misses many cities
+    
     const pool = provCode
         ? all.filter(c => c.prefix === provCode.slice(0, 5))
         : all;
@@ -676,37 +657,33 @@ async function onCityInput(input, pfx) {
             : '';
         li.innerHTML = city.display + zip;
         li.onclick = () => {
-            input.value       = city.display;
-            sel[pfx].cityCode = city.code;
-            // Auto-fill ZIP
-            const zipEl = document.getElementById(pfx + '_zip');
-            if (zipEl && city.zip) {
-                zipEl.value = city.zip;
-                zipEl.classList.remove('zip-autofilled');
-                void zipEl.offsetWidth; // reflow for animation
-                zipEl.classList.add('zip-autofilled');
-            }
-            // Clear barangay when city changes
-            document.getElementById(pfx + '_barangay').value = '';
-            sel[pfx].cityCode = city.code; // ensure set
-            list.style.display = 'none';
-        };
+    input.value       = city.display;
+    sel[pfx].cityCode = city.code;
+    // Auto-fill ZIP
+    const zipEl = document.getElementById(pfx + '_zip');
+    if (zipEl && city.zip) {
+        zipEl.value = city.zip;
+        zipEl.classList.remove('zip-autofilled');
+        void zipEl.offsetWidth; 
+        zipEl.classList.add('zip-autofilled');
+    }
+    
+    document.getElementById(pfx + '_barangay').value = '';
+    sel[pfx].cityCode = city.code; 
+    list.style.display = 'none';
+};
         list.appendChild(li);
     });
     list.style.display = 'block';
 }
 
-// ══════════════════════════════════════════════════════════════
-// BARANGAY INPUT
-// City selected → fetch & show only that city's barangays
-// Falls back to resolving city from text if code not yet set
-// ══════════════════════════════════════════════════════════════
+
 async function onBarangayInput(input, pfx) {
     const list = document.getElementById(pfx + '_barangay_list');
     const q    = input.value.trim().toLowerCase();
     if (!q) { list.style.display = 'none'; return; }
 
-    // If city code not set yet, try resolving from the city text field
+    
     if (!sel[pfx].cityCode) {
         const cName = (document.getElementById(pfx+'_city').value||'').trim().toLowerCase();
         if (cName) {
@@ -732,7 +709,7 @@ async function onBarangayInput(input, pfx) {
     });
 }
 
-// ── Generic dropdown renderer ─────────────────────────────────
+
 function renderDropdown(listEl, items, labelFn, onSelect) {
     listEl.innerHTML = '';
     if (!items.length) { listEl.style.display = 'none'; return; }
@@ -745,13 +722,13 @@ function renderDropdown(listEl, items, labelFn, onSelect) {
     listEl.style.display = 'block';
 }
 
-// ── Close all dropdowns on outside click ─────────────────────
+
 document.addEventListener('click', e => {
     if (!e.target.closest('.pds-field') && !e.target.closest('.skill-search-wrap') && !e.target.closest('.edu-table td'))
         document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
 });
 
-// ── Same as Residential ───────────────────────────────────────
+
 function copyResAddress(cb) {
     if (!cb.checked) return;
     ['house_no','street','subdivision','barangay','city','province','zip'].forEach(f => {
@@ -763,9 +740,7 @@ function copyResAddress(cb) {
     sel['perm'].cityCode = sel['res'].cityCode;
 }
 
-// ══════════════════════════════════════════════════════════════
-// COLLEGE COURSE (static)
-// ══════════════════════════════════════════════════════════════
+
 const allCourses = {
     'Engineering':       ['BS Civil Engineering','BS Computer Engineering','BS Electrical Engineering','BS Electronics Engineering','BS Mechanical Engineering','BS Chemical Engineering','BS Industrial Engineering','BS Geodetic Engineering','BS Mining Engineering','BS Petroleum Engineering'],
     'IT & Computing':    ['BS Computer Science','BS Information Technology','BS Information Systems','BS Data Science','BS Cybersecurity','BS Software Engineering','Associate in Computer Technology'],

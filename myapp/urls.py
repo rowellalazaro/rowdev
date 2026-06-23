@@ -21,6 +21,7 @@ urlpatterns = [
     path('notifications/mark-read/', views.mark_notifications_read, name='mark_notifications_read'),
     path('pds/', views.pds_view, name='pds'),
     path('pds/zip-lookup/', views.zip_lookup, name='zip_lookup'),  # ← ADDED
+    path('api/get-zip/', views.get_zip, name='get_zip'),
 
     # Admin URLs
     path('rowdev-admin/', views.admin_login, name='admin_login'),

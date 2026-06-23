@@ -14,7 +14,17 @@ from django.contrib.auth import logout as auth_logout
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from .models import PDS
-from datetime import datetime  # ← ADDED
+from datetime import datetime  
+from django.http import JsonResponse
+from .models import PostalCode
+
+def get_zip(request):
+    city_code = request.GET.get('code', '')
+    try:
+        pc = PostalCode.objects.get(psgc_city_code=city_code)
+        return JsonResponse({'zip': pc.zip_code})
+    except PostalCode.DoesNotExist:
+        return JsonResponse({'zip': ''})
 
 
 def pds_required(user):
