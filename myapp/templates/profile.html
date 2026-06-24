@@ -83,7 +83,20 @@
         max-width: 600px;
     }
 
-    
+    .post-images-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .post-images-grid img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
     body.dark .profile-card, 
     body.dark .post-card {
         background: #1e3448 !important; 
@@ -210,15 +223,15 @@
             {{ post.content }}
         </p>
 
-        {% if post.image %}
-            <img src="{{ post.image.url }}" alt="Post image" style="
-                max-width: 50%;
-                max-height: 200px;
-                object-fit: cover;
-                border-radius: 8px;
-                margin-top: 10px;
-                display: block;
-            ">
+        {% if post.image or post.extra_images.exists %}
+            <div class="post-images-grid">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post image">
+                {% endif %}
+                {% for img in post.extra_images.all %}
+                    <img src="{{ img.image.url }}" alt="Post image">
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 {% empty %}

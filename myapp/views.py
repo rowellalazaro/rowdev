@@ -5,9 +5,10 @@ from django.contrib.auth.models import Group, User
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import JsonResponse  # ← ADDED (for zip_lookup)
-from django.conf import settings  # ← ADDED (to read GOOGLE_MAPS_API_KEY)
-import requests  # ← ADDED (to call the geocoding API)
+from django.http import JsonResponse  
+from django.conf import settings  
+from django.db.models import Q 
+import requests  
 from .forms import RegisterForm, PostForm, ProfileForm, UserUpdateForm
 from .models import Post, Profile, DiaryEntry, PostImage, Notification, PDS, Education, WorkExperience, Skill, PostalCode  # ← ADDED PostalCode
 from django.contrib.auth import logout as auth_logout
@@ -304,7 +305,14 @@ def user_request(request):
 
 @login_required
 def files_view(request):
-    posts = Post.objects.filter(author=request.user, image__isnull=False).exclude(image='').order_by('-created_at')
+    # ← FIXED: images are stored either directly on Post.image (legacy)
+    # OR via the related PostImage model (Post.extra_images), depending
+    # on how the post was created. Filtering only on Post.image meant
+    # uploads made through the dashboard's photo picker (which create
+    # PostImage rows, not Post.image) never showed up here.
+    posts = Post.objects.filter(author=request.user).filter(
+        Q(image__isnull=False, image__gt='') | Q(extra_images__isnull=False)
+    ).distinct().order_by('-created_at')
     return render(request, 'files.html', {'posts': posts})
 
 

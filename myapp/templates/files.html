@@ -152,12 +152,22 @@
                 <div class="date-label">{{ month.grouper }}</div>
                 <div class="photo-grid">
                     {% for post in month.list %}
-                        <div class="photo-item" onclick="openLightbox('{{ post.image.url }}')">
-                            <img src="{{ post.image.url }}" alt="Photo">
-                            <div class="photo-overlay">
-                                <span>{{ post.created_at|date:"M d, Y" }}</span>
+                        {% if post.image %}
+                            <div class="photo-item" onclick="openLightbox('{{ post.image.url }}')">
+                                <img src="{{ post.image.url }}" alt="Photo">
+                                <div class="photo-overlay">
+                                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
+                        {% for img in post.extra_images.all %}
+                            <div class="photo-item" onclick="openLightbox('{{ img.image.url }}')">
+                                <img src="{{ img.image.url }}" alt="Photo">
+                                <div class="photo-overlay">
+                                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
                     {% endfor %}
                 </div>
             </div>
